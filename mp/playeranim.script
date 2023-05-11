@@ -1205,11 +1205,13 @@ prone_to_crouch
 {
 	movetype moving
 	{
-		both pb_prone2crouchrun
+		//fixed the animation duration while moving for prone_to_crouch
+		both pb_prone2crouchrun duration 1
 	}
 	default
 	{
-		both pb_prone2crouch
+		//fixed the animation duration for prone_to_crouch
+		both pb_prone2crouch duration 1
 	}
 }
 
