@@ -46,6 +46,8 @@ validMode( mode )
 	switches["knife_done"] = false;
 	switches["mr_done"] = false;
 	switches["scores_done"] = false;
+	switches["ot_done"] = false;
+	switches["league"] = false;
 
 	for(i=0;i<keys.size;i++)
 	{
@@ -66,6 +68,10 @@ validMode( mode )
 				if(switches["lan_pb"]) return false;
 				switches["lan_pb"] = true;
 				break;
+			case "league":
+				if(switches["league"]) return false;
+				switches["league"] = true;
+				break;
 			case "knife":
 				if(switches["scores_done"]) return false;
 			case "hc":
@@ -75,6 +81,8 @@ validMode( mode )
 			default:
 				if(keys[i] != "mr" && isSubStr(keys[i],"mr") && "mr"+int(strtok(keys[i], "mr")[0]) == keys[i] && int(strtok(keys[i], "mr")[0]) > 0 && !switches["mr_done"])
 					switches["mr_done"] = true;
+				else if ( keys[i] != "ot" && isSubStr(keys[i],"ot") && "ot"+int(strtok(keys[i], "ot")[0]) == keys[i] && int(strtok(keys[i], "ot")[0]) > 0 )
+					switches["ot_done"] = true;
 				else if ( ( isSubStr( keys[i], ":" ) ) && strtok( keys[i], ":" ).size == 2 && int(strtok( keys[i], ":" )[0]) >= 0 && int(strtok( keys[i], ":" )[1]) >= 0 && !switches["scores_done"] && !switches["knife_done"] )
 					switches["scores_done"] = true;
 				else
@@ -138,9 +146,11 @@ setMode( mode )
 	limited_mode = 0;
 	knockout_mode = 0;
 	mr_rating = 0;
+	mr_overtime = 0;
 
 	game["CUSTOM_MODE"] = 0;
 	game["LAN_MODE"] = 0;
+	game["LEAGUE_MODE"] = 0;
 	game["HARDCORE_MODE"] = 0;
 	game["PROMOD_STRATTIME"] = 6;
 	game["PROMOD_MODE_HUD"] = "";
@@ -226,6 +236,9 @@ setMode( mode )
 				case "lan":
 					game["LAN_MODE"] = 1;
 					break;
+				case "league":
+					game["LEAGUE_MODE"] = 1;
+					break;
 				case "1v1":
 				case "2v2":
 					limited_mode = int(strtok(exploded[i],"v")[0]);
@@ -247,6 +260,9 @@ setMode( mode )
 						game["SCORES_ATTACK"] = int(strtok( exploded[i], ":" )[0]);
 						game["SCORES_DEFENCE"] = int(strtok( exploded[i], ":" )[1]);
 					}
+					else if( isSubStr( exploded[i], "ot" ) ){
+						mr_overtime = int(strtok(exploded[i], "ot")[0]);
+					}
 					break;
 			}
 		}
@@ -256,7 +272,11 @@ setMode( mode )
 		promod\comp::main();
 
 	if ( knockout_mode && !mr_rating )
-		mr_rating = 10;
+		mr_rating = 12;
+
+	if ( knockout_mode && !mr_overtime )
+		mr_overtime = 3;
+	
 
 	if ( limited_mode )
 	{
@@ -282,6 +302,13 @@ setMode( mode )
 			game["PROMOD_STRATTIME"] = 10;
 	}
 
+	if ( game["LEAGUE_MODE"] )
+	{
+		game["PROMOD_MODE_HUD"] += " ^5League";
+		if( knockout_mode || game["PROMOD_MATCH_MODE"] == "match")
+			game["PROMOD_STRATTIME"] = 10;
+	}
+
 	if ( game["HARDCORE_MODE"] )
 	{
 		if(game["PROMOD_MATCH_MODE"] == "match")
@@ -301,12 +328,19 @@ setMode( mode )
 
 		if ( knockout_mode && level.gametype == "sd" )
 			setDvar( "scr_sd_scorelimit", mr_rating + 1 );
+			
 	}
 	else if ( game["PROMOD_MATCH_MODE"] == "match" )
 	{
 		game["PROMOD_MODE_HUD"] += " ^3Standard";
-		mr_rating = 10;
+		mr_rating = 12;
 		maxscore = mr_rating * ( 2 - 1 * knockout_mode ) + ( - 1 * !knockout_mode );
+	}
+
+	if ( mr_overtime > 0 && ( level.gametype == "sd") )
+	{
+		game["PROMOD_MODE_HUD"] += " " + "^3OT" + mr_overtime;
+		setDvar( "scr_" + level.gametype + "_ot_roundlimit", mr_overtime );		
 	}
 
 	if ( level.gametype != "sd" || !knockout_mode && game["SCORES_ATTACK"] + game["SCORES_DEFENCE"] > maxscore || knockout_mode && ( ( game["SCORES_ATTACK"] > maxscore || game["SCORES_DEFENCE"] > maxscore ) || ( game["SCORES_ATTACK"] + game["SCORES_DEFENCE"] >= int( mr_rating ) * 2 ) ) )

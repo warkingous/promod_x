@@ -31,6 +31,10 @@ main()
 	game["allies_timeout_called"] = 0;
 	game["axis_timeout_called"] = 0;
 
+	// Overtime variables
+	game["promod_overtime_active"] = false;
+	game["promod_overtime_count"] = 0;
+
 	game["promod_first_readyup_done"] = 0;
 	game["PROMOD_VERSION"] = "Promod ^1LIVE ^7V2.20 EU";
 }
