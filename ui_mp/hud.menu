@@ -27,7 +27,7 @@
 			forecolor	1 0 0 1 \
 			backcolor	1 0 0 1 \
 			exp			text( txt ); \
-			textfont	UI_FONT_OBJECTIVE \
+			textfont	UI_FONT_DEFAULT \
 			textscale	0.5 \
 			textalign	ITEM_ALIGN_CENTER \
 			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE \
@@ -180,7 +180,7 @@
 			name			"chRect"
 			rect			0 0 80 80
 			ownerdraw		CG_PLAYER_STANCE
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			visible			when( !inkillcam() && !dvarint( ui_hud_hardcore ) );
 			textscale		TEXTSIZE_SMALL
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
@@ -624,7 +624,7 @@
 			rect			50 -27 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
 			exp				rect Y( -27 + 0-(TEAM_IS_LOSING*24) );
 			exp				text( team( score ) );
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			textscale		0.35
 			textalign		ITEM_ALIGN_LEFT
 			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -637,7 +637,7 @@
 			rect			50 -27 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
 			exp				rect Y( -27 + 0-(PLAYER_IS_LOSING*24) );
 			exp				text( player( score ) );
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			textscale		0.35
 			textalign		ITEM_ALIGN_LEFT
 			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -716,7 +716,7 @@
 			rect			50 -8 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
 			exp				rect Y( -8 + (TEAM_IS_LOSING*12) );
 			exp				text( otherteam( score ) );
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			textscale		0.35
 			textalign		ITEM_ALIGN_LEFT
 			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -729,7 +729,7 @@
 			rect			50 -8 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
 			exp				rect Y( -8 + (PLAYER_IS_LOSING*12) );
 			exp				text( scoreatrank( 2 ) );
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			textscale		0.35
 			textalign		ITEM_ALIGN_LEFT
 			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -742,7 +742,7 @@
 			rect			50 -8 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
 			exp				rect Y( -8 + (PLAYER_IS_LOSING*12) );
 			exp				text( scoreatrank( 1 ) );
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			textscale		0.35
 			textalign		ITEM_ALIGN_LEFT
 			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -765,7 +765,7 @@
 			rect			134 -3 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
 			origin			6 0
 			exp				text( secondsAsCountdown( timeLeft() ) );
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			textscale		0.35
 			textalign		ITEM_ALIGN_LEFT
 			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -778,7 +778,7 @@
 			rect			134 -3 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
 			origin			6 0
 			exp				text( secondsAsCountdown( timeLeft() ) );
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			textscale		0.35
 			textalign		ITEM_ALIGN_LEFT
 			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -791,7 +791,7 @@
 			rect			134 -3 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
 			origin			6 0
 			exp				text( secondsAsCountdown( timeLeft() ) + "." + (9 - int( (milliseconds() / 100)%10 )) );
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			textscale		0.35
 			textalign		ITEM_ALIGN_LEFT
 			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -814,7 +814,7 @@
 			rect			0 -3 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
 			origin			6 0
 			exp				text( secondsAsCountdown( timeLeft() ) );
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			textscale		0.35
 			textalign		ITEM_ALIGN_LEFT
 			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -827,7 +827,7 @@
 			rect			0 -3 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
 			origin			6 0
 			exp				text( secondsAsCountdown( timeLeft() ) );
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			textscale		0.35
 			textalign		ITEM_ALIGN_LEFT
 			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -840,7 +840,7 @@
 			rect			0 -3 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_BOTTOM
 			origin			6 0
 			exp				text ( secondsAsCountdown( timeLeft() ) + "." + (9 - int( (milliseconds() / 100)%10 )) );
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			textscale		0.35
 			textalign		ITEM_ALIGN_LEFT
 			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -877,7 +877,7 @@
 			rect			(WEAPINFO_X - 65) (WEAPINFO_Y + 33) 57 0
 			textscale		TEXTSIZE_SMALL
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			forecolor		1 1 1 1
 			ownerdraw		CG_PLAYER_AMMO_VALUE
 			visible			when ( dvarint( cg_drawBreathHint ) )
@@ -898,7 +898,7 @@
 			rect			(WEAPINFO_X - 31) (WEAPINFO_Y + 34) 1 1
 			textscale		TEXTSIZE_SMALL
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
 			ownerdraw		CG_PLAYER_WEAPON_AMMO_STOCK
 			visible			when ( !dvarint( cg_drawBreathHint ) )
@@ -930,7 +930,7 @@
 			rect			(WEAPINFO_X -45) (WEAPINFO_Y +14) 25 25
 			textscale		TEXTSIZE_SMALL
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
 			ownerdraw		CG_OFFHAND_WEAPON_AMMO_SMOKEFLASH
 			visible			1
@@ -942,7 +942,7 @@
 			rect			(WEAPINFO_X -14) (WEAPINFO_Y +14) 25 25
 			textscale		TEXTSIZE_SMALL
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
 			ownerdraw		CG_OFFHAND_WEAPON_AMMO_FRAG
 			visible			1
@@ -954,7 +954,7 @@
 			rect			(WEAPINFO_X - 40) (WEAPINFO_Y + 14) 1 1
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			textscale		TEXTSIZE_SMALL
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
 			ownerdraw		CG_PLAYER_WEAPON_NAME
 			visible			1
@@ -1063,7 +1063,7 @@
 			rect			0 45 1 1 HORIZONTAL_ALIGN_CENTER VERTICAL_ALIGN_TOP
 			origin			0 0
 			exp				text( "KILLCAM" );
-			textfont		UI_FONT_OBJECTIVE
+			textfont		UI_FONT_DEFAULT
 			textscale		0.9
 			textalign		ITEM_ALIGN_CENTER
 			textstyle		ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -1189,7 +1189,7 @@
 			type				ITEM_TYPE_GAME_MESSAGE_WINDOW
 			gamemsgwindowindex	1
 			gamemsgwindowmode	MODE_BOTTOMUP_ALIGN_BOTTOM
-			textfont			UI_FONT_OBJECTIVE
+			textfont			UI_FONT_DEFAULT
 			textstyle			ITEM_TEXTSTYLE_SHADOWED
 			textalign			ITEM_ALIGN_CENTER
 			textscale			0.417
