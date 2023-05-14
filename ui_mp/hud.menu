@@ -573,6 +573,8 @@
 			visible			when ( team( name ) == "TEAM_FREE" && SHOULD_DISPLAY_SCOREBAR && PROMOD_SB );
 			decoration
 		}
+
+		// Hud scorebar overlap fix for overtimes
 		itemDef
 		{
 			style			WINDOW_STYLE_SHADER
@@ -581,7 +583,7 @@
 			exp				rect W( 76 * (team( score ) / dvarInt( "ui_scorelimit" ) ) );
 			exp				material( "scorebar_" + dvarString( "scr_allies" ) );
 			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
-			visible			when ( (team( name ) == "TEAM_ALLIES" || team( name ) == "TEAM_SPECTATOR") && SHOULD_DISPLAY_SCOREBAR && PROMOD_SB )
+			visible			false
 			decoration
 		}
 		itemDef
@@ -592,7 +594,7 @@
 			exp				rect W( 76 * (team( score ) / dvarInt( "ui_scorelimit" ) ) );
 			exp				material( "scorebar_" + dvarString( "scr_axis" ) );
 			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
-			visible			when ( team( name ) == "TEAM_AXIS" && SHOULD_DISPLAY_SCOREBAR && PROMOD_SB )
+			visible			false
 			decoration
 		}
 		itemDef
@@ -603,7 +605,7 @@
 			exp				rect W( 76 * (player( score ) / dvarInt( "ui_scorelimit" ) ) );
 			exp				material( "scorebar_" + dvarString( "scr_axis" ) );
 			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
-			visible			when ( (team( name ) == "TEAM_FREE") && TEAM_IS_OPFOR && SHOULD_DISPLAY_SCOREBAR && PROMOD_SB )
+			visible			false
 			decoration
 		}
 		itemDef
@@ -614,7 +616,7 @@
 			exp				rect W( 76 * (player( score ) / dvarInt( "ui_scorelimit" ) ) );
 			exp				material( "scorebar_" + dvarString( "scr_allies" ) );
 			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
-			visible			when ( (team( name ) == "TEAM_FREE") && TEAM_IS_MARINES && SHOULD_DISPLAY_SCOREBAR && PROMOD_SB )
+			visible			false
 			decoration
 		}
 		itemDef
@@ -663,6 +665,8 @@
 			visible			when ( team( name ) == "TEAM_FREE" && SHOULD_DISPLAY_SCOREBAR && PROMOD_SB )
 			decoration
 		}
+
+		// Hud scorebar overlap fix for overtimes
 		itemDef
 		{
 			style			WINDOW_STYLE_SHADER
@@ -671,7 +675,7 @@
 			exp				rect W( 76 * (otherteam( score ) / dvarInt( "ui_scorelimit" ) ) );
 			exp				material( "scorebar_" + dvarString( "scr_allies" ) );
 			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
-			visible			when ( team( name ) == "TEAM_AXIS" && SHOULD_DISPLAY_SCOREBAR && PROMOD_SB )
+			visible			false
 			decoration
 		}
 		itemDef
@@ -682,7 +686,7 @@
 			exp				rect W( 76 * (otherteam( score ) / dvarInt( "ui_scorelimit" ) ) );
 			exp				material( "scorebar_" + dvarString( "scr_axis" ) );
 			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
-			visible			when ( (team( name ) == "TEAM_ALLIES" || team( name ) == "TEAM_SPECTATOR") && SHOULD_DISPLAY_SCOREBAR && PROMOD_SB )
+			visible			false
 			decoration
 		}
 		itemDef
@@ -693,7 +697,7 @@
 			exp				rect W( 76 * (scoreatrank( 2 ) / dvarInt( "ui_scorelimit" ) ) );
 			exp				material( "scorebar_" + dvarString( "scr_allies" ) );
 			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
-			visible			when ( (team( name ) == "TEAM_FREE") && TEAM_IS_OPFOR && SHOULD_DISPLAY_SCOREBAR && PROMOD_SB )
+			visible			false
 			decoration
 		}
 		itemDef
@@ -704,7 +708,7 @@
 			exp				rect W( 76 * (scoreatrank( 2 ) / dvarInt( "ui_scorelimit" ) ) );
 			exp				material( "scorebar_" + dvarString( "scr_axis" ) );
 			forecolor		1 1 1 HUD_FOREGROUND_ALPHA
-			visible			when ( (team( name ) == "TEAM_FREE") && TEAM_IS_MARINES && SHOULD_DISPLAY_SCOREBAR && PROMOD_SB )
+			visible			false
 			decoration
 		}
 		itemDef
