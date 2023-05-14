@@ -647,6 +647,40 @@ monitorFreeLook()
 	self thread checkADS();
 	self thread checkAttack();
 	self thread checkMelee();
+	self thread checkFrag();
+}
+
+checkFrag()
+{
+	self endon("disconnect");
+	self endon("joined_team");
+
+	waittillframeend;
+
+	for(;;)
+	{
+		// Check if the frag button is pressed
+		if ( self fragButtonPressed() )
+		
+		{
+			//iprintln("Frag pressed");
+			if ( !isDefined( self.thirdPersonActive ) ){
+				self.thirdPersonActive = true;
+				self setClientDvar( "cg_thirdperson", 1 );
+			}else {
+				self.thirdPersonActive = undefined;
+				self setClientDvar( "cg_thirdperson", 0 );
+			}			
+		}
+
+		while ( self fragButtonPressed() )
+		{
+			wait 0.05;
+			continue;
+		}
+
+		wait 0.05;
+	}
 }
 
 checkMelee()
@@ -3936,6 +3970,7 @@ setSpawnVariables()
 
 	self StopShellshock();
 	self StopRumble( "damage_heavy" );
+	self setClientDvar( "cg_thirdPerson", 0 );
 }
 
 notifyConnecting()
@@ -3995,7 +4030,7 @@ checkOvertimeSwitch() {
         return false;
 
     if (hitOvertime() && level.overtimeRoundSwitch > 0) {
-    iPrintLn("Overtime switch");
+    //iPrintLnBold("Overtime switch");
 	game["promod_do_readyup"] = isDefined(game["PROMOD_MATCH_MODE"]) && game["PROMOD_MATCH_MODE"] == "match" || getDvarInt("promod_allow_readyup") && isDefined(game["CUSTOM_MODE"]) && game["CUSTOM_MODE"];
         
 	game["promod_timeout_called"] = false;
