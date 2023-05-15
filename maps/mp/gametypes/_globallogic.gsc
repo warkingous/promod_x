@@ -3374,6 +3374,21 @@ isHeadShot( sWeapon, sHitLoc, sMeansOfDeath )
 	return (sHitLoc == "head" || sHitLoc == "helmet") && sMeansOfDeath != "MOD_MELEE" && sMeansOfDeath != "MOD_IMPACT";
 }
 
+angleDiff(player, eAttacker)
+	{
+		myAngle = player.angles[1]; // -180 <-> +180
+		myAngle += 180; // flip direction, now in range 0 <-> 360
+		if (myAngle > 180) myAngle -= 360; // back to range -180 <-> +180
+
+		enemyAngle = eAttacker.angles[1];
+
+		anglediff = myAngle - enemyAngle;
+		if (anglediff > 180)		anglediff -= 360;
+		else if (anglediff < -180)	anglediff += 360;
+
+		return anglediff;
+	}
+
 Callback_PlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, psOffsetTime )
 {
 	if ( !isDefined( level.rdyup ) )
@@ -3402,6 +3417,31 @@ Callback_PlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, s
 		if ( self.ruptally < 0 )
 			return;
 	}
+
+	// Scope hitbox arms fix
+	if ( isDefined(sWeapon) && isDefined(sHitLoc) && isDefined(eAttacker) && isPlayer(eAttacker) && eAttacker != self ) 
+	{
+		if (sHitLoc == "left_arm_lower"  &&  (sWeapon == "remington700_mp" || sWeapon == "m40a3_mp") && iDFlags != 8 )		    
+		{
+			// If players are looking to each other, make shot to arm a kill
+			distance = distance(self.origin, eAttacker.origin);
+			angleDiff = angleDiff(self, eAttacker);
+			if (distance > 200 && anglediff > -20 && anglediff < 20)
+			{
+				iprintln("^1Hitbox fix left - " + sHitLoc + "- Distance: " + distance + " - Angle: " + int(anglediff));
+				iDamage = 100;
+			}
+		}
+		// Right upper arm fix - cod2 both arms always insta kill, cod4 right arm upper is 98
+		if(sHitLoc == "right_arm_upper" && (sWeapon == "remington700_mp" || sWeapon == "m40a3_mp") && iDFlags != 8 ){
+			//distance = distance(self.origin, eAttacker.origin);
+			//angleDiff = angleDiff(self, eAttacker);
+			iDamage = 100;
+			//iprintln("^1Hitbox fix right - " + sHitLoc + "- Distance: " + distance + " - Angle: " + int(anglediff));
+		}
+	}
+
+
 
 	// bit arrays are interesting, huh?
 	if( !isDefined( vDir ) )
