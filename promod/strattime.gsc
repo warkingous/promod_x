@@ -100,7 +100,7 @@ stratTime()
 
 stratTimer()
 {
-	matchStartText = createServerFontString( "objective", 1.5 );
+	matchStartText = createServerFontString( "default", 1.5 );
 	matchStartText setPoint( "CENTER", "CENTER", 0, -60 );
 	matchStartText.sort = 1001;
 
@@ -112,7 +112,7 @@ stratTimer()
 	matchStartText.foreground = false;
 	matchStartText.hidewheninmenu = false;
 
-	matchStartTimer = createServerTimer( "objective", 1.4 );
+	matchStartTimer = createServerTimer( "default", 1.4 );
 	matchStartTimer setPoint( "CENTER", "CENTER", 0, -45 );
 	matchStartTimer setTimer( game["PROMOD_STRATTIME"] + level.prematchPeriod * int( getDvarInt( "promod_allow_strattime" ) && isDefined( game["CUSTOM_MODE"] ) && game["CUSTOM_MODE"] && level.gametype == "sd" ) );
 	matchStartTimer.sort = 1001;

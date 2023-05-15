@@ -336,7 +336,7 @@ matchStartTimer()
 	visionSetNaked( "mpIntro", 0 );
 
 	// Create and position the match start text element
-	matchStartText = createServerFontString( "objective", 1.5 );
+	matchStartText = createServerFontString( "default", 1.5 );
 	matchStartText setPoint( "CENTER", "CENTER", 0, -60 );
 	matchStartText.sort = 1001;
 	matchStartText setText( game["strings"]["match_starting_in"] );
@@ -344,7 +344,7 @@ matchStartTimer()
 	matchStartText.hidewheninmenu = true;
 
 	// Create and position the match start timer element
-	matchStartTimer = createServerTimer( "objective", 1.4 );
+	matchStartTimer = createServerTimer( "default", 1.4 );
 	matchStartTimer setPoint( "CENTER", "CENTER", 0, -45 );
 	matchStartTimer setTimer( level.prematchPeriod );
 	matchStartTimer.sort = 1001;

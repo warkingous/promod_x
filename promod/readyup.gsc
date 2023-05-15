@@ -138,7 +138,7 @@ main()
 
 	visionSetNaked( "mpIntro", 1 );
 
-	matchStartText = createServerFontString( "objective", 1.5 );
+	matchStartText = createServerFontString( "default", 1.5 );
 	matchStartText setPoint( "CENTER", "CENTER", 0, -75 );
 	matchStartText.sort = 1001;
 	matchStartText setText( "All Players are Ready!" );
@@ -148,14 +148,14 @@ main()
 	matchStartText.glowAlpha = 1;
 	matchStartText setPulseFX( 100, 4000, 1000 );
 
-	matchStartText2 = createServerFontString( "objective", 1.5 );
+	matchStartText2 = createServerFontString( "default", 1.5 );
 	matchStartText2 setPoint( "CENTER", "CENTER", 0, -60 );
 	matchStartText2.sort = 1001;
 	matchStartText2 setText( game["strings"]["match_starting_in"] );
 	matchStartText2.foreground = false;
 	matchStartText2.hidewheninmenu = false;
 
-	matchStartTimer = createServerTimer( "objective", 1.4 );
+	matchStartTimer = createServerTimer( "default", 1.4 );
 	matchStartTimer setPoint( "CENTER", "CENTER", 0, -45 );
 	matchStartTimer setTimer( 5 );
 	matchStartTimer.sort = 1001;
@@ -284,14 +284,14 @@ clientHUD()
 	else
 		text = "Half-Time";
 
-	self.periodtext = createFontString( "objective", 1.6 );
+	self.periodtext = createFontString( "default", 1.6 );
 	self.periodtext setPoint( "CENTER", "CENTER", 0, -75 );
 	self.periodtext.sort = 1001;
 	self.periodtext setText( text + " Ready-Up Period" );
 	self.periodtext.foreground = false;
 	self.periodtext.hidewheninmenu = true;
 
-	self.halftimetext = createFontString( "objective", 1.5 );
+	self.halftimetext = createFontString( "default", 1.5 );
 	self.halftimetext.alpha = 0;
 	self.halftimetext setPoint( "CENTER", "CENTER", 0, 200 );
 	self.halftimetext.sort = 1001;
@@ -331,7 +331,7 @@ onSpawn()
 
 periodAnnounce()
 {
-	level.halftimetimer = createServerTimer( "objective", 1.4 );
+	level.halftimetimer = createServerTimer( "default", 1.4 );
 	level.halftimetimer.alpha = 0;
 	level.halftimetimer setPoint( "CENTER", "CENTER", 0, 215 );
 
