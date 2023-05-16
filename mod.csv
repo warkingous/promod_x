@@ -25,6 +25,7 @@ menufile,ui_mp/scriptmenus/shoutcast_setup_binds.menu
 menufile,ui_mp/scriptmenus/team_marinesopfor.menu
 menufile,ui_mp/scriptmenus/team_marinesopfor_flipped.menu
 
+rawfile,maps/createfx/mp_backlot_fix_fx.gsc
 rawfile,maps/createfx/mp_backlot_fx.gsc
 rawfile,maps/createfx/mp_bloc_fx.gsc
 rawfile,maps/createfx/mp_bog_fx.gsc
@@ -76,6 +77,7 @@ rawfile,maps/mp/gametypes/sab.gsc
 rawfile,maps/mp/gametypes/sd.gsc
 rawfile,maps/mp/gametypes/war.gsc
 
+rawfile,maps/mp/mp_backlot_fix.gsc
 rawfile,maps/mp/mp_backlot.gsc
 rawfile,maps/mp/mp_bloc.gsc
 rawfile,maps/mp/mp_bog.gsc
@@ -122,3 +124,14 @@ stringtable,promod/customStatsTable.csv
 stringtable,promod/destructible.csv
 
 xmodel,com_floodlight_on
+
+# Map fixes
+xmodel,com_plainchair_shardrail
+xmodel,ch_corkboard_metaltrim_4x8
+xmodel,ch_corkboard_metaltrim_3x4
+xmodel,me_concrete_barrier
+xmodel,mil_sandbag_desert_long
+xmodel,mil_sandbag_desert_single_bent
+xmodel,me_corrugated_metal2x8
+xmodel,me_corrugated_metal4x8
+xmodel,me_corrugated_metal4x4

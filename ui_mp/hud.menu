@@ -430,19 +430,6 @@
 			visible			when ( dvarString( self_kills ) != "" && team( name ) != "TEAM_SPECTATOR" )
 			decoration
 		}
-		// Hud for functionality to turn off the ability to be killed or flashed
-		itemDef
-		{
-			rect			-37 318 2 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
-			text			"Kills"
-			textalign		ITEM_ALIGN_CENTER
-			textstyle		ITEM_TEXTSTYLE_SHADOWED
-			textscale		0.35
-			textfont		UI_FONT_DEFAULT
-			forecolor		0.8 1 1 1
-			visible			when ( dvarString( self_kills ) != "" && team( name ) != "TEAM_SPECTATOR" )
-			decoration
-		}
 		itemDef
 		{
 			rect			-37 333 2 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP

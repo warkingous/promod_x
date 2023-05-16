@@ -20,6 +20,8 @@ xcopy sound ..\..\raw\sound\ /SY
 xcopy soundaliases ..\..\raw\soundaliases\ /SY
 xcopy ui_mp ..\..\raw\ui_mp\ /SY
 xcopy xmodel ..\..\raw\xmodel\ /SY
+xcopy xmodelparts ..\..\raw\xmodelparts\ /SY
+xcopy xmodelsurfs ..\..\raw\xmodelsurfs\ /SY
 
 copy mod.csv ..\..\zone_source /Y
 
