@@ -3403,17 +3403,21 @@ Callback_PlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, s
 	self.iDFlags = iDFlags;
 	self.iDFlagsTime = getTime();
 
+	// If we are in a ready-up period
 	if ( level.rdyup && isDefined( eAttacker ) && isPlayer( eAttacker ) && eAttacker != self )
 	{
+		// If attackers ruptally (indication whether he had intention to kill someone) is defined or < 0
 		if ( !isDefined( eAttacker.ruptally ) || eAttacker.ruptally < 0 )
 		{
+			// Set his ruptally flag non-zero so he can be killed or flashed
 			eAttacker.ruptally = 0;
 			eAttacker setclientdvar("self_kills", 0);
 		}
 
+		// If our ruptally is not defined
 		if ( !isDefined( self.ruptally ) )
 			self.ruptally = -1;
-
+		// If our ruptally is less than 0 (no intension of tryin to kill someone), ignore damage
 		if ( self.ruptally < 0 )
 			return;
 	}

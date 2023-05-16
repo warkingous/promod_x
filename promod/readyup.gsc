@@ -69,6 +69,9 @@ main()
 				player.update = false;
 				player.statusicon = "compassping_enemy";
 				player thread selfLoop();
+				
+				if ( isDefined( player.pers["team"] ) && player.pers["team"] != "spectator" )
+					player thread createExtraHUD();
 			}
 
 			player.oldready = player.update;
@@ -177,6 +180,32 @@ main()
 	map_restart( true );
 }
 
+createExtraHUD()
+{
+	// Hold hint
+	// self.hint1 = newClientHudElem(self);
+	// self.hint1.x = -7;
+	// self.hint1.y = 266;
+	// self.hint1.horzAlign = "right";
+	// self.hint1.vertAlign = "top";
+	// self.hint1.alignX = "center";
+	// self.hint1.alignY = "middle";
+	// self.hint1.fontScale = 1.4;
+	// self.hint1.font = "default";
+	// self.hint1.color = (0.8, 1, 1);
+	// self.hint1.hidewheninmenu = true;
+	// self.hint1 setText( "" );
+
+	// Immunity hint
+	self.hint2 = createFontString( "default", 1.4 );
+	self.hint2 setPoint( "CENTER", "CENTER", 0, 180 );
+	self.hint2.sort = 1001;
+	self.hint2.foreground = false;
+	self.hint2.hidewheninmenu = true;
+	self.hint2 setText( "" );
+
+}
+
 lastPlayerReady()
 {
 	wait 0.5;
@@ -266,8 +295,46 @@ selfLoop()
 
 		while ( self useButtonPressed() )
 			wait 0.1;
+		
+		// Change hint for disabling killing
+		if ( !isDefined( self.ruptally ) || self.ruptally == -1 )
+		{
+			//self.hint1 setText( "" );
+			self.hint2 setText( "" );
+		}
+		else {
+			//self.hint1 setText( "Hold ^3[{+melee}]" );
+			self.hint2 setText( "Hold ^3[{+melee}]^7 for Immunity" );
+		}
+			
+
+		// Add functionality to turn off the ability to be killed or flashed
+		if ( self meleeButtonPressed() )
+		{
+			wait 0.1;
+
+			holdButtonTime = 0;
+			while ( holdButtonTime < 0.5 && self meleeButtonPressed() )
+			{
+				holdButtonTime += 0.05;
+				wait 0.05;
+			}
+
+			if ( holdButtonTime > 0.35 )
+			{
+				if ( isDefined( self.ruptally ) )
+				{
+					self.ruptally = undefined;
+					self setclientdvar("self_kills", "");					
+				}
+			}
+
+			while ( self meleeButtonPressed() )
+				wait 0.05;
+		}
 	}
 }
+
 
 clientHUD()
 {
@@ -276,20 +343,20 @@ clientHUD()
 	if ( !game["promod_first_readyup_done"] )
 		self waittill("spawned_player");
 
-	text = "";
-	if ( !game["promod_first_readyup_done"] )
-		text = "Pre-Match";
-	else if ( game["promod_in_timeout"] )
-		text = "Timeout";
-	else
-		text = "Half-Time";
+	//text = "";
+	//if ( !game["promod_first_readyup_done"] )
+	//	text = "Pre-Match";
+	//else if ( game["promod_in_timeout"] )
+	//	text = "Timeout";
+	//else
+	//	text = "Half-Time";
 
-	self.periodtext = createFontString( "default", 1.6 );
-	self.periodtext setPoint( "CENTER", "CENTER", 0, -75 );
-	self.periodtext.sort = 1001;
-	self.periodtext setText( text + " Ready-Up Period" );
-	self.periodtext.foreground = false;
-	self.periodtext.hidewheninmenu = true;
+	//self.periodtext = createFontString( "default", 1.6 );
+	//self.periodtext setPoint( "CENTER", "CENTER", 0, -75 );
+	//self.periodtext.sort = 1001;
+	//self.periodtext setText( text + " Ready-Up Period" );
+	//self.periodtext.foreground = false;
+	//self.periodtext.hidewheninmenu = true;
 
 	self.halftimetext = createFontString( "default", 1.5 );
 	self.halftimetext.alpha = 0;
@@ -310,8 +377,8 @@ clientHUD()
 
 	level waittill("kill_ru_period");
 
-	if ( isDefined( self.periodtext ) )
-		self.periodtext destroy();
+	//if ( isDefined( self.periodtext ) )
+	//	self.periodtext destroy();
 
 	if ( isDefined( self.halftimetext ) )
 		self.halftimetext destroy();
@@ -355,13 +422,12 @@ moveOver()
 	level endon("kill_ru_period");
 	self endon("disconnect");
 
-	if( level.rup_txt_fx )
-	{
-		wait 3;
-		self.periodtext MoveOverTime( 2.5 );
-	}
+	//if( level.rup_txt_fx )
+	//{
+	//	wait 3;
+	//	self.periodtext MoveOverTime( 2.5 );
+	//}
 
-	self.periodtext setPoint( "CENTER", "CENTER", 0, 185 );
 
 	if( level.rup_txt_fx )
 	{

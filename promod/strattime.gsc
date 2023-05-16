@@ -12,31 +12,42 @@
 
 main()
 {
+	// Check if promod timeout has been called
 	if ( game["promod_timeout_called"] )
 	{
+		// Start promod timeout thread and return
 		thread promod\timeout::main();
 		return;
 	}
 
+	// Start strat time thread
 	thread stratTime();
 
+	// Wait until strat time is over
 	level waittill( "strat_over" );
 
+	// Get all players
 	players = getentarray("player", "classname");
+
+	// Loop through players
 	for ( i = 0; i < players.size; i++ )
 	{
 		player = players[i];
 		classType = player.pers["class"];
 
+		// Check if player is on allies or axis team, in playing state, and has a class defined
 		if ( ( player.pers["team"] == "allies" || player.pers["team"] == "axis" ) && player.sessionstate == "playing" && isDefined( player.pers["class"] ) )
 		{
+			// Check if it's not a knife round or knife rounds are not defined
 			if ( isDefined( game["PROMOD_KNIFEROUND"] ) && !game["PROMOD_KNIFEROUND"] || !isDefined( game["PROMOD_KNIFEROUND"] ) )
 			{
+				// Give frag grenade based on hardcore mode and weapon allowances
 				if ( level.hardcoreMode && getDvarInt("weap_allow_frag_grenade") )
 					player giveWeapon( "frag_grenade_short_mp" );
 				else if ( getDvarInt( "weap_allow_frag_grenade" ) )
 					player giveWeapon( "frag_grenade_mp" );
 
+				// Check loadout grenade and give corresponding grenade based on weapon allowance
 				if ( player.pers[classType]["loadout_grenade"] == "flash_grenade" && getDvarInt("weap_allow_flash_grenade") )
 				{
 					player setOffhandSecondaryClass("flash");
@@ -48,9 +59,11 @@ main()
 					player giveWeapon( "smoke_grenade_mp" );
 				}
 
+				// Set sidearm and primary weapons based on class
 				player maps\mp\gametypes\_class::sidearmWeapon();
 				player maps\mp\gametypes\_class::primaryWeapon();
 			}
+			// Remove weapons for knife rounds
 			else
 				player thread maps\mp\gametypes\_globallogic::removeWeapons();
 
@@ -62,8 +75,10 @@ main()
 
 	UpdateClientNames();
 
+	// Check if promod timeout has been called
 	if ( game["promod_timeout_called"] )
 	{
+		// Start promod timeout thread and return
 		thread promod\timeout::main();
 		return;
 	}
