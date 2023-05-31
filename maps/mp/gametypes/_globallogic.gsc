@@ -3162,7 +3162,11 @@ checkRoundSwitch()
 	{
 		// If in a match mode, and if ready-up is allowed and if first ready-up is done, that means we reached proper half-time, that means another ready-up period
 		if ( ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || getDvarInt( "promod_allow_readyup" ) && isDefined( game["CUSTOM_MODE"] ) && game["CUSTOM_MODE"] ) && game["promod_first_readyup_done"] )
-			game["promod_do_readyup"] = true;
+			// Removed ready-up halftime period when in match making mode 
+			if( game["MATCHMAKING_MODE"] )
+				game["promod_do_readyup"] = false;
+			else 
+				game["promod_do_readyup"] = true;
 		
 		// Reset timeout for another half
 		game["promod_timeout_called"] = false;
