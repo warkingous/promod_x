@@ -77,6 +77,7 @@ rawfile,maps/mp/gametypes/sab.gsc
 rawfile,maps/mp/gametypes/sd.gsc
 rawfile,maps/mp/gametypes/war.gsc
 
+rawfile,maps/mp/mp_backlot_fix_fx.gsc
 rawfile,maps/mp/mp_backlot_fix.gsc
 rawfile,maps/mp/mp_backlot.gsc
 rawfile,maps/mp/mp_bloc.gsc
