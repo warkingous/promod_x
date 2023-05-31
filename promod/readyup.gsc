@@ -405,7 +405,13 @@ periodAnnounce()
 	if ( !game["promod_in_timeout"] || isDefined( game["LAN_MODE"] ) && game["LAN_MODE"] )
 		level.halftimetimer setTimerUp( 0 );
 	else
-		level.halftimetimer setTimer( 300 );
+	{
+		if( ( game["MATCHMAKING_MODE"] ) )
+			level.halftimetimer setTimer( 120 );
+		else
+			level.halftimetimer setTimer( 300 );
+	}
+	
 
 	level.halftimetimer.sort = 1001;
 	level.halftimetimer.foreground = false;

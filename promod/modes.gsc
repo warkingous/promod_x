@@ -48,6 +48,7 @@ validMode( mode )
 	switches["scores_done"] = false;
 	switches["ot_done"] = false;
 	switches["league"] = false;
+	switches["mm"] = false;
 
 	for(i=0;i<keys.size;i++)
 	{
@@ -71,6 +72,10 @@ validMode( mode )
 			case "league":
 				if(switches["league"]) return false;
 				switches["league"] = true;
+				break;
+			case "mm":
+				if(switches["mm"]) return false;
+				switches["mm"] = true;
 				break;
 			case "knife":
 				if(switches["scores_done"]) return false;
@@ -151,6 +156,7 @@ setMode( mode )
 	game["CUSTOM_MODE"] = 0;
 	game["LAN_MODE"] = 0;
 	game["LEAGUE_MODE"] = 0;
+	game["MATCHMAKING_MODE"] = 0;
 	game["HARDCORE_MODE"] = 0;
 	game["PROMOD_STRATTIME"] = 6;
 	game["PROMOD_MODE_HUD"] = "";
@@ -239,6 +245,9 @@ setMode( mode )
 				case "league":
 					game["LEAGUE_MODE"] = 1;
 					break;
+				case "mm":
+					game["MATCHMAKING_MODE"] = 1;
+					break;
 				case "1v1":
 				case "2v2":
 					limited_mode = int(strtok(exploded[i],"v")[0]);
@@ -314,6 +323,14 @@ setMode( mode )
 		if(game["PROMOD_MATCH_MODE"] == "match")
 			game["PROMOD_MODE_HUD"] += " ^6HC";
 		setDvar( "scr_hardcore", 1 );
+	}
+
+	// Match making rules
+	if ( game["MATCHMAKING_MODE"] )
+	{
+		game["PROMOD_MODE_HUD"] += " ^1MM";
+	// Override comp settings with mm rules
+		promod\matchmaking::main();
 	}
 
 	maxscore = 0;

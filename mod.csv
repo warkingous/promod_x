@@ -137,3 +137,5 @@ xmodel,me_corrugated_metal2x8
 xmodel,me_corrugated_metal4x8
 xmodel,me_corrugated_metal4x4
 xmodel,me_dumpster_close
+
+rawfile,promod/matchmaking.gsc
