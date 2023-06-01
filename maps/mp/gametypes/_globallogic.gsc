@@ -71,6 +71,7 @@ init()
 	level.shoutbars = [];
 
 	registerDvars();
+	registerMatchIdDvar();
 
 	precacheModel( "tag_origin" );
 
@@ -108,6 +109,15 @@ registerDvars()
 {
 	setDvar( "ui_bomb_timer", 0 );
 	makeDvarServerInfo( "ui_bomb_timer" );
+}
+
+registerMatchIdDvar()
+{
+		// Set server fps_matchid
+	if ( getDvar( "fps_match_id" ) == "" )
+		setDvar( "fps_match_id", 0 );    	
+	else
+		level.fps_matchid =  getDvarInt( "fps_match_id" );
 }
 
 SetupCallbacks()
@@ -955,10 +965,13 @@ endGame( winner, endReasonText )
 				if ( isDefined( player.pers["team"] ) && player.pers["team"] == "spectator" )
 					continue;
 
-				player setClientDvars(
-										"ui_hud_hardcore", 1,
-										"cg_drawSpectatorMessages", 0,
-										"g_compassShowEnemies", 0 );
+				player setClientDvars("ui_hud_hardcore", 1,	"cg_drawSpectatorMessages", 0, "g_compassShowEnemies", 0 );
+				
+				// Start recording on each round end
+				if ( isDefined( player.pers["team"] ) && player.pers["team"] != "spectator" )
+				{
+					player thread promod\readyup::startDemoRecord();
+				}
 			}
 
 			// Trigger the header thread
@@ -1335,6 +1348,10 @@ endGame( winner, endReasonText )
 		player notify ( "reset_outcome" );
 		player thread spawnIntermission();
 		player setClientDvar( "ui_hud_hardcore", 0 );
+
+		// Stop recording demo on map end
+		if ( isDefined( player.pers["team"] ) && player.pers["team"] != "spectator" )
+			player thread promod\readyup::stopDemoRecord();
 	}
 
 	wait 4;

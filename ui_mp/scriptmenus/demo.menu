@@ -33,40 +33,15 @@
 {
 	menuDef
 	{
-		CENTER_POPUP_SETUP_ONOPEN( demo, 5, ;, setDvar ui_demo "record "; setfocus demo;, 1 )
-
-		CHOICE_POPMENU_TITLE( "Record Demo" )
-		CHOICE_POPMENU_SUBTITLE( "   Note: Don't remove 'record' in front of the demo name" )
-
 		name "demo"
+		rect           0 0 1 1
+        visible        0
+        fullscreen     0
 
 		onClose
 		{
 			scriptMenuResponse "demo";
+			execNow "vstr record_string";
 		}
-
-		itemDef
-		{
-			name			demo
-			type			ITEM_TYPE_EDITFIELD
-			text			"Demo Name:"
-			dvar			"ui_demo"
-			rect			CHOICE_ORIGIN( 3 ) (CHOICE_SIZE_X) 20
-			origin			0 -12
-			textaligny		0
-			textalignx		1
-			maxpaintchars	30
-			textalign		ITEM_ALIGN_MIDDLE_LEFT
-			textfont		UI_FONT_NORMAL
-			textscale		TEXTSIZE_SMALL
-			forecolor		.9 .9 .9 1
-			style			WINDOW_STYLE_FILLED
-			backcolor		0 0 0 .3
-			visible			1
-			accept			{ exec "stoprecord"; exec "vstr ui_demo"; close self }
-		}
-
-		CHOICE_BUTTON( 4, "Start Recording", exec "stoprecord"; exec "vstr ui_demo"; close self )
-		CHOICE_BUTTON( 5, "Cancel", close self; )
 	}
 }

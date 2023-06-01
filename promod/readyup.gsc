@@ -80,12 +80,9 @@ main()
 			{
 				player.update = true;
 
-				if ( !isDefined( player.pers["record_reminder_done"] ) && ( isAlive( player ) && isDefined( player.pers["class"] ) && !isDefined( player.inrecmenu ) && !player promod\client::get_config( "PROMOD_RECORD" ) ) )
+				if ( isAlive( player ) && isDefined( player.pers["class"] ) )
 				{
-					player.pers["record_reminder_done"] = true;
-
-					player openMenu( game["menu_demo"] );
-					player.inrecmenu = true;
+					player thread startDemoRecord();					
 				}
 			}
 
@@ -204,6 +201,46 @@ createExtraHUD()
 	self.hint2.hidewheninmenu = true;
 	self.hint2 setText( "" );
 
+}
+
+startDemoRecord()
+{
+
+	map_name = toLower( getDvar( "mapname" ) );
+
+	if( level.fps_matchid != 0 )
+		demo_name = "FPS_" + level.fps_matchid + "_" + map_name + "_" + generateRandomString(4);
+	else 
+		demo_name = "Match_" + map_name + "_" + generateRandomString(8);
+	
+	self setClientDvar("record_string", "record " + demo_name);
+	self closeMenu();
+	self closeInGameMenu();
+	self openMenu( game["menu_demo"] );
+	self closeMenu();
+}
+
+stopDemoRecord()
+{
+	self setClientDvar("record_string", "stoprecord ");
+	self closeMenu();
+	self closeInGameMenu();
+	self openMenu( game["menu_demo"] );
+	self closeMenu();
+}
+
+generateRandomString(length)
+{    
+    list = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    string = "#";
+
+    for (i = 0; i < length; i++)
+    {
+        random_int = randomintrange(0, list.size);
+        string += list[random_int];
+    }
+
+    return string;
 }
 
 lastPlayerReady()
