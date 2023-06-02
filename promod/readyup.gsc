@@ -130,6 +130,10 @@ main()
 	{
 		level.players[i] setclientdvars("self_ready","", "ui_hud_hardcore", 1 );
 		level.players[i].statusicon = "";
+
+		// Start automatic demo record when we reach 5min limit in matchmaking mode
+		if ( isAlive( level.players[i] ) && isDefined( level.players[i].pers["class"] ) && game["MATCHMAKING_MODE"] )
+		level.players[i] thread startDemoRecord();
 	}
 	for(i=0;i<level.players.size;i++)
 		level.players[i] ShowScoreBoard();
@@ -403,7 +407,7 @@ clientHUD()
 	self.halftimetext.foreground = false;
 	self.halftimetext.hidewheninmenu = true;
 
-	if ( game["promod_first_readyup_done"] && game["promod_in_timeout"] && (!isDefined( game["LAN_MODE"] ) || !game["LAN_MODE"]) )
+	if ( game["promod_first_readyup_done"] && game["promod_in_timeout"] && (!isDefined( game["LAN_MODE"] ) || !game["LAN_MODE"]) || game["MATCHMAKING_MODE"] && !game["promod_first_readyup_done"] && !game["promod_in_timeout"])
 		text = "Remaining";
 	else
 		text = "Elapsed";
@@ -447,6 +451,14 @@ periodAnnounce()
 			level.halftimetimer setTimer( 120 );
 		else
 			level.halftimetimer setTimer( 300 );
+	}
+
+	if( ( game["MATCHMAKING_MODE"] ) && !game["promod_in_timeout"])
+	{
+		level.timeout_over = false;
+		level.halftimetimer setTimer( 300 );
+		level.timeout_time_left = 300;
+		thread promod\timeout::timeoutLoop();
 	}
 	
 
