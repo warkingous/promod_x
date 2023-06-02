@@ -3174,25 +3174,48 @@ checkRoundSwitch()
 	if ( !level.roundSwitch || level.gametype == "dm" )
 		return false;
 
-	// If the number of rounds played is divisible by roundswitch (scr_sd_roundSwitch) basically if its halftime
-	if ( game["roundsplayed"] % level.roundswitch == 0 )
+	// If we are in over-time
+	if( game["promod_overtime_active"] )
 	{
-		// If in a match mode, and if ready-up is allowed and if first ready-up is done, that means we reached proper half-time, that means another ready-up period
-		if ( ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || getDvarInt( "promod_allow_readyup" ) && isDefined( game["CUSTOM_MODE"] ) && game["CUSTOM_MODE"] ) && game["promod_first_readyup_done"] )
-			// Removed ready-up halftime period when in match making mode 
-			if( game["MATCHMAKING_MODE"] )
-				game["promod_do_readyup"] = false;
-			else 
-				game["promod_do_readyup"] = true;
-		
-		// Reset timeout for another half
-		game["promod_timeout_called"] = false;
+		// If the number of rounds played is divisible by roundswitch (scr_sd_roundSwitch) basically if its halftime
+		if ( game["roundsplayed"] % level.overtimeRoundSwitch == 0 )
+		{
+			// If in a match mode, and if ready-up is allowed and if first ready-up is done, that means we reached proper half-time, that means another ready-up period
+			if ( ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || getDvarInt( "promod_allow_readyup" ) && isDefined( game["CUSTOM_MODE"] ) && game["CUSTOM_MODE"] ) && game["promod_first_readyup_done"] )
+			{
+				// If we are in a match-making mode, dont start ready-up period
+				if( game["MATCHMAKING_MODE"] )
+					game["promod_do_readyup"] = false;
+				else 
+					game["promod_do_readyup"] = true;
+			}			
 
-		[[level.onRoundSwitch]]();
-		// We did hit half-time
-		return true;
-	}
-	// We did not hit a half-time 
+			game["promod_timeout_called"] = false;
+
+			[[level.onRoundSwitch]]();
+			return true;
+		}
+
+	}else
+		{		
+			if ( game["roundsplayed"] % level.roundswitch == 0 )
+			{
+				if ( ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || getDvarInt( "promod_allow_readyup" ) && isDefined( game["CUSTOM_MODE"] ) && game["CUSTOM_MODE"] ) && game["promod_first_readyup_done"] )
+				{
+					if( game["MATCHMAKING_MODE"] )
+					game["promod_do_readyup"] = false;
+				else 
+					game["promod_do_readyup"] = true;
+				}
+
+				game["promod_timeout_called"] = false;
+
+				[[level.onRoundSwitch]]();
+				return true;
+			}
+		}
+	
+
 	return false;
 }
 
