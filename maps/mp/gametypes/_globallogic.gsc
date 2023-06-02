@@ -4090,56 +4090,23 @@ getObjectiveHintText( team )
 	return game["strings"]["objective_hint_"+team];
 }
 
-// Check for half-time
-checkRoundSwitch()
-{
-	// No overtime if roundSwitch is disabled or if gametype is DM
-	if ( !level.roundSwitch || level.gametype == "dm" )
-		return false;
+checkOvertimeSwitch() {
+    if (!level.roundSwitch || level.gametype == "dm" || level.gametype == "sab" || level.gametype == "war" || level.gametype == "koth")
+        return false;
 
-	// If we are in over-time
-	if( game["promod_overtime_active"] )
-	{
-		// If the number of rounds played is divisible by roundswitch (scr_sd_roundSwitch) basically if its halftime
-		if ( game["roundsplayed"] % level.overtimeRoundSwitch == 0 )
-		{
-			// If in a match mode, and if ready-up is allowed and if first ready-up is done, that means we reached proper half-time, that means another ready-up period
-			if ( ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || getDvarInt( "promod_allow_readyup" ) && isDefined( game["CUSTOM_MODE"] ) && game["CUSTOM_MODE"] ) && game["promod_first_readyup_done"] )
-			{
-				// If we are in a match-making mode, dont start ready-up period
-				if( game["MATCHMAKING_MODE"] )
-					game["promod_do_readyup"] = false;
-				else 
-					game["promod_do_readyup"] = true;
-			}			
+    if (hitOvertime() && level.overtimeRoundSwitch > 0) {
+    //iPrintLnBold("Overtime switch");
+	game["promod_do_readyup"] = isDefined(game["PROMOD_MATCH_MODE"]) && game["PROMOD_MATCH_MODE"] == "match" || getDvarInt("promod_allow_readyup") && isDefined(game["CUSTOM_MODE"]) && game["CUSTOM_MODE"];
+        
+	game["promod_timeout_called"] = false;
+    game["promod_overtime_active"] = true;
+    game["promod_overtime_count"]++;
+    [[level.onRoundSwitch]]();
+    
+	return true;
+    }
 
-			game["promod_timeout_called"] = false;
-
-			[[level.onRoundSwitch]]();
-			return true;
-		}
-
-	}else
-		{		
-			if ( game["roundsplayed"] % level.roundswitch == 0 )
-			{
-				if ( ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || getDvarInt( "promod_allow_readyup" ) && isDefined( game["CUSTOM_MODE"] ) && game["CUSTOM_MODE"] ) && game["promod_first_readyup_done"] )
-				{
-					if( game["MATCHMAKING_MODE"] )
-					game["promod_do_readyup"] = false;
-				else 
-					game["promod_do_readyup"] = true;
-				}
-
-				game["promod_timeout_called"] = false;
-
-				[[level.onRoundSwitch]]();
-				return true;
-			}
-		}
-	
-
-	return false;
+    return false;
 }
 
 hitOvertime() {
