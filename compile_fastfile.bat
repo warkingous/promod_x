@@ -28,7 +28,7 @@ copy mod.csv ..\..\zone_source /Y
 cd ..\..\bin
 linker_pc.exe -language english -compress -cleanup mod -verbose
 
-cd ..\mods\pml220
+cd ..\mods\fps_promod_265
 copy ..\..\zone\english\mod.ff
 
 pause

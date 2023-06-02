@@ -113,7 +113,7 @@ registerDvars()
 
 registerMatchIdDvar()
 {
-		// Set server fps_matchid
+	// Set server fps_matchid
 	if ( getDvar( "fps_match_id" ) == "" )
 		setDvar( "fps_match_id", 0 );    	
 	else

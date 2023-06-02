@@ -23,7 +23,7 @@ main()
 		forceDvar( "sv_disableClientConsole", "0" );
 		forceDvar( "sv_fps", "20" );
 		forceDvar( "sv_pure", "1" );
-		forceDvar( "sv_maxrate", "25000" );
+		forceDvar( "sv_maxrate", "100000" );
 		forceDvar( "g_gravity", "800" );
 		forceDvar( "g_speed", "190" );
 		forceDvar( "g_knockback", "1000" );
@@ -76,9 +76,9 @@ errorMessage()
 		if ( (antilag && dedicated == "dedicated LAN server") || (!antilag && dedicated == "dedicated internet server" && !game["PROMOD_PB_OFF"]))
 			iprintlnbold("^1Server Violation^7: Modified Connection");
 
-		if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || toLower( getDvar( "fs_game" ) ) == "mods/pml220" )
+		if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || toLower( getDvar( "fs_game" ) ) == "mods/fps_promod_265" )
 		{
-			if( toLower(getDvar("fs_game")) != "mods/pml220" )
+			if( toLower(getDvar("fs_game")) != "mods/fps_promod_265" )
 				iprintlnbold("^1Server Violation^7: Invalid fs_game value");
 
 			iwdnames = strToK( getDvar( "sv_iwdnames" ), " " );
@@ -105,12 +105,12 @@ errorMessage()
 						break;
 
 					case "z_c_r":
-						if ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && iwdsums[i] != "1988645860" )
+						if ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && iwdsums[i] != "-2064692340" )
 							iprintlnbold("^1Server Violation^7: Modified Custom IWD File While In Match Mode");
 						break;
 
-					case "pml220":
-						if( iwdsums[i] != "1491770436" )
+					case "fps_promod_265":
+						if( iwdsums[i] != "-1230907629" )
 							iprintlnbold("^1Server Violation^7: Modified Promod IWD Detected");
 						iwd_loaded = true;
 						break;

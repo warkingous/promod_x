@@ -79,11 +79,6 @@ main()
 			if ( player.ready )
 			{
 				player.update = true;
-
-				if ( isAlive( player ) && isDefined( player.pers["class"] ) )
-				{
-					player thread startDemoRecord();					
-				}
 			}
 
 			if ( !player.ready || isDefined( player.inrecmenu ) && player.inrecmenu && !player promod\client::get_config( "PROMOD_RECORD" ) )
@@ -117,8 +112,21 @@ main()
 			}
 		}
 
+
+		// Start auto demo record when all players ready-up before 5min timer
 		if ( all_players_ready )
+		{
 			level.ready_up_over = true;
+
+			for ( i = 0; i < level.players.size; i++ )
+			{
+				if ( isAlive( level.players[i] ) && isDefined( level.players[i].pers["class"] ) )
+				{
+					level.players[i] thread startDemoRecord();					
+				}
+			}
+		}
+			
 
 		wait 0.05;
 	}
@@ -199,7 +207,7 @@ createExtraHUD()
 
 	// Immunity hint
 	self.hint2 = createFontString( "default", 1.4 );
-	self.hint2 setPoint( "CENTER", "CENTER", 0, 180 );
+	self.hint2 setPoint( "CENTER", "CENTER", 0, 183 );
 	self.hint2.sort = 1001;
 	self.hint2.foreground = false;
 	self.hint2.hidewheninmenu = true;
