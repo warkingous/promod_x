@@ -139,3 +139,5 @@ xmodel,me_corrugated_metal4x4
 xmodel,me_dumpster_close
 
 rawfile,promod/matchmaking.gsc
+material,mtl_weapon_ak74u_camo_gold
+xmodel,viewmodel_ak74u_mp_gold

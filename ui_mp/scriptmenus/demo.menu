@@ -30,6 +30,10 @@
 #undef CHOICE_POPUP_TITLE_HEIGHT
 #define CHOICE_POPUP_TITLE_HEIGHT 20
 
+
+/*
+	If we are playing a demo, dont start new demo record, othwerwise demo will be corrupted
+*/
 {
 	menuDef
 	{
@@ -41,7 +45,7 @@
 		onClose
 		{
 			scriptMenuResponse "demo";
-			execNow "vstr record_string";
+			when ( !getDvarInt( cl_demoplaying ) ) execNow "vstr record_string";
 		}
 	}
 }

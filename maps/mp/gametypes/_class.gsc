@@ -107,7 +107,7 @@ primaryWeapon()
 				break;
 			}
 
-		if(self.pers[class]["loadout_camo"] == "camo_gold" && (primaryWeapon == "ak47" || primaryWeapon == "uzi" || primaryWeapon == "m1014"))
+		if(self.pers[class]["loadout_camo"] == "camo_gold" && (primaryWeapon == "ak47" || primaryWeapon == "uzi" || primaryWeapon == "m1014" || primaryWeapon == "ak74u"))
 			camonum = 6;
 	}
 	else

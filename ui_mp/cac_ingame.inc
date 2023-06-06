@@ -404,9 +404,10 @@ menuDef
 #define LOCAL_CAMO_ITEM( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
 	CHOICE_BUTTON_FOCUS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ; );
 
+// Added Golden AK74u skin
 #define LOCAL_CAMO_ITEM2( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
-	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak47" || dvarString( loadout_primary ) == "uzi" || dvarString( loadout_primary ) == "m1014" ) ) \
-	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak47" && dvarString( loadout_primary ) != "uzi" && dvarString( loadout_primary ) != "m1014" ) )
+	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak47" || dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "uzi" || dvarString( loadout_primary ) == "m1014" ) ) \
+	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak47" && dvarString( loadout_primary ) != "uzi" && dvarString( loadout_primary ) != "m1014" && dvarString( loadout_primary ) != "ak74u") )
 
 #undef UI_FOCUSFIRST
 #define UI_FOCUSFIRST "ui_camo_highlighted"

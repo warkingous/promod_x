@@ -234,7 +234,7 @@ startDemoRecord()
 
 stopDemoRecord()
 {
-	self setClientDvar("record_string", "stoprecord ");
+	self setClientDvar("record_string", "stoprecord");
 	self closeMenu();
 	self closeInGameMenu();
 	self openMenu( game["menu_demo"] );
