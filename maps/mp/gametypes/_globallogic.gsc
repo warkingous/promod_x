@@ -3476,7 +3476,7 @@ Callback_PlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, s
 			angleDiff = angleDiff(self, eAttacker);
 			if (distance > 200 && anglediff > -20 && anglediff < 20)
 			{
-				iprintln("^1Hitbox fix left - " + sHitLoc + "- Distance: " + distance + " - Angle: " + int(anglediff));
+				//iprintln("^1Hitbox fix left - " + sHitLoc + "- Distance: " + distance + " - Angle: " + int(anglediff));
 				iDamage = 100;
 			}
 		}

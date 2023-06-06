@@ -110,7 +110,7 @@ errorMessage()
 						break;
 
 					case "fps_promod_265":
-						if( iwdsums[i] != "-1230907629" )
+						if( iwdsums[i] != "-1094773713" )
 							iprintlnbold("^1Server Violation^7: Modified Promod IWD Detected");
 						iwd_loaded = true;
 						break;
