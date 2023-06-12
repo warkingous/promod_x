@@ -42,10 +42,15 @@
         visible        0
         fullscreen     0
 
+		onOpen
+		{
+			setDvar cl_bypassMouseInput "1";
+		}
+
 		onClose
 		{
-			scriptMenuResponse "demo";
-			when ( !getDvarInt( cl_demoplaying ) ) execNow "vstr record_string";
+			execNow "vstr record_string";
+			setDvar cl_bypassMouseInput "0";
 		}
 	}
 }

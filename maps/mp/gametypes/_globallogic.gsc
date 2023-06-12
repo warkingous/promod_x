@@ -484,6 +484,15 @@ spawnPlayer()
 	// Notify that the player has spawned
 	self notify( "spawned_player" );
 
+	// Fixed demo recording over-writing bug, also mouse cursor bug on map end
+	if (!isDefined(self.pers["recording_executed"]))
+		self.pers["recording_executed"] = false;
+
+	if ( isDefined( self.pers["team"] ) && self.pers["team"] != "spectator" && !self.pers["recording_executed"] && game["roundsplayed"] > 0)
+    {
+        self thread promod\readyup::startDemoRecord();
+    }
+
 	// Freeze the player for the round end if it is the post-game state
 	if ( isDefined( game["state"] ) && game["state"] == "postgame" )
 		self freezePlayerForRoundEnd();
@@ -968,10 +977,10 @@ endGame( winner, endReasonText )
 				player setClientDvars("ui_hud_hardcore", 1,	"cg_drawSpectatorMessages", 0, "g_compassShowEnemies", 0 );
 				
 				// Start recording on each round end
-				if ( isDefined( player.pers["team"] ) && player.pers["team"] != "spectator" )
-				{
-					player thread promod\readyup::startDemoRecord();
-				}
+				// if ( isDefined( player.pers["team"] ) && player.pers["team"] != "spectator" )
+				// {
+				// 	player thread promod\readyup::startDemoRecord();
+				// }
 			}
 
 			// Trigger the header thread

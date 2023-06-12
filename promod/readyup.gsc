@@ -120,7 +120,7 @@ main()
 
 			for ( i = 0; i < level.players.size; i++ )
 			{
-				if ( isAlive( level.players[i] ) && isDefined( level.players[i].pers["class"] ) )
+				if ( isAlive( level.players[i] ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] )
 				{
 					level.players[i] thread startDemoRecord();					
 				}
@@ -140,8 +140,8 @@ main()
 		level.players[i].statusicon = "";
 
 		// Start automatic demo record when we reach 5min limit in matchmaking mode
-		if ( isAlive( level.players[i] ) && isDefined( level.players[i].pers["class"] ) && game["MATCHMAKING_MODE"] )
-		level.players[i] thread startDemoRecord();
+		if ( isAlive( level.players[i] ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] && game["MATCHMAKING_MODE"] )
+			level.players[i] thread startDemoRecord();
 	}
 	for(i=0;i<level.players.size;i++)
 		level.players[i] ShowScoreBoard();
@@ -226,10 +226,11 @@ startDemoRecord()
 		demo_name = "Match_" + map_name + "_" + generateRandomString(8);
 	
 	self setClientDvar("record_string", "record " + demo_name);
-	self closeMenu();
-	self closeInGameMenu();
+	//self closeMenu();
+	//self closeInGameMenu();
 	self openMenu( game["menu_demo"] );
 	self closeMenu();
+	self.pers["recording_executed"] = true;
 }
 
 stopDemoRecord()
@@ -244,7 +245,7 @@ stopDemoRecord()
 generateRandomString(length)
 {    
     list = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    string = "#";
+    string = "";
 
     for (i = 0; i < length; i++)
     {
