@@ -305,7 +305,8 @@ validClass( classType, preServed, type )
 	loadout_secondary = strTok( "deserteaglegold,deserteagle,colt45,usp,beretta", "," );
 	loadout_secondary_attachment = strTok( "none,silencer", "," );
 	loadout_grenade = strTok( "flash_grenade,smoke_grenade", "," );
-	loadout_camo = strTok( "camo_none,camo_brockhaurd,camo_bushdweller,camo_blackwhitemarpat,camo_tigerred,camo_stagger,camo_gold", "," );
+	loadout_camo = strTok( "camo_none,camo_brockhaurd,camo_bushdweller,camo_blackwhitemarpat,camo_tigerred,camo_stagger,camo_gold,camo_dark", "," );
+	loadout_secondary_camo = strTok( "camo_none,camo_brockhaurd,camo_bushdweller,camo_blackwhitemarpat,camo_tigerred,camo_stagger,camo_gold,camo_dark", "," );
 
 	switch ( type )
 	{
@@ -468,7 +469,7 @@ processLoadoutResponse( respString )
 					default:
 						return;
 				}
-
+			// Primary weapon camos
 			case "loadout_camo":
 				switch ( subTokens[1] )
 				{
@@ -479,6 +480,24 @@ processLoadoutResponse( respString )
 					case "camo_tigerred":
 					case "camo_stagger":
 					case "camo_gold":
+					case "camo_dark":
+						self.pers[self.class][subTokens[0]] = subTokens[1];
+						break;
+					default:
+						return;
+				}
+			// Side arm weapon camos
+			case "loadout_secondary_camo":
+				switch ( subTokens[1] )
+				{
+					case "camo_none":
+					case "camo_brockhaurd":
+					case "camo_bushdweller":
+					case "camo_blackwhitemarpat":
+					case "camo_tigerred":
+					case "camo_stagger":
+					case "camo_gold":
+					case "camo_dark":
 						self.pers[self.class][subTokens[0]] = subTokens[1];
 						break;
 					default:

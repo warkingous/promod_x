@@ -139,5 +139,11 @@ xmodel,me_corrugated_metal4x4
 xmodel,me_dumpster_close
 
 rawfile,promod/matchmaking.gsc
+menufile,ui_mp/weaponinfo.menu
+stringtable,mp/attachmentTable.csv
+
 material,mtl_weapon_ak74u_camo_gold
+
 xmodel,viewmodel_ak74u_mp_gold
+xmodel,viewmodel_m40a3_mp_gold
+xmodel,viewmodel_remington700_mp_gold
