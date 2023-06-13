@@ -50,6 +50,30 @@ sidearmWeapon()
 	if ( sidearmWeapon != "none" && sidearmWeapon != "deserteaglegold" && sidearmWeapon != "deserteagle" && sidearmWeapon != "colt45" && sidearmWeapon != "usp" && sidearmWeapon != "beretta" )
 		sidearmWeapon = getDvar( "class_" + class + "_secondary" );
 
+	// Side Arm Camos
+	camos = strtok("camo_brockhaurd|camo_bushdweller|camo_blackwhitemarpat|camo_tigerred|camo_stagger", "|");
+	camonum = 0;
+
+	if(isDefined(self.pers[class]["loadout_secondary_camo"]))
+	{
+		for( i = 0; i < camos.size; i++)
+			if(self.pers[class]["loadout_secondary_camo"] == camos[i])
+			{
+				camonum = i+1;
+				break;
+			}
+
+		if(self.pers[class]["loadout_secondary_camo"] == "camo_gold" )
+			camonum = 6;
+ 		else if( self.pers[class]["loadout_secondary_camo"] == "camo_dark" )
+			camonum = 7;
+	}
+	else{
+		self.pers[class]["loadout_secondary_camo"] = "camo_none";
+		//iPrintLn("nastavuji none camo");
+	}
+	// Side Arm CAmos end
+
 	if ( sideArmWeapon != "none" )
 	{
 		s = "";
@@ -106,9 +130,12 @@ primaryWeapon()
 				camonum = i+1;
 				break;
 			}
-
-		if(self.pers[class]["loadout_camo"] == "camo_gold" && (primaryWeapon == "ak47" || primaryWeapon == "uzi" || primaryWeapon == "m1014" || primaryWeapon == "ak74u"))
+		// Golden Camo
+		if(self.pers[class]["loadout_camo"] == "camo_gold" && (primaryWeapon == "ak47" || primaryWeapon == "uzi" || primaryWeapon == "m1014" || primaryWeapon == "ak74u" || primaryWeapon == "m40a3" || primaryWeapon == "remington700"))
 			camonum = 6;
+		// Dark Camo
+		else if( self.pers[class]["loadout_camo"] == "camo_dark" )
+			camonum = 7;
 	}
 	else
 		self.pers[class]["loadout_camo"] = "camo_none";
