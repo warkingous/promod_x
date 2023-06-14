@@ -105,12 +105,12 @@ errorMessage()
 						break;
 
 					case "z_c_r":
-						if ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && iwdsums[i] != "-664693541" )
+						if ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && iwdsums[i] != "-2064692340" )
 							iprintlnbold("^1Server Violation^7: Modified Custom IWD File While In Match Mode");
 						break;
 
 					case "fps_promod_265":
-						if( iwdsums[i] != "-1596154013" )
+						if( iwdsums[i] != "959182553" )
 							iprintlnbold("^1Server Violation^7: Modified Promod IWD Detected");
 						iwd_loaded = true;
 						break;
