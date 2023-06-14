@@ -71,10 +71,10 @@ errorMessage()
 		if ( getDvarInt( "scr_player_maxhealth" ) != 100 && game["HARDCORE_MODE"] != 1 && game["CUSTOM_MODE"] != 1 || getDvarInt( "scr_player_maxhealth" ) != 30 && game["HARDCORE_MODE"] == 1 && game["CUSTOM_MODE"] != 1 )
 			iprintlnbold("^1Server Violation^7: Modified Player Health");
 
-		// antilag = getDvarInt( "g_antilag" );
-		// dedicated = getDvar( "dedicated" );
-		// if ( (antilag && dedicated == "dedicated LAN server") || (!antilag && dedicated == "dedicated internet server" && !game["PROMOD_PB_OFF"]))
-		// 	iprintlnbold("^1Server Violation^7: Modified Connection");
+		antilag = getDvarInt( "g_antilag" );
+		dedicated = getDvar( "dedicated" );
+		if ( (antilag && dedicated == "dedicated LAN server") || (!antilag && dedicated == "dedicated internet server" && !game["PROMOD_PB_OFF"]))
+		 	iprintlnbold("^1Server Violation^7: Modified Connection");
 
 		if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || toLower( getDvar( "fs_game" ) ) == "mods/fps_promod_265" )
 		{

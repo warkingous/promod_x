@@ -107,7 +107,7 @@ main()
 
 	setDvar( "g_inactivity", 0 );
 	setDvar( "g_no_script_spam", 1 );
-	setDvar( "g_antilag", 0 );
+	setDvar( "g_antilag", 1 );
 	setDvar( "g_smoothClients", 1 );
 	setDvar( "sv_allowDownload", 1 );
 	setDvar( "sv_maxPing", 0 );
