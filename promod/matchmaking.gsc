@@ -22,19 +22,19 @@ main()
 	setDvar( "class_demolitions_allowdrop", 0 );
 	setDvar( "class_sniper_allowdrop", 0 );
 
-	setDvar( "weap_allow_m16", 1 );
+	setDvar( "weap_allow_m16", 0 );
 	setDvar( "weap_allow_ak47", 1 );
 	setDvar( "weap_allow_m4", 1 );
-	setDvar( "weap_allow_g3", 1 );
-	setDvar( "weap_allow_g36c", 1 );
-	setDvar( "weap_allow_m14", 1 );
-	setDvar( "weap_allow_mp44", 1 );
+	setDvar( "weap_allow_g3", 0 );
+	setDvar( "weap_allow_g36c", 0 );
+	setDvar( "weap_allow_m14", 0 );
+	setDvar( "weap_allow_mp44", 0 );
 
 	setDvar( "attach_allow_assault_none", 1 );
 	setDvar( "attach_allow_assault_silencer", 0 );
 
-	setDvar( "weap_allow_mp5", 1 );
-	setDvar( "weap_allow_uzi", 1 );
+	setDvar( "weap_allow_mp5", 0 );
+	setDvar( "weap_allow_uzi", 0 );
 	setDvar( "weap_allow_ak74u", 1 );
 
 	setDvar( "attach_allow_specops_none", 1 );

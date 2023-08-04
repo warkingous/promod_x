@@ -20,6 +20,7 @@
 #define ORIGIN_STATUS			390 64
 #define MENU_FONT_COLOR2		1 1 1 0.5
 
+
 #include "ui_mp/stats_info.inc"
 
 menuDef	{
@@ -49,7 +50,7 @@ menuDef	{
 	itemDef
 	{
 		style			WINDOW_STYLE_SHADER
-		rect			0 405 854 75 HORIZONTAL_ALIGN_FULLSCREEN 0
+		rect			0 500 854 75 HORIZONTAL_ALIGN_FULLSCREEN 0
 		background		"gradient_bottom"
 		visible			1
 		decoration
@@ -59,6 +60,7 @@ menuDef	{
 
 	#define BACK_OPEN;
 	#include "ui_mp/navcontrols.inc"
+	//#include "ui_mp/fps_big_logo.inc"
 
 	#define CAC_SETUP_ACTION1 \
 		play "mouse_click"; \
@@ -79,42 +81,76 @@ menuDef	{
 		uiScript openMenuOnDvar loadout_class assault "ocd_attachment_popup_assault"; \
 		uiScript openMenuOnDvar loadout_class specops "ocd_attachment_popup_SMG";
 
-	CHOICE_BUTTON_VIS( 2, "2. Primary Attachment", CAC_SETUP_ACTION_ATTACHMENT, when( dvarString( loadout_primary ) != "mp44" && dvarString( loadout_class ) != "demolitions" && dvarString( loadout_class ) != "sniper" ) )
-	CHOICE_DBUTTON_VIS( 2, "2. Primary Attachment", when( dvarString( loadout_primary ) == "mp44" || dvarString( loadout_class ) == "demolitions" || dvarString( loadout_class ) == "sniper" ) )
-	execKey "2" { CAC_SETUP_ACTION_ATTACHMENT; }
+	#define CAC_SETUP_CAMOX \
+		open "ocd_popup_cac_camo";
+
+	#define CAC_SETUP_PRIMARY_CAMOX \
+		open "ocd_popup_cac_primary_camo";
+
+	#define CAC_SETUP_PRIMARY2_CAMOX \
+		open "ocd_popup_cac_primary2_camo";
+
+	CHOICE_BUTTON( 2, "2. Primary Default Camos", CAC_SETUP_PRIMARY_CAMOX )
+	execKey "2" { CAC_SETUP_PRIMARY; }
+
+	CHOICE_BUTTON( 3, "3. Primary New Camos", CAC_SETUP_PRIMARY2_CAMOX )
+	execKey "3" { CAC_SETUP_PRIMARY2; }
+
+	CHOICE_BUTTON_VIS( 4, "4. Primary Attachment", CAC_SETUP_ACTION_ATTACHMENT, when( dvarString( loadout_primary ) != "mp44" && dvarString( loadout_class ) != "demolitions" && dvarString( loadout_class ) != "sniper" ) )
+	CHOICE_DBUTTON_VIS( 4, "4. Primary Attachment", when( dvarString( loadout_primary ) == "mp44" || dvarString( loadout_class ) == "demolitions" || dvarString( loadout_class ) == "sniper" ) )
+	execKey "4" { CAC_SETUP_ACTION_ATTACHMENT; }
 
 	#define CAC_SETUP_ACTION2 \
 		play "mouse_click"; \
 		open "ocd_popup_cac_secondary";
+	
+	CHOICE_SEPARATOR_VIS( 5, when (true) )
 
-	CHOICE_BUTTON( 3, "3. Side Arm", CAC_SETUP_ACTION2 )
-	execKey "3" { CAC_SETUP_ACTION2; }
+	CHOICE_BUTTON( 6, "5. Side Arm", CAC_SETUP_ACTION2 )
+	execKey "5" { CAC_SETUP_ACTION2; }
+
+	#define CAC_SETUP_SIDEARM2_CAMOX \
+		play "mouse_click"; \
+		open "ocd_popup_cac_sidearm2_camo";
+
+	#define CAC_SETUP_SIDEARM_CAMOX \
+		play "mouse_click"; \
+		open "ocd_popup_cac_sidearm_camo";
+	
+	CHOICE_BUTTON_VIS( 7, "6. Deagle Camos", CAC_SETUP_SIDEARM_CAMOX, when( dvarString( loadout_secondary ) == "deserteagle" ) )
+	CHOICE_DBUTTON_VIS( 7, "6. Deagle Camos", when( dvarString( loadout_secondary ) != "deserteagle" ) )
+	execKey "7" { CAC_SETUP_SIDEARM_CAMOX; }	
+
+	//CHOICE_BUTTON_VIS( 8, "7. Deagle Camo Set #2", CAC_SETUP_SIDEARM2_CAMOX, when( dvarString( loadout_secondary ) == "deserteagle" ) )
+	//CHOICE_DBUTTON_VIS( 8, "7. Deagle Camo Set #2", when( dvarString( loadout_secondary ) != "deserteagle" ) )
+	//execKey "7" { CAC_SETUP_SIDEARM2_CAMOX; }
 
 	#define CAC_SETUP_ACTION3 \
 		play "mouse_click"; \
 		open "ocd_popup_cac_extra";
 
-	CHOICE_BUTTON( 4, "4. Grenade", CAC_SETUP_ACTION3 )
-	execKey "4" { CAC_SETUP_ACTION3 }
-
-	#define CAC_SETUP_CAMOX \
-		open "ocd_popup_cac_camo";
-
-	CHOICE_BUTTON( 5, "5. Camo", CAC_SETUP_CAMOX )
-	execKey "5" { CAC_SETUP_CAMOX; }
+	CHOICE_BUTTON( 8, "7. Grenade", CAC_SETUP_ACTION3 )
+	execKey "7" { CAC_SETUP_ACTION3 }
+	
 
 	#define CAC_SETUP_ACTIONGO \
 		play "mouse_click"; \
 		scriptMenuResponse "go";
+	
+	
 
-	CHOICE_BUTTON( 6, "6. Start!", CAC_SETUP_ACTIONGO )
-	execKey "6" { CAC_SETUP_ACTIONGO; }
+	CHOICE_BUTTON( 9, "8. Start!", CAC_SETUP_ACTIONGO )
+	execKey "8" { CAC_SETUP_ACTIONGO; }
 
 	#define STAT_CAC_PRIMARY				tableLookup("mp/statstable.csv", 4, dvarString( loadout_primary ), 0)
 	#define STAT_CAC_PRIMARY_ATTACHMENT		tableLookup("mp/attachmentTable.csv", 4, dvarString( loadout_primary_attachment ), 9)
 	#define STAT_CAC_SECONDARY				tableLookup("mp/statstable.csv", 4, dvarString( loadout_secondary ), 0)
 	#define STAT_CAC_SECONDARY_ATTACHMENT	tableLookup("mp/attachmentTable.csv", 4, dvarString( loadout_secondary_attachment ), 9)
 	#define STAT_CAC_CAMO					tableLookup("mp/attachmentTable.csv", 4, dvarString( loadout_camo ), 11)
+
+	//gun camo table														  // porovnani a pak vybrani
+	#define STAT_CAC_PRIMARY_GUN_CAMO 		tableLookup("mp/statstable.csv", 4, dvarString( loadout_primary ), 6)+"_"+tableLookup("mp/attachmentTable.csv", 4, dvarString( loadout_camo ), 4) 
+	#define STAT_CAC_SECONDARY_GUN_CAMO 	tableLookup("mp/statstable.csv", 4, dvarString( loadout_secondary ), 6)+"_"+tableLookup("mp/attachmentTable.csv", 4, dvarString( loadout_secondary_camo ), 4) 
 
 	#include "ui_mp/cac_loadout_ingame.inc"
 }
@@ -130,6 +166,10 @@ close "ocd_attachment_popup_assault"; \
 close "ocd_attachment_popup_SMG"; \
 close "ocd_attachment_popup_pistol"; \
 close "ocd_popup_cac_camo"; \
+close "ocd_popup_cac_primary_camo"; \
+close "ocd_popup_cac_primary2_camo"; \
+close "ocd_popup_cac_sidearm_camo"; \
+close "ocd_popup_cac_sidearm2_camo"; \
 
 #include "ui_mp/weaponinfo.menu"
 #include "ui_mp/popupstyle.inc"
@@ -340,17 +380,15 @@ menuDef
 	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_secondary", 6, (CHOICE_X( 2 )-2), (CHOICE_Y( 2 )), ;, execnow "set "UI_FOCUSFIRST" "REF_M9BERETTA"; set selected_weapon_class pistol; set ui_inside_popup pistol";, 0 )
 	onClose{execnow "set ui_inside_popup 0";}
 	LOCAL_SIDEARM_INFO_WINDOW( "ui_sidearm_highlighted" )
-	LOCAL_SIDEARM_ITEM( 1, "1. Gold Desert Eagle", STAT_PISTOL_DESERTEAGLEGOLD, REF_DESERTEAGLEGOLD, "ui_sidearm_highlighted" )
-	LOCAL_SIDEARM_ITEM( 2, "2. Desert Eagle", STAT_PISTOL_DESERTEAGLE, REF_DESERTEAGLE, "ui_sidearm_highlighted" )
-	LOCAL_SIDEARM_ITEM( 3, "3. M1911 .45", STAT_PISTOL_COLT45, REF_COLT45, "ui_sidearm_highlighted" )
-	LOCAL_SIDEARM_ITEM( 4, "4. USP .45", STAT_PISTOL_USP, REF_USP, "ui_sidearm_highlighted" )
-	LOCAL_SIDEARM_ITEM( 5, "5. M9", STAT_PISTOL_M9BERETTA, REF_M9BERETTA, "ui_sidearm_highlighted" )
+	LOCAL_SIDEARM_ITEM( 1, "1. Desert Eagle", STAT_PISTOL_DESERTEAGLE, REF_DESERTEAGLE, "ui_sidearm_highlighted" )
+	LOCAL_SIDEARM_ITEM( 2, "2. M1911 .45", STAT_PISTOL_COLT45, REF_COLT45, "ui_sidearm_highlighted" )
+	LOCAL_SIDEARM_ITEM( 3, "3. USP .45", STAT_PISTOL_USP, REF_USP, "ui_sidearm_highlighted" )
+	LOCAL_SIDEARM_ITEM( 4, "4. M9", STAT_PISTOL_M9BERETTA, REF_M9BERETTA, "ui_sidearm_highlighted" )
 
-	execKey "1" { LOCAL_SIDEARM_ACTION(STAT_PISTOL_DESERTEAGLEGOLD,REF_DESERTEAGLEGOLD); }
-	execKey "2" { LOCAL_SIDEARM_ACTION(STAT_PISTOL_DESERTEAGLE,REF_DESERTEAGLE); }
-	execKey "3" { LOCAL_SIDEARM_ACTION2(STAT_PISTOL_COLT45,REF_COLT45); }
-	execKey "4" { LOCAL_SIDEARM_ACTION2(STAT_PISTOL_USP,REF_USP); }
-	execKey "5" { LOCAL_SIDEARM_ACTION2(STAT_PISTOL_M9BERETTA,REF_M9BERETTA); }
+	execKey "1" { LOCAL_SIDEARM_ACTION(STAT_PISTOL_DESERTEAGLE,REF_DESERTEAGLE); }
+	execKey "2" { LOCAL_SIDEARM_ACTION2(STAT_PISTOL_COLT45,REF_COLT45); }
+	execKey "3" { LOCAL_SIDEARM_ACTION2(STAT_PISTOL_USP,REF_USP); }
+	execKey "4" { LOCAL_SIDEARM_ACTION2(STAT_PISTOL_M9BERETTA,REF_M9BERETTA); }
 }
 
 #define LOCAL_SGRENADE_INFO_WINDOW( highlight_dvar ) \
@@ -401,24 +439,98 @@ menuDef
 		scriptMenuResponse "loadout_camo:" camoRef;\
 		PREPROC_ATTACH_CLOSEALL
 
+#define SIDEARM_CAMO_ACTION( camoRef ) \
+		play "mouse_click"; \
+		setdvar loadout_secondary_camo camoRef;\
+		scriptMenuResponse "loadout_secondary_camo:" camoRef;\
+		PREPROC_ATTACH_CLOSEALL
+
 #define LOCAL_CAMO_ITEM( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
 	CHOICE_BUTTON_FOCUS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ; );
 
-// Added Golden AK74u, M40A3, R700 camos
+#define SIDEARM_CAMO_ITEM( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
+	CHOICE_BUTTON_FOCUS( itemNum, camoName, SIDEARM_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ; );
+
+
+//added golden aku camo
 #define LOCAL_CAMO_ITEM2( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
-	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak47" || dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "uzi" || dvarString( loadout_primary ) == "m1014" || dvarString( loadout_primary ) == "m40a3" || dvarString( loadout_primary ) == "remington700") ) \
+	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak47" || dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "uzi" || dvarString( loadout_primary ) == "m1014" || dvarString( loadout_primary ) == "m40a3" || dvarString( loadout_primary ) == "remington700" ) ) \
 	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak47" && dvarString( loadout_primary ) != "uzi" && dvarString( loadout_primary ) != "m1014" && dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "m40a3" && dvarString( loadout_primary ) != "remington700") )
+
+//custom camos
+#define LOCAL_CAMO_ITEM3( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
+	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak47" || dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "m40a3" || dvarString( loadout_primary ) == "remington700" ) ) \
+	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak47" && dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "m40a3" && dvarString( loadout_primary ) != "remington700") ) \
+	//CHOICE_NEWICON_VIS( itemNum, "fps_premium_access", when( 1 ) )
+
+
+// Wasteland Camo
+#define LOCAL_CAMO_WASTELAND( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
+	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "ak47" ) ) \
+	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "ak47" ) ) \
+
+// Asiimov Camo
+#define LOCAL_CAMO_ASIIMOV( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
+	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "m40a3" || dvarString( loadout_primary ) == "remington700" || dvarString( loadout_primary ) == "ak47" ) ) \
+	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "m40a3" && dvarString( loadout_primary ) != "remington700" && dvarString( loadout_primary ) != "ak47") ) \
+
+// Dark Camo
+#define LOCAL_CAMO_DARK( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
+	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak47" || dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "m40a3") ) \
+	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak47" && dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "m40a3" ) ) \
+	//CHOICE_NEWICON_VIS( itemNum, "fps_premium_access", when( 1 ) )
+
+//AK74u Camos
+#define LOCAL_CAMO_AKU( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
+	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak74u" ) ) \
+	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak74u" ) ) \
+
+
 
 #undef UI_FOCUSFIRST
 #define UI_FOCUSFIRST "ui_camo_highlighted"
 
-#define LOCAL_CAMO_GROUP( prefix, onLeave )\
+#define SIDEARM_CAMO_GROUP( prefix, onLeave )\
 menuDef	\
 {\
-	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_camo"prefix, 7, (CHOICE_X( 1 )-2), (CHOICE_Y( 1 )+68), ;, execnow "set "UI_FOCUSFIRST" "REF_CAMO_NONE"; set ui_inside_popup camo";, 0 )\
+	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_sidearm_camo"prefix, 7, (CHOICE_X( 1 )-2), (CHOICE_Y( 1 )+68), ;, execnow "set "UI_FOCUSFIRST" "REF_CAMO_NONE"; set ui_inside_popup camo";, 0 )\
 	onClose{onLeave;} \
 	LOCAL_CAMO_INFO_WINDOW( "ui_camo_highlighted" )\
-	LOCAL_CAMO_ITEM( 1, "1. None", CAMO_NONE, REF_CAMO_NONE, "ui_camo_highlighted", 0, 1 )\
+	SIDEARM_CAMO_ITEM( 1, "1. Silver", CAMO_NONE, REF_CAMO_NONE, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	SIDEARM_CAMO_ITEM( 2, "2. Golden", CAMO_GOLDEN, REF_GOLDEN, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	SIDEARM_CAMO_ITEM( 3, "3. Two-Tone", CAMO_TWOTONE, REF_TWOTONE, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	SIDEARM_CAMO_ITEM( 4, "4. Dark", CAMO_DARK, REF_DARK, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	SIDEARM_CAMO_ITEM( 5, "5. MW", CAMO_MW, REF_MW, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\	
+	execKey "1" { LOCAL_CAMO_ACTION(REF_CAMO_NONE); }\
+	execKey "2" { LOCAL_CAMO_ACTION(REF_GOLDEN); }\
+	execKey "3" { LOCAL_CAMO_ACTION(REF_TWOTONE); }\
+	execKey "4" { LOCAL_CAMO_ACTION(REF_DARK); }\
+	execKey "5" { LOCAL_CAMO_ACTION(REF_MW); }\
+}
+
+SIDEARM_CAMO_GROUP( "", execnow "set ui_inside_popup attachment" )
+
+
+#define SIDEARM2_CAMO_GROUP( prefix, onLeave )\
+menuDef	\
+{\
+	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_sidearm2_camo"prefix, 7, (CHOICE_X( 1 )-2), (CHOICE_Y( 1 )+68), ;, execnow "set "UI_FOCUSFIRST" "REF_CAMO_NONE"; set ui_inside_popup camo";, 0 )\
+	onClose{onLeave;} \
+	LOCAL_CAMO_INFO_WINDOW( "ui_camo_highlighted" )\
+	SIDEARM_CAMO_ITEM( 1, "1. Two-tone", CAMO_TWOTONE, REF_TWOTONE, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	execKey "1" { LOCAL_CAMO_ACTION(REF_TWOTONE); }\
+}
+
+SIDEARM2_CAMO_GROUP( "", execnow "set ui_inside_popup attachment" )
+
+
+#define PRIMARY_CAMO_GROUP( prefix, onLeave )\
+menuDef	\
+{\
+	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_primary_camo"prefix, 7, (CHOICE_X( 1 )-2), (CHOICE_Y( 1 )+68), ;, execnow "set "UI_FOCUSFIRST" "REF_CAMO_NONE"; set ui_inside_popup camo";, 0 )\
+	onClose{onLeave;} \
+	LOCAL_CAMO_INFO_WINDOW( "ui_camo_highlighted" )\
+	LOCAL_CAMO_ITEM( 1, "1. None ", CAMO_NONE, REF_CAMO_NONE, "ui_camo_highlighted", 0, 1 )\
 	LOCAL_CAMO_ITEM( 2, "2. Desert", CAMO_BROCKHUARD, REF_BROCKHUARD, "ui_camo_highlighted", DESERT_NEW_BITMASK, 1 )\
 	LOCAL_CAMO_ITEM( 3, "3. Woodland", CAMO_BUSHDWELLER, REF_BUSHDWELLER, "ui_camo_highlighted", WOODLAND_NEW_BITMASK, 1 )\
 	LOCAL_CAMO_ITEM( 4, "4. Digital", CAMO_BLACKWHITEMARPAT, REF_BLACKWHITEMARPAT, "ui_camo_highlighted", DIGITAL_NEW_BITMASK, 1 )\
@@ -434,4 +546,28 @@ menuDef	\
 	execKey "7" { LOCAL_CAMO_ACTION(REF_GOLDEN); }\
 }
 
-LOCAL_CAMO_GROUP( "", execnow "set ui_inside_popup attachment" )
+PRIMARY_CAMO_GROUP( "", execnow "set ui_inside_popup attachment" )
+
+#define PRIMARY2_CAMO_GROUP( prefix, onLeave )\
+menuDef	\
+{\
+	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_primary2_camo"prefix, 7, (CHOICE_X( 1 )-2), (CHOICE_Y( 1 )+68), ;, execnow "set "UI_FOCUSFIRST" "REF_CAMO_NONE"; set ui_inside_popup camo";, 0 )\
+	onClose{onLeave;} \
+	LOCAL_CAMO_INFO_WINDOW( "ui_camo_highlighted" )\
+	LOCAL_CAMO_DARK( 1, "1. Dark", CAMO_DARK, REF_DARK, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	LOCAL_CAMO_ITEM3( 2, "2. Two-tone", CAMO_TWOTONE, REF_TWOTONE, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	LOCAL_CAMO_WASTELAND( 3, "3. Wasteland", CAMO_WASTELAND, REF_WASTELAND, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	LOCAL_CAMO_ITEM3( 4, "4. MW Green", CAMO_MW, REF_MW, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	LOCAL_CAMO_ASIIMOV( 5, "5. Asiimov", CAMO_ASIIMOV, REF_ASIIMOV, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	LOCAL_CAMO_ITEM3( 6, "6. Special", CAMO_X, REF_X, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	execKey "1" { LOCAL_CAMO_ACTION(REF_DARK); }\
+	execKey "2" { LOCAL_CAMO_ACTION(REF_TWOTONE); }\
+	execKey "3" { LOCAL_CAMO_ACTION(REF_WASTELAND); }\
+	execKey "4" { LOCAL_CAMO_ACTION(REF_MW); }\
+	execKey "5" { LOCAL_CAMO_ACTION(REF_ASIIMOV); }\
+	execKey "6" { LOCAL_CAMO_ACTION(REF_X); }\
+}
+
+PRIMARY2_CAMO_GROUP( "", execnow "set ui_inside_popup attachment" )
+
+
