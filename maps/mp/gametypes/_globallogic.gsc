@@ -72,6 +72,7 @@ init()
 
 	registerDvars();
 	registerMatchIdDvar();
+	registerPingWatchDvars();
 
 	precacheModel( "tag_origin" );
 
@@ -118,6 +119,22 @@ registerMatchIdDvar()
 		setDvar( "fps_match_id", 0 );    	
 	else
 		level.fps_matchid =  getDvarInt( "fps_match_id" );
+}
+
+registerPingWatchDvars()
+{
+	// Set server fps_max_ping
+	if ( getDvar( "fps_max_ping" ) == "" )
+		setDvar( "fps_max_ping", 100 );    	
+	else
+		level.fps_max_ping =  getDvarInt( "fps_max_ping" );
+
+	if ( getDvar( "fps_ping_allowed_players" ) == "" )
+		setDvar (  "fps_ping_allowed_players", 0 );
+	else {
+		level.steamIds = strtok(getDvar("fps_ping_allowed_players"), ",");
+	}
+		
 }
 
 SetupCallbacks()
@@ -3300,6 +3317,7 @@ Callback_PlayerConnect()
 	self.wasAliveAtMatchStart = false;
 
 	self thread maps\mp\_flashgrenades::monitorFlash();
+	self thread maps\mp\_ping::monitorPing();
 
 	level.players[level.players.size] = self;
 

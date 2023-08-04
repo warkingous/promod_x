@@ -193,3 +193,5 @@ rawfile,maps/mp/mp_dahman_b41.gsc
 # Liberation side fix
 rawfile,maps/mp/mp_dahman_b41.gsc
 
+# Ping checker 
+rawfile,maps/mp/_ping.gsc

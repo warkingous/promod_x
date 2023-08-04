@@ -141,7 +141,7 @@
 		}
 		itemDef
 		{
-			text			"Current Promod Version: LIVE V2.65 EU"
+			text			"Current Promod Version: LIVE V2.66 EU Beta"
 			style			0
 			textscale		0.25
 			textstyle		3
