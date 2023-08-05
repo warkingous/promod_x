@@ -120,7 +120,7 @@ quickpromod(response)
 			a = "en";
 			if ( self promod\client::toggle("PROMOD_RECORD") )
 				a = "dis";
-			self iprintln("Record reminder has been "+a+"abled");
+			self iprintln("Automatic recording has been "+a+"abled");
 			break;
 
 		case "5":

@@ -23,14 +23,19 @@ monitorPing()
             for(;;)
             {
                 ping = self getPing();
-                iprintln("You exceeded max ping - ^1" + ping + "^7!");
                 wait 1;
 
                 if(ping > level.fps_max_ping)
+                {
+                    self iprintln("You exceeded max ping - ^1" + ping + "^7!");
                     self.pingStrikes++;
+                }
 
                 if(self.pingStrikes > 5)
+                {
                     kick( self getentitynumber() );
+                }
+                    
             }
         }
     }        

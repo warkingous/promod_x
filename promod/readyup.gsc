@@ -120,7 +120,7 @@ main()
 
 			for ( i = 0; i < level.players.size; i++ )
 			{
-				if ( isAlive( level.players[i] ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] )
+				if ( !level.players[i] promod\client::get_config( "PROMOD_RECORD" ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] )
 				{
 					level.players[i] thread startDemoRecord();					
 				}
@@ -140,7 +140,7 @@ main()
 		level.players[i].statusicon = "";
 
 		// Start automatic demo record when we reach 5min limit in matchmaking mode
-		if ( isAlive( level.players[i] ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] && game["MATCHMAKING_MODE"] )
+		if ( !level.players[i] promod\client::get_config( "PROMOD_RECORD" ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] && game["MATCHMAKING_MODE"] )
 			level.players[i] thread startDemoRecord();
 	}
 	for(i=0;i<level.players.size;i++)
@@ -225,7 +225,7 @@ startDemoRecord()
 	else 
 		demo_name = "Match_" + map_name + "_" + generateRandomString(8);
 	
-	self setClientDvar("record_string", "record " + demo_name);
+	self setClientDvar("record_string", "stoprecord;record " + demo_name);
 	//self closeMenu();
 	//self closeInGameMenu();
 	self openMenu( game["menu_demo"] );

@@ -505,7 +505,7 @@ spawnPlayer()
 	if (!isDefined(self.pers["recording_executed"]))
 		self.pers["recording_executed"] = false;
 
-	if ( isDefined( self.pers["team"] ) && self.pers["team"] != "spectator" && !self.pers["recording_executed"] && game["roundsplayed"] > 0)
+	if ( !self promod\client::get_config( "PROMOD_RECORD" ) && isDefined( self.pers["team"] ) && self.pers["team"] != "spectator" && !self.pers["recording_executed"] && game["roundsplayed"] > 0)
     {
         self thread promod\readyup::startDemoRecord();
     }
