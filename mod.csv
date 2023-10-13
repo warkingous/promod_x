@@ -195,3 +195,6 @@ rawfile,maps/mp/mp_dahman_b41.gsc
 
 # Ping checker 
 rawfile,maps/mp/_ping.gsc
+
+# Velocity meter 
+rawfile,promod/velocity.gsc

@@ -80,6 +80,7 @@ init()
 	precacheShader( "faction_128_arab" );
 	precacheShader( "faction_128_ussr" );
 	precacheShader( "faction_128_sas" );
+	precacheShader("line_horizontal");
 
 	if ( !isDefined( game["tiebreaker"] ) )
 		game["tiebreaker"] = false;
@@ -3318,6 +3319,7 @@ Callback_PlayerConnect()
 
 	self thread maps\mp\_flashgrenades::monitorFlash();
 	self thread maps\mp\_ping::monitorPing();
+	self thread promod\velocity::mainLoop();
 
 	level.players[level.players.size] = self;
 

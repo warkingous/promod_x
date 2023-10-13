@@ -213,6 +213,12 @@ quickpromod(response)
 		case "killspec":
 			self [[level.killspec]]();
 			break;
+		case "velocity":
+			a = "dis";
+			if ( self promod\client::toggle("PROMOD_VELOCITY") )
+				a = "en";
+			self iprintln("Velocity meter has been "+a+"abled");
+			break;
 	}
 }
 

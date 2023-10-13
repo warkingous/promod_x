@@ -119,7 +119,7 @@ menuDef	{
 	
 	CHOICE_BUTTON_VIS( 7, "6. Deagle Camos", CAC_SETUP_SIDEARM_CAMOX, when( dvarString( loadout_secondary ) == "deserteagle" ) )
 	CHOICE_DBUTTON_VIS( 7, "6. Deagle Camos", when( dvarString( loadout_secondary ) != "deserteagle" ) )
-	execKey "7" { CAC_SETUP_SIDEARM_CAMOX; }	
+	execKey "6" { CAC_SETUP_SIDEARM_CAMOX; }	
 
 	//CHOICE_BUTTON_VIS( 8, "7. Deagle Camo Set #2", CAC_SETUP_SIDEARM2_CAMOX, when( dvarString( loadout_secondary ) == "deserteagle" ) )
 	//CHOICE_DBUTTON_VIS( 8, "7. Deagle Camo Set #2", when( dvarString( loadout_secondary ) != "deserteagle" ) )
@@ -132,7 +132,7 @@ menuDef	{
 	CHOICE_BUTTON( 8, "7. Grenade", CAC_SETUP_ACTION3 )
 	execKey "7" { CAC_SETUP_ACTION3 }
 	
-
+	
 	#define CAC_SETUP_ACTIONGO \
 		play "mouse_click"; \
 		scriptMenuResponse "go";

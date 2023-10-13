@@ -8,7 +8,7 @@
 
 @echo off
 
-SET mod_name=fps_promod_266_beta
+SET mod_name=fps_promod_268
 SET work_directory=%~dp0
 cd %work_directory%
 

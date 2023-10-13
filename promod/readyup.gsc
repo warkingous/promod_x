@@ -69,10 +69,14 @@ main()
 				player.update = false;
 				player.statusicon = "compassping_enemy";
 				player thread selfLoop();
+
+				// Added nadetraining in ready-up period even if its not strat mode
+				player thread promod\stratmode::nadeTraining();
 				
 				if ( isDefined( player.pers["team"] ) && player.pers["team"] != "spectator" )
 					player thread createExtraHUD();
 			}
+
 
 			player.oldready = player.update;
 
@@ -221,16 +225,29 @@ startDemoRecord()
 	map_name = toLower( getDvar( "mapname" ) );
 
 	if( level.fps_matchid != 0 )
+	{
 		demo_name = "FPS_" + level.fps_matchid + "_" + map_name + "_" + generateRandomString(4);
+	}		
+	else if ( game["LAN_MODE"] )
+	{
+		demo_name = "LAN_" + map_name + "_" + generateRandomString(8);
+	}		
 	else 
+	{
 		demo_name = "Match_" + map_name + "_" + generateRandomString(8);
+	}
+		
 	
 	self setClientDvar("record_string", "stoprecord;record " + demo_name);
 	//self closeMenu();
 	//self closeInGameMenu();
-	self openMenu( game["menu_demo"] );
-	self closeMenu();
-	self.pers["recording_executed"] = true;
+
+	if( level.gametype == "sd" ){
+		self openMenu( game["menu_demo"] );
+		self closeMenu();
+		self.pers["recording_executed"] = true;
+	}
+
 }
 
 stopDemoRecord()
@@ -337,11 +354,27 @@ selfLoop()
 	{
 		while ( !isDefined( self.pers["team"] ) || self.pers["team"] == "none" )
 			wait 0.05;
+		
+		// Spectator always ready
+		while ( self.pers["team"] == "spectator" )
+		{
+			self.ready = true;
+			wait 0.05;
+		}
+			
 
 		wait 0.05;
 
-		if ( self useButtonPressed() )
+		// Return back to position fix - so we dont ready up by accident
+		if(isDefined( self.flying ) && self.flying )
+		{
+			//do nothing
+		}
+		else 
+		{
+			if ( self useButtonPressed() )
 			self.ready = !self.ready;
+		}
 
 		while ( self useButtonPressed() )
 			wait 0.1;
