@@ -378,7 +378,7 @@
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			textscale		0.35
 			textfont		UI_FONT_DEFAULT
-			forecolor		1 1 1 1
+			forecolor		0.73 0.99 0.73 1
 			visible			when ( dvarInt( self_ready ) )
 			decoration
 		}
@@ -973,7 +973,7 @@
 		{
 			rect			-60 -107 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
 			origin			0 0
-			forecolor		1 1 1 1
+			forecolor		0.73 0.99 0.73 1
 			exp				text( dvarint(self_alive) );
 			textfont		TEXTSIZE_SMALL
 			textscale		0.48
