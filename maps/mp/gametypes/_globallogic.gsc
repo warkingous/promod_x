@@ -69,6 +69,7 @@ init()
 	level.players = [];
 
 	level.shoutbars = [];
+	level.infobars = [];
 
 	registerDvars();
 	registerMatchIdDvar();
@@ -523,6 +524,9 @@ spawnPlayer()
 
 	// Update player information for Promod shoutcasting
 	self promod\shoutcast::updatePlayer();
+
+	// Update player information for Enemy list
+	self promod\enemylist::updatePlayerInfo();
 }
 
 // Remove weapons for knife round
@@ -1669,6 +1673,9 @@ menuAutoAssign()
 	if(isDefined(self.pers["shoutnum"]))
 		self promod\shoutcast::removePlayer();
 
+	if(isDefined(self.pers["infonum"]))
+		self promod\enemylist::removePlayerInfo();
+
 	self updateObjectiveText();
 
 	if ( level.teamBased )
@@ -1788,6 +1795,9 @@ menuAllies()
 		if(isDefined(self.pers["shoutnum"]))
 			self promod\shoutcast::removePlayer();
 
+		if(isDefined(self.pers["infonum"]))
+			self promod\enemylist::removePlayerInfo();
+
 		self updateObjectiveText();
 
 		if ( level.teamBased )
@@ -1874,6 +1884,9 @@ menuAxis()
 
 		if(isDefined(self.pers["shoutnum"]))
 			self promod\shoutcast::removePlayer();
+		
+		if(isDefined(self.pers["infonum"]))
+			self promod\enemylist::removePlayerInfo();
 
 		self updateObjectiveText();
 
@@ -1934,6 +1947,9 @@ menuKillspec()
 
 	if(isDefined(self.pers["shoutnum"]))
 		self promod\shoutcast::removePlayer();
+
+	if(isDefined(self.pers["infonum"]))
+		self promod\enemylist::removePlayerInfo();
 }
 
 menuSpectator()
@@ -1964,6 +1980,9 @@ menuSpectator()
 
 		if(isDefined(self.pers["shoutnum"]))
 			self promod\shoutcast::removePlayer();
+
+		if(isDefined(self.pers["infonum"]))
+			self promod\enemylist::removePlayerInfo();
 
 		self updateObjectiveText();
 
@@ -3417,6 +3436,7 @@ Callback_PlayerDisconnect()
 		self removeDisconnectedPlayerFromPlacement();
 
 	self promod\shoutcast::removePlayer();
+	self promod\enemylist::removePlayerInfo();
 	self maps\mp\gametypes\_weapons::printStats();
 
 	if ( isDefined( self.pers["team"] ) && ( self.pers["team"] == "allies" || self.pers["team"] == "axis" ) )
@@ -3705,6 +3725,9 @@ Callback_PlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, s
 
 	// Shoutcaster healthbar update
 	self promod\shoutcast::updatePlayer();
+
+	// Update player information for Enemy list
+	self promod\enemylist::updatePlayerInfo();
 }
 
 dinkNoise( player1, player2 )
@@ -3749,7 +3772,8 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	else
 		obituary(self, attacker, sWeapon, sMeansOfDeath);
 
-	if ( !isDefined( game["promod_do_readyup"] ) || !game["promod_do_readyup"] )
+	// Fixed old promod bug when suicide()
+	if ( !isDefined( game["promod_do_readyup"] ) || !game["promod_do_readyup"] && attacker != self )
 		self maps\mp\gametypes\_weapons::dropWeaponForDeath( attacker );
 
 	self.sessionstate = "dead";
@@ -3921,6 +3945,9 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	}
 
 	self promod\shoutcast::updatePlayer();
+
+	// Update player information for Enemy list
+	self promod\enemylist::updatePlayerInfo();
 
 	self.switching_teams = undefined;
 	self.joining_team = undefined;

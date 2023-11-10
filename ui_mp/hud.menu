@@ -378,7 +378,7 @@
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			textscale		0.35
 			textfont		UI_FONT_DEFAULT
-			forecolor		0.73 0.99 0.73 1
+			forecolor		1 1 1 1
 			visible			when ( dvarInt( self_ready ) )
 			decoration
 		}
@@ -973,7 +973,7 @@
 		{
 			rect			-60 -107 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
 			origin			0 0
-			forecolor		0.73 0.99 0.73 1
+			forecolor		1 1 1 1
 			exp				text( dvarint(self_alive) );
 			textfont		TEXTSIZE_SMALL
 			textscale		0.48
@@ -995,6 +995,332 @@
 			visible			1
 			decoration
 		}
+
+		// Promod ENEMYLIST Start 
+		itemDef
+		{
+			rect			-220 -100 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		1 1 1 1
+			exp				text( dvarstring( info_name0 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_AXIS" && dvarFloat ( info_health0 ) > 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -100 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		0.7 0.7 0.7 0.2
+			exp				text( dvarstring( info_name0 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_AXIS" && dvarFloat ( info_health0 ) <= 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -90 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		1 1 1 1
+			exp				text( dvarstring( info_name1 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -10 );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_AXIS" && dvarFloat ( info_health1 ) > 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -90 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		0.7 0.7 0.7 0.2
+			exp				text( dvarstring( info_name1 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -10 );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_AXIS" && dvarFloat ( info_health1 ) <= 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -80 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		1 1 1 1
+			exp				text( dvarstring( info_name2 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -20 );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_AXIS" && dvarFloat ( info_health2 ) > 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -80 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		0.7 0.7 0.7 0.2
+			exp				text( dvarstring( info_name2 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -20 );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_AXIS" && dvarFloat ( info_health2 ) <= 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -70 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		1 1 1 1
+			exp				text( dvarstring( info_name3 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -30 );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_AXIS" && dvarFloat ( info_health3 ) > 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -70 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		0.7 0.7 0.7 0.2
+			exp				text( dvarstring( info_name3 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -30 );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_AXIS" && dvarFloat ( info_health3 ) <= 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -60 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		1 1 1 1
+			exp				text( dvarstring( info_name4 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -40 );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_AXIS" && dvarFloat ( info_health4 ) > 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -60 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		0.7 0.7 0.7 0.2
+			exp				text( dvarstring( info_name4 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -40 );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_AXIS" && dvarFloat ( info_health4 ) <= 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		// ALLIES
+
+		itemDef
+		{
+			rect			-220 -100 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		1 1 1 1
+			exp				text( dvarstring(info_name5) );
+			//exp  			rect Y( dvarInt( enemylist_y ) );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_ALLIES" && dvarFloat ( info_health5 ) > 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -100 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		0.7 0.7 0.7 0.2
+			exp				text( dvarstring(info_name5) );
+			//exp  			rect Y( dvarInt( enemylist_y ) );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_ALLIES" && dvarFloat ( info_health5 ) <= 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -90 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		1 1 1 1
+			exp				text( dvarstring( info_name6 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -10 );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_ALLIES" && dvarFloat ( info_health6 ) > 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -90 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		0.7 0.7 0.7 0.2
+			exp				text( dvarstring( info_name6 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -10 );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_ALLIES" && dvarFloat ( info_health6 ) <= 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -80 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		1 1 1 1
+			exp				text( dvarstring( info_name7 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -20 );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_ALLIES" && dvarFloat ( info_health7 ) > 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -80 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		0.7 0.7 0.7 0.2
+			exp				text( dvarstring( info_name7 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -20 );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_ALLIES" && dvarFloat ( info_health7 ) <= 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -70 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		1 1 1 1
+			exp				text( dvarstring( info_name8 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -30 );
+			//exp  			rect X( dvarInt( enemylist_x ) );			
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_ALLIES" && dvarFloat ( info_health8 ) > 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -70 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		0.7 0.7 0.7 0.2
+			exp				text( dvarstring( info_name8 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -30 );
+			//exp  			rect X( dvarInt( enemylist_x ) );			
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_ALLIES" && dvarFloat ( info_health8 ) <= 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -60 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		1 1 1 1
+			exp				text( dvarstring( info_name9 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -40 );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_ALLIES" && dvarFloat ( info_health9 ) > 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		itemDef
+		{
+			rect			-220 -60 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_BOTTOM
+			origin			0 0
+			forecolor		0.7 0.7 0.7 0.2
+			exp				text( dvarstring( info_name9 ) );
+			//exp  			rect Y( dvarInt( enemylist_y ) -40 );
+			//exp  			rect X( dvarInt( enemylist_x ) );
+			textfont		TEXTSIZE_TITLE
+			textscale		0.24
+			textalign		ITEM_ALIGN_LEFT
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			visible			when ( team( name ) == "TEAM_ALLIES" && dvarFloat ( info_health9 ) <= 0 && int( stat(int ( tableLookup( "promod/customStatsTable.csv", 1, PROMOD_ENEMYLIST, 0 ) ) ) ) == 1 )
+			decoration
+		}
+
+		// Promod ENEMYLIST End 
+
 	}
 
 	menuDef

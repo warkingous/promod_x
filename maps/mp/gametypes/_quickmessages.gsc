@@ -219,6 +219,13 @@ quickpromod(response)
 				a = "en";
 			self iprintln("Velocity meter has been "+a+"abled");
 			break;
+		case "enemylist":
+			a = "dis";
+			if ( self promod\client::toggle("PROMOD_ENEMYLIST") )
+				a = "en";
+
+			self iprintln( "Enemy list has been "+a+"abled" );
+			break;
 	}
 }
 

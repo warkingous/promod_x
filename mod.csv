@@ -198,3 +198,6 @@ rawfile,maps/mp/_ping.gsc
 
 # Velocity meter 
 rawfile,promod/velocity.gsc
+
+# Enemy list
+rawfile,promod/enemylist.gsc

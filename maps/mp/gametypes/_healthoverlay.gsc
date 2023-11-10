@@ -161,6 +161,10 @@ playerHealthRegen()
 			player setnormalhealth (newHealth);
 			oldhealth = player.health;
 			player promod\shoutcast::updatePlayer();
+
+			// Update player information for Enemy list
+			self promod\enemylist::updatePlayerInfo();
+			
 			continue;
 		}
 
