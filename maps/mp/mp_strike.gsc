@@ -26,6 +26,8 @@ main()
 	preCacheModel( "mil_sandbag_desert_single_flat" );
 	preCacheModel( "ch_corkboard_metaltrim_4x8" );
 	preCacheModel( "me_corrugated_metal4x4" );
+	precacheModel( "ch_corkboard_metaltrim_3x4" );
+	precacheModel( "com_plainchair_shardrail" );
 
 	// Fixed A bins sandbags - one way vision
 	bags = spawn("script_model", (-155, 850, 18 ));
@@ -148,4 +150,62 @@ main()
 	stevy_6 = spawn("script_model", (738, -549, 176 ));
 	stevy_6.angles = (0,90,0);
 	stevy_6 setmodel( "me_corrugated_metal4x4" );
+
+	// water = spawn("script_model", (-1193, 2049, 21 ));
+	// water.angles = (0,0,0);
+	// water setmodel( "ch_corkboard_metaltrim_3x4" );
+
+	// water2 = spawn("script_model", (-1112, 2049, 21 ));
+	// water2.angles = (0,0,0);
+	// water2 setmodel( "ch_corkboard_metaltrim_3x4" );
+	water1 = spawn("script_model", (-1170, 2051, 16 ));
+	water1.angles = (0,0,0);
+	water1 setmodel( "ch_corkboard_metaltrim_4x8" );
+
+	water2 = spawn("script_model", (-1104, 2051, 16 ));
+	water2.angles = (90,0,0);
+	water2 setmodel( "ch_corkboard_metaltrim_3x4" );
+
+	water3 = spawn("script_model", (-1170, 1725, 16 ));
+	water3.angles = (0,180,0);
+	water3 setmodel( "ch_corkboard_metaltrim_4x8" );
+
+	water4 = spawn("script_model", (-1104, 1725, 16 ));
+	water4.angles = (90,0,180);
+	water4 setmodel( "ch_corkboard_metaltrim_3x4" );
+
+	water5 = spawn("script_model", (-1218, 1774, 14 ));
+	water5.angles = (0,90,0);
+	water5 setmodel( "ch_corkboard_metaltrim_4x8" );
+
+	water6 = spawn("script_model", (-1218, 1870, 14 ));
+	water6.angles = (0,90,0);
+	water6 setmodel( "ch_corkboard_metaltrim_4x8" );
+
+	water7 = spawn("script_model", (-1218, 1966, 14 ));
+	water7.angles = (0,90,0);
+	water7 setmodel( "ch_corkboard_metaltrim_4x8" );
+
+	water9 = spawn("script_model", (-1218, 2032, 14 ));
+	water9.angles = (90,90,0);
+	water9 setmodel( "ch_corkboard_metaltrim_3x4" );
+	
+	water10 = spawn("script_model", (-1086, 1870, 14 ));
+	water10.angles = (0,90,180);
+	water10 setmodel( "ch_corkboard_metaltrim_4x8" );
+
+	water11 = spawn("script_model", (-1086, 1774, 14 ));
+	water11.angles = (0,90,180);
+	water11 setmodel( "ch_corkboard_metaltrim_4x8" );
+
+	water11 = spawn("script_model", (-1086, 1966, 14 ));
+	water11.angles = (0,90,180);
+	water11 setmodel( "ch_corkboard_metaltrim_4x8" );
+
+	water12 = spawn("script_model", (-1086, 2032, 14 ));
+	water12.angles = (90,90,180);
+	water12 setmodel( "ch_corkboard_metaltrim_3x4" );
+
+	
+	
 }
