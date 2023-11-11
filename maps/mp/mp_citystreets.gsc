@@ -47,5 +47,33 @@ main()
 	ticket4 = spawn("script_model", (3138, -527, -140));
 	ticket4.angles = (90,10,180);
 	ticket4 setmodel( "ch_corkboard_metaltrim_4x8" );
+
+	wb = spawn("script_model", (4820, -500, 60));
+	wb.angles = (0,0,0);
+	wb setmodel( "ch_corkboard_metaltrim_4x8" );
+
+	wb1 = spawn("script_model", (4820, -510, 60));
+	wb1.angles = (0,0,0);
+	wb1 setmodel( "ch_corkboard_metaltrim_4x8" );
+
+	wb2 = spawn("script_model", (4820, -520, 60));
+	wb2.angles = (0,0,0);
+	wb2 setmodel( "ch_corkboard_metaltrim_4x8" );
+
+	wb11 = spawn("script_model", (4820, -505, 100));
+	wb11.angles = (0,0,0);
+	wb11 setmodel( "ch_corkboard_metaltrim_4x8" );
+
+	wb12 = spawn("script_model", (4820, -515, 100));
+	wb12.angles = (0,0,0);
+	wb12 setmodel( "ch_corkboard_metaltrim_4x8" );
+
+	wb13 = spawn("script_model", (4820, -525, 100));
+	wb13.angles = (0,0,0);
+	wb13 setmodel( "ch_corkboard_metaltrim_4x8" );
+
+	// wb3 = spawn("script_model", (4820, -530, 60));
+	// wb3.angles = (0,0,0);
+	// wb3 setmodel( "ch_corkboard_metaltrim_4x8" );
 	
 }

@@ -27,7 +27,6 @@ main()
 	preCacheModel( "ch_corkboard_metaltrim_4x8" );
 	preCacheModel( "me_corrugated_metal4x4" );
 	precacheModel( "ch_corkboard_metaltrim_3x4" );
-	precacheModel( "com_plainchair_shardrail" );
 
 	// Fixed A bins sandbags - one way vision
 	bags = spawn("script_model", (-155, 850, 18 ));
@@ -151,13 +150,7 @@ main()
 	stevy_6.angles = (0,90,0);
 	stevy_6 setmodel( "me_corrugated_metal4x4" );
 
-	// water = spawn("script_model", (-1193, 2049, 21 ));
-	// water.angles = (0,0,0);
-	// water setmodel( "ch_corkboard_metaltrim_3x4" );
-
-	// water2 = spawn("script_model", (-1112, 2049, 21 ));
-	// water2.angles = (0,0,0);
-	// water2 setmodel( "ch_corkboard_metaltrim_3x4" );
+	// Fixed water area one-way gaps
 	water1 = spawn("script_model", (-1170, 2051, 16 ));
 	water1.angles = (0,0,0);
 	water1 setmodel( "ch_corkboard_metaltrim_4x8" );
@@ -206,6 +199,4 @@ main()
 	water12.angles = (90,90,180);
 	water12 setmodel( "ch_corkboard_metaltrim_3x4" );
 
-	
-	
 }
