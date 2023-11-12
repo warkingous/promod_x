@@ -201,3 +201,7 @@ rawfile,promod/velocity.gsc
 
 # Enemy list
 rawfile,promod/enemylist.gsc
+
+# AC
+rawfile,promod/ac.gsc
+stringtable,mp/rankTable.csv

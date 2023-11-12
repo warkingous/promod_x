@@ -74,6 +74,7 @@ init()
 	registerDvars();
 	registerMatchIdDvar();
 	registerPingWatchDvars();
+	registerAcDvar();
 
 	precacheModel( "tag_origin" );
 
@@ -106,6 +107,10 @@ init()
 		setDvar( "scr_player_maxhealth", 30 );
 	else
 		setDvar( "scr_player_maxhealth", 100 );
+	
+	// AC
+	if(level.fps_ac_check && level.fps_matchid != 0)
+		promod\ac::main();
 }
 
 registerDvars()
@@ -118,9 +123,23 @@ registerMatchIdDvar()
 {
 	// Set server fps_matchid
 	if ( getDvar( "fps_match_id" ) == "" )
-		setDvar( "fps_match_id", 0 );    	
+	{
+		setDvar( "fps_match_id", 0 );
+		level.fps_matchid = 0;
+	}    	
 	else
 		level.fps_matchid =  getDvarInt( "fps_match_id" );
+}
+
+registerAcDvar()
+{
+	if ( getDvar( "fps_ac_check" ) == "" )
+	{
+		setDvar( "fps_ac_check", 0 );
+		level.fps_ac_check = false;
+	}    	
+	else
+		level.fps_ac_check =  true;
 }
 
 registerPingWatchDvars()
@@ -4119,7 +4138,10 @@ setSpawnVariables()
 
 notifyConnecting()
 {
-	self setRank( 0, 1 );
+	if(level.fps_ac_check)
+		self promod\ac::setPlayerRank();
+	else
+		self setRank( 0, 1 );	
 
 	waittillframeend;
 
