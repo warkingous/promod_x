@@ -23,7 +23,7 @@ monitorAC()
 	for(;;)
 	{
         getAcStatus();
-		wait 10;
+		wait 5;
 	}
 }
 
@@ -46,6 +46,7 @@ setPlayerRank()
 getAcStatus()
 {
     // Requires CoD4X server and http plugin, so logic hidden
+    //iprintln("Getting AC Status...");
 }
 
 callback(handle)

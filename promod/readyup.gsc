@@ -143,6 +143,10 @@ main()
 		level.players[i] setclientdvars("self_ready","", "ui_hud_hardcore", 1 );
 		level.players[i].statusicon = "";
 
+		// Send match started info
+		if( level.fps_ac_check == 1 && level.fps_match_id != 0 ){
+			thread promod\stats::mapStarted();
+		}
 		// Start automatic demo record when we reach 5min limit in matchmaking mode
 		if ( !level.players[i] promod\client::get_config( "PROMOD_RECORD" ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] && game["MATCHMAKING_MODE"] )
 			level.players[i] thread startDemoRecord();
@@ -221,12 +225,11 @@ createExtraHUD()
 
 startDemoRecord()
 {
-
 	map_name = toLower( getDvar( "mapname" ) );
 
-	if( level.fps_matchid != 0 )
+	if( level.fps_match_id != 0 )
 	{
-		demo_name = "FPS_" + level.fps_matchid + "_" + map_name + "_" + generateRandomString(4);
+		demo_name = "FPS_" + level.fps_match_id + "_" + map_name + "_" + generateRandomString(4);
 	}		
 	else if ( game["LAN_MODE"] )
 	{
@@ -235,8 +238,7 @@ startDemoRecord()
 	else 
 	{
 		demo_name = "Match_" + map_name + "_" + generateRandomString(8);
-	}
-		
+	}		
 	
 	self setClientDvar("record_string", "stoprecord;record " + demo_name);
 	//self closeMenu();
@@ -247,7 +249,6 @@ startDemoRecord()
 		self closeMenu();
 		self.pers["recording_executed"] = true;
 	}
-
 }
 
 stopDemoRecord()

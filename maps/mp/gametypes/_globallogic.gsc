@@ -72,7 +72,7 @@ init()
 	level.infobars = [];
 
 	registerDvars();
-	registerMatchIdDvar();
+	registerMatchDvars();
 	registerPingWatchDvars();
 	registerAcDvar();
 
@@ -109,7 +109,7 @@ init()
 		setDvar( "scr_player_maxhealth", 100 );
 	
 	// AC
-	if(level.fps_ac_check && level.fps_matchid != 0)
+	if(level.fps_ac_check == 1 && level.fps_match_id != 0)
 		promod\ac::main();
 }
 
@@ -119,16 +119,25 @@ registerDvars()
 	makeDvarServerInfo( "ui_bomb_timer" );
 }
 
-registerMatchIdDvar()
+registerMatchDvars()
 {
-	// Set server fps_matchid
+	// Set server fps_match_id
 	if ( getDvar( "fps_match_id" ) == "" )
 	{
 		setDvar( "fps_match_id", 0 );
-		level.fps_matchid = 0;
+		level.fps_match_id = 0;
 	}    	
 	else
-		level.fps_matchid =  getDvarInt( "fps_match_id" );
+		level.fps_match_id =  getDvarInt( "fps_match_id" );
+
+	// Set server fps_match_type
+	if ( getDvar( "fps_match_type" ) == "" )
+	{
+		setDvar( "fps_match_type", 0 );
+		level.fps_match_type = 0;
+	}    	
+	else
+		level.fps_match_type =  getDvar( "fps_match_type" );
 }
 
 registerAcDvar()
@@ -136,10 +145,10 @@ registerAcDvar()
 	if ( getDvar( "fps_ac_check" ) == "" )
 	{
 		setDvar( "fps_ac_check", 0 );
-		level.fps_ac_check = false;
+		level.fps_ac_check = 0;
 	}    	
 	else
-		level.fps_ac_check =  true;
+		level.fps_ac_check = 1;
 }
 
 registerPingWatchDvars()
@@ -225,6 +234,7 @@ default_onDeadEvent( team )
 		setDvar( "ui_text_endreason", game["strings"]["allies_eliminated"] );
 
 		thread endGame( "axis", game["strings"]["allies_eliminated"] );
+		logPrint("endGame from 1 \n");
 	}
 	else if ( team == "axis" )
 	{
@@ -233,6 +243,7 @@ default_onDeadEvent( team )
 		setDvar( "ui_text_endreason", game["strings"]["axis_eliminated"] );
 
 		thread endGame( "allies", game["strings"]["axis_eliminated"] );
+		logPrint("endGame from 2 \n");
 	}
 	else
 	{
@@ -240,9 +251,15 @@ default_onDeadEvent( team )
 		setDvar( "ui_text_endreason", game["strings"]["tie"] );
 
 		if ( level.teamBased )
+		{
 			thread endGame( "tie", game["strings"]["tie"] );
+			logPrint("endGame from 3 \n");
+		}
 		else
+		{
 			thread endGame( undefined, game["strings"]["tie"] );
+			logPrint("endGame from 4 \n");
+		}
 	}
 }
 
@@ -252,6 +269,7 @@ default_onOneLeftEvent( team )
 	{
 		winner = getHighestScoringPlayer();
 		thread endGame( winner, &"MP_ENEMIES_ELIMINATED" );
+		logPrint("endGame from 5 \n");
 	}
 }
 
@@ -282,6 +300,7 @@ default_onTimeLimit()
 
 	// Start a thread to end the game
 	thread endGame( winner, game["strings"]["time_limit_reached"] );
+	logPrint("endGame from 6 \n");
 }
 
 default_onScoreLimit()
@@ -316,6 +335,7 @@ default_onScoreLimit()
 
 	// Start a thread to end the game
 	thread endGame( winner, game["strings"]["score_limit_reached"] );
+	logPrint("endGame from 7 \n");
 }
 
 updateGameEvents()
@@ -952,6 +972,10 @@ endGame( winner, endReasonText )
 	level.gameEnded = true;
 	level.inGracePeriod = false;
 
+	winnerTeamId = 0;
+	attack_score = 0;
+	defence_score = 0;
+
 	level notify ( "game_ended" );
 
 	setGameEndTime( 0 );
@@ -1036,6 +1060,8 @@ endGame( winner, endReasonText )
 
 		 // Increment the number of rounds played
 		game["roundsplayed"]++;
+		logPrint("ROUNDS" + game["roundsplayed"]);
+
 		roundSwitching = false;
 
 		// Check if we hit OVERTIME
@@ -1381,9 +1407,27 @@ endGame( winner, endReasonText )
 								"cg_drawSpectatorMessages", 0,
 								"g_compassShowEnemies", 0 );
 
+		if( level.fps_ac_check == 1 && level.fps_match_id != 0 )
+		{
+			// Send players stats to api
+			if ( isDefined( player.pers["teamId"] ) && player.pers["teamId"] != 0 )
+			{
+				if ( player.pers["team"] == winner )
+					winnerTeamId = player.pers["teamId"];
+				else if ( winner == "tie" )
+					winnerTeamId = -1;
+
+				player thread promod\stats::sendData();
+			}
+		}
+
 		// Print promod stats
-		player maps\mp\gametypes\_weapons::printStats();
+		player maps\mp\gametypes\_weapons::printStats(true);
 	}
+
+	// Send data to api
+	if ( level.fps_ac_check == 1 && level.fps_match_id != 0 )
+		thread promod\stats::mapFinished( attack_score, defence_score, winnerTeamId );
 
 	roundEndWait( level.postRoundTime );
 
@@ -3261,25 +3305,28 @@ checkRoundSwitch()
 			return true;
 		}
 
-	}else
-		{		
-			if ( game["roundsplayed"] % level.roundswitch == 0 )
+	}
+	else
+	{		
+		if ( game["roundsplayed"] % level.roundswitch == 0 )
+		{
+			if ( ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || getDvarInt( "promod_allow_readyup" ) && isDefined( game["CUSTOM_MODE"] ) && game["CUSTOM_MODE"] ) && game["promod_first_readyup_done"] )
 			{
-				if ( ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || getDvarInt( "promod_allow_readyup" ) && isDefined( game["CUSTOM_MODE"] ) && game["CUSTOM_MODE"] ) && game["promod_first_readyup_done"] )
+				if( game["MATCHMAKING_MODE"] )
 				{
-					if( game["MATCHMAKING_MODE"] )
 					game["promod_do_readyup"] = false;
-				else 
+				}
+				else
+				{ 
 					game["promod_do_readyup"] = true;
 				}
-
-				game["promod_timeout_called"] = false;
-
-				[[level.onRoundSwitch]]();
-				return true;
 			}
+			game["promod_timeout_called"] = false;
+
+			[[level.onRoundSwitch]]();
+			return true;
 		}
-	
+	}	
 
 	return false;
 }
@@ -3342,6 +3389,15 @@ Callback_PlayerConnect()
 	self.assists = self getPersStat( "assists" );
 
 	self initPersStat( "teamkills" );
+
+	self initPersStat( "damage_done" );
+	self initPersStat( "damage_taken" );
+	self initPersStat( "friendly_damage_done" );
+	self initPersStat( "friendly_damage_taken" );
+	self initPersStat( "shots" );
+	self initPersStat( "hits" );
+	self initPersStat( "plants" );
+	self initPersStat( "defuses" );
 
 	self.lastGrenadeSuicideTime = -1;
 
@@ -3431,6 +3487,9 @@ Callback_PlayerConnect()
 
 Callback_PlayerDisconnect()
 {
+	if ( level.fps_match_id != 0 && level.fps_ac_check == 1 && isDefined( self.pers["teamId"] ))
+		self promod\stats::sendData();
+
 	self removePlayerOnDisconnect();
 
 	[[level.onPlayerDisconnect]]();
@@ -3456,7 +3515,7 @@ Callback_PlayerDisconnect()
 
 	self promod\shoutcast::removePlayer();
 	self promod\enemylist::removePlayerInfo();
-	self maps\mp\gametypes\_weapons::printStats();
+	self maps\mp\gametypes\_weapons::printStats(true);
 
 	if ( isDefined( self.pers["team"] ) && ( self.pers["team"] == "allies" || self.pers["team"] == "axis" ) )
 		thread maps\mp\gametypes\_promod::updateClassAvailability( self.pers["team"] );
@@ -3662,7 +3721,12 @@ Callback_PlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, s
 				thread dinkNoise(eAttacker, self);
 
 			if ( iDamage > 0 && ( getDvarInt( "scr_enable_hiticon" ) == 1 || getDvarInt( "scr_enable_hiticon" ) == 2 && !(iDFlags & level.iDFLAGS_PENETRATION) ) )
-				eAttacker thread maps\mp\gametypes\_damagefeedback::updateDamageFeedback( false );
+			{
+				if ( sMeansOfDeath == "MOD_HEAD_SHOT" )
+					eAttacker thread maps\mp\gametypes\_damagefeedback::updateDamageFeedback( true );
+				else 
+					eAttacker thread maps\mp\gametypes\_damagefeedback::updateDamageFeedback( false );
+			}
 		}
 
 		self.hasDoneCombat = true;
@@ -4138,7 +4202,7 @@ setSpawnVariables()
 
 notifyConnecting()
 {
-	if(level.fps_ac_check)
+	if(level.fps_ac_check == 1)
 		self promod\ac::setPlayerRank();
 	else
 		self setRank( 0, 1 );	
@@ -4192,19 +4256,19 @@ getObjectiveHintText( team )
 }
 
 checkOvertimeSwitch() {
-    if (!level.roundSwitch || level.gametype == "dm" || level.gametype == "sab" || level.gametype == "war" || level.gametype == "koth")
+    if ( !level.roundSwitch || level.gametype == "dm" || level.gametype == "sab" || level.gametype == "war" || level.gametype == "koth" )
         return false;
 
     if (hitOvertime() && level.overtimeRoundSwitch > 0) {
-    //iPrintLnBold("Overtime switch");
-	game["promod_do_readyup"] = isDefined(game["PROMOD_MATCH_MODE"]) && game["PROMOD_MATCH_MODE"] == "match" || getDvarInt("promod_allow_readyup") && isDefined(game["CUSTOM_MODE"]) && game["CUSTOM_MODE"];
-        
-	game["promod_timeout_called"] = false;
-    game["promod_overtime_active"] = true;
-    game["promod_overtime_count"]++;
-    [[level.onRoundSwitch]]();
-    
-	return true;
+		//iPrintLnBold("Overtime switch");
+		game["promod_do_readyup"] = isDefined(game["PROMOD_MATCH_MODE"]) && game["PROMOD_MATCH_MODE"] == "match" || getDvarInt("promod_allow_readyup") && isDefined(game["CUSTOM_MODE"]) && game["CUSTOM_MODE"];
+			
+		game["promod_timeout_called"] = false;
+		game["promod_overtime_active"] = true;
+		game["promod_overtime_count"]++;
+		[[level.onRoundSwitch]]();
+		
+		return true;
     }
 
     return false;

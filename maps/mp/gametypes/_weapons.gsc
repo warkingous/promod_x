@@ -141,7 +141,7 @@ shotCounter()
 	}
 }
 
-printStats()
+printStats( reset )
 {
 	if(isDefined(game["PROMOD_MATCH_MODE"]) && game["PROMOD_MATCH_MODE"] == "match" && isDefined(self.hasDoneCombat) && self.hasDoneCombat && isDefined(level.gameEnded) && !level.gameEnded && (!isDefined( game["promod_do_readyup"] ) || !game["promod_do_readyup"]))
 		self iprintln("Can't display stats. Wait for the round to end.");
@@ -179,12 +179,15 @@ printStats()
 		self iprintln("Shots Fired: ^2" + self.pers["shots"] + "^7 Shots Hit: ^2" + self.pers["hits"] + "^7 Accuracy: ^1" + acc + " pct");
 
 		// Reset the stats afterwards
-		self.pers["damage_done"] = 0;
-		self.pers["damage_taken"] = 0;
-		self.pers["friendly_damage_done"] = 0;
-		self.pers["friendly_damage_taken"] = 0;
-		self.pers["shots"] = 0;
-		self.pers["hits"] = 0;
+		if ( reset )
+		{
+			self.pers["damage_done"] = 0;
+			self.pers["damage_taken"] = 0;
+			self.pers["friendly_damage_done"] = 0;
+			self.pers["friendly_damage_taken"] = 0;
+			self.pers["shots"] = 0;
+			self.pers["hits"] = 0;
+		}
 	}
 }
 

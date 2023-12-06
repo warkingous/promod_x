@@ -179,6 +179,7 @@ sd_endGame( winningTeam, endReasonText )
 		[[level._setTeamScore]]( winningTeam, [[level._getTeamScore]]( winningTeam ) + 1 );
 
 	thread maps\mp\gametypes\_globallogic::endGame( winningTeam, endReasonText );
+	logPrint("endGame from 8 \n");
 }
 
 onDeadEvent( team )
@@ -189,9 +190,15 @@ onDeadEvent( team )
 	if ( team == "all" )
 	{
 		if ( level.bombPlanted )
+		{
 			sd_endGame( game["attackers"], game["strings"][game["defenders"]+"_eliminated"] );
+			logPrint("endGame from 9 \n");
+		}
 		else
+		{
 			sd_endGame( game["defenders"], game["strings"][game["attackers"]+"_eliminated"] );
+			logPrint("endGame from 10 \n");
+		}
 	}
 	else if ( team == game["attackers"] )
 	{
@@ -199,17 +206,27 @@ onDeadEvent( team )
 			return;
 
 		sd_endGame( game["defenders"], game["strings"][game["attackers"]+"_eliminated"] );
+		logPrint("endGame from 11 \n");
 	}
 	else if ( team == game["defenders"] )
+	{
 		sd_endGame( game["attackers"], game["strings"][game["defenders"]+"_eliminated"] );
+		logPrint("endGame from 12 \n");
+	}
 }
 
 onTimeLimit()
 {
 	if ( level.teamBased )
+	{
 		sd_endGame( game["defenders"], game["strings"]["time_limit_reached"] );
+		logPrint("endGame from 13 \n");
+	}
 	else
+	{
 		sd_endGame( undefined, game["strings"]["time_limit_reached"] );
+		logPrint("endGame from 14 \n");
+	}
 }
 
 updateGametypeDvars()
@@ -392,6 +409,8 @@ onUsePlantObject( player )
 			game["promod_scorebot_ticker_buffer"] += "planted_by" + player.name;
 
 		logPrint("P_P;" + player getGuid() + ";" + player getEntityNumber() + ";" + player.name + "\n");
+
+		player incPersStat( "plants", 1 );
 	}
 }
 
@@ -415,6 +434,8 @@ onUseDefuseObject( player )
 		game["promod_scorebot_ticker_buffer"] += "defused_by" + player.name;
 
 	logPrint("P_D;" + player getGuid() + ";" + player getEntityNumber() + ";" + player.name + "\n");
+
+	player incPersStat( "defuses", 1 );
 }
 
 onDrop( player )
@@ -550,6 +571,7 @@ bombPlanted( destroyedObj, player )
 	wait 0.05;
 
 	sd_endGame( game["attackers"], game["strings"]["target_destroyed"] );
+	logPrint("endGame from 15 \n");
 }
 
 BombTimerWait()
@@ -581,4 +603,10 @@ bombDefused()
 	wait 0.05;
 
 	sd_endGame( game["defenders"], game["strings"]["bomb_defused"] );
+	logPrint("endGame from 16 \n");
+}
+
+incPersStat( dataName, increment )
+{
+	self.pers[dataName] += increment;
 }

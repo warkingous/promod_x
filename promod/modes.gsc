@@ -165,6 +165,7 @@ setMode( mode )
 	game["PROMOD_KNIFEROUND"] = 0;
 	game["SCORES_ATTACK"] = 0;
 	game["SCORES_DEFENCE"] = 0;
+	game["PROMOD_KNOCKOUT"] = 0;
 
 	if ( mode == "comp_public" )
 	{
@@ -238,6 +239,7 @@ setMode( mode )
 				case "knockout":
 					knockout_mode = 1;
 					game["PROMOD_MATCH_MODE"] = "match";
+					game["PROMOD_KNOCKOUT"] = 1;
 					break;
 				case "lan":
 					game["LAN_MODE"] = 1;
