@@ -1,9 +1,7 @@
 /*
   Copyright (c) 2009-2017 Andreas Göransson <andreas.goransson@gmail.com>
   Copyright (c) 2009-2017 Indrek Ardel <indrek@ardel.eu>
-
   This file is part of Call of Duty 4 Promod.
-
   Call of Duty 4 Promod is licensed under Promod Modder Ethical Public License.
   Terms of license can be found in LICENSE.md document bundled with the project.
 */
@@ -299,7 +297,7 @@ sabotage()
 		level.sabBomb.onDrop = ::onDrop;
 		level.sabBomb.objPoints["allies"].archived = true;
 		level.sabBomb.objPoints["axis"].archived = true;
-		level.sabBomb.autoResetTime = 60;
+		level.sabBomb.autoResetTime = 60.0;
 	}
 	else
 	{
@@ -364,7 +362,7 @@ onPickup( player )
 {
 	level notify ( "bomb_picked_up" );
 
-	self.autoResetTime = 60;
+	self.autoResetTime = 60.0;
 
 	level.useStartSpawns = false;
 
@@ -416,13 +414,15 @@ onDrop( player )
 
 		playSoundOnPlayers( game["bomb_dropped_sound"], self maps\mp\gametypes\_gameobjects::getOwnerTeam() );
 
-		thread abandonmentThink();
+		thread abandonmentThink( 0.0 );
 	}
 }
 
-abandonmentThink()
+abandonmentThink( delay )
 {
 	level endon ( "bomb_picked_up" );
+
+	wait delay;
 
 	if ( isDefined( self.carrier ) )
 		return;
@@ -465,8 +465,6 @@ onUse( player )
 		if ( isDefined( level.scorebot ) && level.scorebot )
 			game["promod_scorebot_ticker_buffer"] += "planted_by" + player.name;
 
-		logPrint("P_P;" + player getGuid() + ";" + player getEntityNumber() + ";" + player.name + "\n");
-
 		level.bombOwner = player;
 
 		level.sabBomb.autoResetTime = undefined;
@@ -492,8 +490,6 @@ onUse( player )
 
 		if ( isDefined( level.scorebot ) && level.scorebot )
 			game["promod_scorebot_ticker_buffer"] += "defused_by" + player.name;
-
-		logPrint("P_D;" + player getGuid() + ";" + player getEntityNumber() + ";" + player.name + "\n");
 
 		if ( level.inOverTime && isDefined( level.plantingTeamDead ) )
 		{
