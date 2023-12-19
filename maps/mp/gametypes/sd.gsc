@@ -150,6 +150,7 @@ onSpawnPlayer()
 {
 	self.isPlanting = false;
 	self.isDefusing = false;
+	self.isBombCarrier = false;
 
 	if ( self.pers["team"] == game["attackers"] )
 		spawnPointName = "mp_sd_spawn_attacker";
@@ -443,8 +444,10 @@ onDrop( player )
 	if ( !level.bombPlanted )
 	{
 		if ( isDefined( player ) && isDefined( player.name ) )
+		{
+			self.isBombCarrier = false;
 			printOnTeamArg( &"MP_EXPLOSIVES_DROPPED_BY", game["attackers"], player );
-
+		}
 		if ( isDefined( level.scorebot ) && level.scorebot && isDefined( player ) && isDefined( player.name ) )
 			game["promod_scorebot_ticker_buffer"] += "dropped_bomb" + player.name;
 	}
@@ -457,6 +460,8 @@ onDrop( player )
 
 onPickup( player )
 {
+	player.isBombCarrier = true;
+
 	self maps\mp\gametypes\_gameobjects::set3DIcon( "friendly", "waypoint_defend" );
 
 	if ( !level.bombDefused )
@@ -527,6 +532,8 @@ bombPlanted( destroyedObj, player )
 	defuseObject maps\mp\gametypes\_gameobjects::set2DIcon( "friendly", "compass_waypoint_defuse" + label );
 	defuseObject maps\mp\gametypes\_gameobjects::set2DIcon( "enemy", "compass_waypoint_defend" + label );
 
+	level.defuseObject = defuseObject;
+	
 	defuseObject.label = label;
 	defuseObject.onBeginUse = ::onBeginUse;
 	defuseObject.onEndUse = ::onEndUse;

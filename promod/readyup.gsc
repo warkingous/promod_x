@@ -124,7 +124,7 @@ main()
 
 			for ( i = 0; i < level.players.size; i++ )
 			{
-				if ( !level.players[i] promod\client::get_config( "PROMOD_RECORD" ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] )
+				if ( !level.players[i] promod\client::get_config( "PROMOD_RECORD" ) && !isDefined( level.players[i].isBot ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] )
 				{
 					level.players[i] thread startDemoRecord();					
 				}
@@ -356,8 +356,8 @@ selfLoop()
 		while ( !isDefined( self.pers["team"] ) || self.pers["team"] == "none" )
 			wait 0.05;
 		
-		// Spectator always ready
-		while ( self.pers["team"] == "spectator" )
+		// Spectator & bots always ready
+		while ( self.pers["team"] == "spectator" || isDefined( self.isBot ) )
 		{
 			self.ready = true;
 			wait 0.05;
@@ -384,11 +384,13 @@ selfLoop()
 		if ( !isDefined( self.ruptally ) || self.ruptally == -1 )
 		{
 			//self.hint1 setText( "" );
-			self.hint2 setText( "" );
+			if( isDefined( self.hint2 ))
+				self.hint2 setText( "" );
 		}
 		else {
 			//self.hint1 setText( "Hold ^3[{+melee}]" );
-			self.hint2 setText( "Hold ^3[{+melee}]^7 for Immunity" );
+			if( isDefined( self.hint2 ))
+				self.hint2 setText( "Hold ^3[{+melee}]^7 for Immunity" );
 		}
 			
 

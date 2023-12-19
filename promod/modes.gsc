@@ -376,6 +376,8 @@ setMode( mode )
 		game["PROMOD_MODE_HUD"] += " ^1CHEATS";
 
 	if(level.gametype != "sd") game["PROMOD_KNIFEROUND"] = 0;
+
+	game["MR"] = mr_rating;
 }
 
 pub()

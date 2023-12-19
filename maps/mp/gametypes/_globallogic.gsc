@@ -3399,6 +3399,9 @@ Callback_PlayerConnect()
 	self initPersStat( "plants" );
 	self initPersStat( "defuses" );
 
+	self.isDefusing = false;
+	self.isPlanting = false;
+
 	self.lastGrenadeSuicideTime = -1;
 
 	self.teamkillsThisRound = 0;
