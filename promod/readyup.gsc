@@ -124,7 +124,7 @@ main()
 
 			for ( i = 0; i < level.players.size; i++ )
 			{
-				if ( !level.players[i] promod\client::get_config( "PROMOD_RECORD" ) && !isDefined( level.players[i].isBot ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] )
+				if ( !level.players[i] promod\client::get_config( "PROMOD_RECORD" ) && !isDefined( level.players[i].pers["isBot"] ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] )
 				{
 					level.players[i] thread startDemoRecord();					
 				}
@@ -138,20 +138,32 @@ main()
 	level notify("kill_ru_period");
 	level notify("header_destroy");
 
-	for(i=0;i<level.players.size;i++)
+	// Send match started info
+	if( game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.players.size > 1 && level.fps_track_stats == 1 && level.fps_is_public == 0 && !game["promod_first_readyup_done"]){
+		thread promod\stats::findTeamId("allies");
+		wait 0.1;
+		thread promod\stats::findTeamId("axis");
+		wait 0.1;
+		thread promod\stats::mapStarted();
+		wait 0.2;
+		thread promod\stats::initPlayers();
+	}
+
+	// Public stats
+	if ( level.fps_track_stats == 1 && level.fps_is_public == 1 )
+		thread promod\stats::publicMapStarted();
+
+	for( i = 0;i < level.players.size; i++)
 	{
 		level.players[i] setclientdvars("self_ready","", "ui_hud_hardcore", 1 );
 		level.players[i].statusicon = "";
 
-		// Send match started info
-		if( level.fps_ac_check == 1 && level.fps_match_id != 0 ){
-			thread promod\stats::mapStarted();
-		}
 		// Start automatic demo record when we reach 5min limit in matchmaking mode
-		if ( !level.players[i] promod\client::get_config( "PROMOD_RECORD" ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] && game["MATCHMAKING_MODE"] )
+		if ( !level.players[i] promod\client::get_config( "PROMOD_RECORD" ) && !isDefined( level.players[i].pers["isBot"] ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] && game["MATCHMAKING_MODE"] )
 			level.players[i] thread startDemoRecord();
 	}
-	for(i=0;i<level.players.size;i++)
+
+	for( i = 0;i < level.players.size; i++)
 		level.players[i] ShowScoreBoard();
 
 	game["state"] = "postgame";
@@ -357,7 +369,7 @@ selfLoop()
 			wait 0.05;
 		
 		// Spectator & bots always ready
-		while ( self.pers["team"] == "spectator" || isDefined( self.isBot ) )
+		while ( self.pers["team"] == "spectator" || isDefined( self.pers["isBot"] ) )
 		{
 			self.ready = true;
 			wait 0.05;

@@ -33,6 +33,7 @@ main( bScriptgened, bCSVgened, bsgenabled )
 	thread promod\dvarmon::main();
 	thread promod\servercheck::main();
 	thread promod\modes::monitorMode();
+	thread promod\modes::monitorMatchId();
 
 	VisionSetNight( "default_night" );
 

@@ -316,3 +316,40 @@ onWeaponDamage( eInflictor, sWeapon, meansOfDeath, damage )
 
 	maps\mp\gametypes\_shellshock::shellshockOnDamage( meansOfDeath, damage );
 }
+
+isPrimaryWeapon( weapon )
+{
+	if ( 
+        weapon == "ak47_mp" || 
+        weapon == "ak74u_mp" ||  
+        weapon == "m40a3_mp" || 
+        weapon == "remington700_mp" ||
+        weapon == "none_mp" ||
+        weapon == "m16_mp" ||
+        weapon == "m4_mp" ||
+        weapon == "g3_mp" ||
+        weapon == "g36c_mp" ||
+        weapon == "m14_mp" ||
+        weapon == "mp44_mp" ||
+        weapon == "mp5_mp" ||
+        weapon == "uzi_mp" ||
+        weapon == "winchester1200_mp" ||
+        weapon == "m1014_mp"
+        )
+		return true;
+	
+	return false;
+}
+isSideArm( weapon )
+{
+    if ( 
+        weapon == "deserteaglegold_mp" || 
+        weapon == "deserteagle_mp" ||  
+        weapon == "colt45_mp" ||
+        weapon == "usp_mp" ||
+        weapon == "beretta_mp"
+        )
+		return true;
+	
+	return false;
+}

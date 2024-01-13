@@ -107,6 +107,16 @@ init()
 		setDvar( "scr_player_maxhealth", 30 );
 	else
 		setDvar( "scr_player_maxhealth", 100 );
+
+	// Stats variables
+	if ( !isDefined( game["alliesTeamId"] ) )
+		game["alliesTeamId"] = -1;
+
+	if ( !isDefined( game["axisTeamId"] ) )
+		game["axisTeamId"] = -1;
+	
+	// So we can track overtimes
+	//game["totalroundsplayed"] = 0;
 	
 	// AC
 	if(level.fps_ac_check == 1 && level.fps_match_id != 0)
@@ -133,22 +143,39 @@ registerMatchDvars()
 	// Set server fps_match_type
 	if ( getDvar( "fps_match_type" ) == "" )
 	{
-		setDvar( "fps_match_type", 0 );
-		level.fps_match_type = 0;
+		setDvar( "fps_match_type", "custom" );
+		level.fps_match_type = "custom";
 	}    	
 	else
-		level.fps_match_type =  getDvar( "fps_match_type" );
+		level.fps_match_type = getDvar( "fps_match_type" );
+
+	// Set server fps_track_stats
+	if ( getDvar( "fps_track_stats" ) == "" )
+	{
+		setDvar( "fps_track_stats", 0 );
+		level.fps_track_stats = 0;
+	}    	
+	else
+		level.fps_track_stats = getDvarInt( "fps_track_stats" );
+
+	// Set server type
+	if ( getDvar( "fps_is_public" ) == "" )
+	{
+		setDvar( "fps_is_public", 0 );
+		level.fps_is_public = 0;
+	}    	
+	else
+		level.fps_is_public = getDvarInt( "fps_is_public" );
 }
 
 registerAcDvar()
 {
-	if ( getDvar( "fps_ac_check" ) == "" )
+	if ( getDvarInt( "fps_ac_check" ) == 1 )
 	{
-		setDvar( "fps_ac_check", 0 );
-		level.fps_ac_check = 0;
+		level.fps_ac_check = 1;
 	}    	
 	else
-		level.fps_ac_check = 1;
+		level.fps_ac_check = 0;
 }
 
 registerPingWatchDvars()
@@ -546,7 +573,7 @@ spawnPlayer()
 	if (!isDefined(self.pers["recording_executed"]))
 		self.pers["recording_executed"] = false;
 
-	if ( !self promod\client::get_config( "PROMOD_RECORD" ) && isDefined( self.pers["team"] ) && self.pers["team"] != "spectator" && !self.pers["recording_executed"] && game["roundsplayed"] > 0)
+	if ( !self promod\client::get_config( "PROMOD_RECORD" ) && !isDefined( self.pers["isBot"] ) && isDefined( self.pers["team"] ) && self.pers["team"] != "spectator" && !self.pers["recording_executed"] && game["roundsplayed"] > 0 && level.gametype == "sd" && level.fps_is_public == 0 )
     {
         self thread promod\readyup::startDemoRecord();
     }
@@ -1060,6 +1087,8 @@ endGame( winner, endReasonText )
 
 		 // Increment the number of rounds played
 		game["roundsplayed"]++;
+		game["totalroundsplayed"]++;
+
 		logPrint("ROUNDS" + game["roundsplayed"]);
 
 		roundSwitching = false;
@@ -1166,6 +1195,17 @@ endGame( winner, endReasonText )
 			game["teamScores"]["allies"] = game["teamScores"]["axis"];
 			game["teamScores"]["axis"] = old_score;
 
+			// Swap teamIds for stats
+			if( level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 && level.fps_is_public == 0 )
+			{
+				old_teamId = game["alliesTeamId"] ;
+				game["alliesTeamId"] = game["axisTeamId"];
+				game["axisTeamId"] = old_teamId;
+				//iprintln("switch ot");		
+
+				thread promod\stats::halftime();	
+			}
+
 			// Reset the timeout flags for both teams
 			game["allies_timeout_called"] = 0;
 			game["axis_timeout_called"] = 0;
@@ -1256,6 +1296,17 @@ endGame( winner, endReasonText )
 			thread maps\mp\gametypes\_promod::updateClassAvailability( "allies" );
 			thread maps\mp\gametypes\_promod::updateClassAvailability( "axis" );
 
+			// Swap teamIds for stats
+			if( level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 && level.fps_is_public == 0 )
+			{
+				old_teamId = game["alliesTeamId"] ;
+				game["alliesTeamId"] = game["axisTeamId"];
+				game["axisTeamId"] = old_teamId;
+				//iprintln("switch");		
+
+				thread promod\stats::halftime();	
+			}
+
 			// Wait for the specified round end delay for halftime
 			roundEndWait( level.halftimeRoundEndDelay );
 		}
@@ -1325,6 +1376,7 @@ endGame( winner, endReasonText )
 				}
 
 				game["roundsplayed"]--;
+				game["totalroundsplayed"]--;
 				[[level._setTeamScore]]( "allies", 0 );
 				[[level._setTeamScore]]( "axis", 0 );
 
@@ -1402,14 +1454,12 @@ endGame( winner, endReasonText )
 			// Show winner
 			player thread maps\mp\gametypes\_hud_message::outcomeNotify( winner, endReasonText );
 
-		player setClientDvars(
-								"ui_hud_hardcore", 1,
-								"cg_drawSpectatorMessages", 0,
-								"g_compassShowEnemies", 0 );
+		player setClientDvars( "ui_hud_hardcore", 1, "cg_drawSpectatorMessages", 0, "g_compassShowEnemies", 0 );
 
-		if( level.fps_ac_check == 1 && level.fps_match_id != 0 )
+		// Players stats
+		if( level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 && level.fps_is_public == 0 )
 		{
-			// Send players stats to api
+			// Send players stats to api on map end
 			if ( isDefined( player.pers["teamId"] ) && player.pers["teamId"] != 0 )
 			{
 				if ( player.pers["team"] == winner )
@@ -1417,16 +1467,20 @@ endGame( winner, endReasonText )
 				else if ( winner == "tie" )
 					winnerTeamId = -1;
 
-				player thread promod\stats::sendData();
+				player thread promod\stats::sendStatsData();
 			}
 		}
+
+		// Public stats
+		if ( level.fps_is_public ==1 && level.fps_track_stats == 1 && !isDefined( self.pers["isBot"] ))
+			player thread promod\stats::sendPublicStatsData();
 
 		// Print promod stats
 		player maps\mp\gametypes\_weapons::printStats(true);
 	}
 
-	// Send data to api
-	if ( level.fps_ac_check == 1 && level.fps_match_id != 0 )
+	// Send data to api on map end
+	if ( level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 )
 		thread promod\stats::mapFinished( attack_score, defence_score, winnerTeamId );
 
 	roundEndWait( level.postRoundTime );
@@ -3127,6 +3181,9 @@ Callback_StartGameType()
 	if ( !isdefined( game["roundsplayed"] ) )
 		game["roundsplayed"] = game["SCORES_ATTACK"] + game["SCORES_DEFENCE"];
 
+	if ( !isDefined( game["totalroundsplayed"] ) )
+		game["totalroundsplayed"] = game["SCORES_ATTACK"] + game["SCORES_DEFENCE"];
+
 	if ( !isDefined( game["promod_do_readyup"] ) )
 		game["promod_do_readyup"] = false;
 
@@ -3490,8 +3547,13 @@ Callback_PlayerConnect()
 
 Callback_PlayerDisconnect()
 {
-	if ( level.fps_match_id != 0 && level.fps_ac_check == 1 && isDefined( self.pers["teamId"] ))
-		self promod\stats::sendData();
+	// Players stats
+	if ( level.fps_match_id != 0 && level.fps_ac_check == 1 && level.fps_track_stats == 1 && isDefined( self.pers["teamId"] ))
+		self promod\stats::sendStatsData();
+
+	// Public stats
+	if ( level.fps_track_stats == 1 && level.fps_is_public == 1 )
+		self promod\stats::sendPublicStatsData();
 
 	self removePlayerOnDisconnect();
 
@@ -3541,6 +3603,15 @@ removePlayerOnDisconnect()
 			break;
 		}
 	}
+}
+
+isWallBang( attacker, victim )
+{
+	start = attacker getEye();
+	end = victim getEye();
+	if( bulletTracePassed( start, end, false, attacker ) )
+		return false;
+	return true;
 }
 
 isHeadShot( sWeapon, sHitLoc, sMeansOfDeath )
@@ -3726,7 +3797,7 @@ Callback_PlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, s
 			if ( iDamage > 0 && ( getDvarInt( "scr_enable_hiticon" ) == 1 || getDvarInt( "scr_enable_hiticon" ) == 2 && !(iDFlags & level.iDFLAGS_PENETRATION) ) )
 			{
 				if ( sMeansOfDeath == "MOD_HEAD_SHOT" )
-					eAttacker thread maps\mp\gametypes\_damagefeedback::updateDamageFeedback( true );
+					eAttacker thread maps\mp\gametypes\_damagefeedback::updateDamageFeedback( false );
 				else 
 					eAttacker thread maps\mp\gametypes\_damagefeedback::updateDamageFeedback( false );
 			}
@@ -3859,8 +3930,8 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 		obituary(self, attacker, sWeapon, sMeansOfDeath);
 
 	// Fixed old promod bug when suicide()
-	if ( !isDefined( game["promod_do_readyup"] ) || !game["promod_do_readyup"] && attacker != self )
-		self maps\mp\gametypes\_weapons::dropWeaponForDeath( attacker );
+	//if ( !isDefined( game["promod_do_readyup"] ) || !game["promod_do_readyup"] && attacker != self )
+	self maps\mp\gametypes\_weapons::dropWeaponForDeath( attacker );
 
 	self.sessionstate = "dead";
 
@@ -3884,10 +3955,20 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 		}
 	}
 
-	lpattackGuid = "";
-	lpattackname = "";
-	lpattackerteam = "";
+	lpattackGuid = "-1";
+	lpattackname = "-1";
+	lpattackerteam = "-1";
+	attackerStance = "-1";
 	lpattacknum = -1;
+	attackerADS = -1;
+	attackerIsOnGround = -1;
+	isAttackerDefusing = -1;
+	isAttackerPlanting = -1;
+	isAttackerFlashed = -1;
+	isTeamkill = false;	
+	metrestring = 0;
+	isWallbang = isWallbang( attacker, self );
+	camo = "camo_none";
 
 	prof_end( "PlayerKilled pre constants" );
 
@@ -3895,6 +3976,26 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	{
 		lpattackGuid = attacker getGuid();
 		lpattackname = attacker.name;
+		lpattackerteam = attacker.pers["team"];
+		attackerStance = attacker getStance();
+		attackerADS = attacker playerADS();
+		attackerIsOnGround = attacker isOnGround();
+		
+		if( isDefined( attacker.isDefusing ) )
+			isAttackerDefusing = attacker.isDefusing; 
+		if( isDefined( attacker.isPlanting ) )
+			isAttackerPlanting = attacker.isPlanting;
+
+		isAttackerFlashed = attacker maps\mp\_flashgrenades::isFlashbanged();
+		metrestring = int(distance(self.origin, attacker.origin) * 2.54) / 100;
+
+		// camo
+		if ( maps\mp\gametypes\_weapons::isPrimaryWeapon( sWeapon ) )
+			camo = attacker.pers[attacker.pers["class"]]["loadout_camo"];
+		
+		if ( maps\mp\gametypes\_weapons::isSideArm( sWeapon ) )
+			camo = attacker.pers[attacker.pers["class"]]["loadout_secondary_camo"];
+
 
 		if ( attacker == self )
 		{
@@ -3946,6 +4047,7 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 					attacker thread [[level.onXPEvent]]( "teamkill" );
 
 					attacker.pers["teamkills"] += 1;
+					isTeamkill = true;
 
 					if ( maps\mp\gametypes\_tweakables::getTweakableValue( "team", "teamkillpointloss" ) )
 					{
@@ -4052,6 +4154,61 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 		game["promod_scorebot_ticker_buffer"] += "kill" + lpattackname + "" + scWeapon + "" + self.name + "" + sHeadshot;
 
 	logPrint( "K;" + self getGuid() + ";" + self getEntityNumber() + ";" + self.pers["team"] + ";" + self.name + ";" + lpattackguid + ";" + lpattacknum + ";" + lpattackerteam + ";" + lpattackname + ";" + sWeapon + ";" + iDamage + ";" + sMeansOfDeath + ";" + sHitLoc + "\n" );
+
+	// Stats
+	if( isDefined( eInflictor ) )
+		inflictorOrigin = eInflictor.origin;
+	else 	
+		inflictorOrigin = "";
+
+	if ( isDefined( timeUntilRoundEnd() ) )
+		time = ( timeUntilRoundEnd() - level.postRoundTime );
+	else 
+		time = 0;
+
+	if( !level.rdyup && attacker != self && lpattackerteam != "world" && isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 
+		)//|| !level.rdyup && attacker != self && lpattackerteam != "world" && level.fps_track_stats == 1 && level.fps_is_public == 1 )
+	{
+		thread promod\stats::processKillData(	
+			attacker,
+			self,
+			lpattackGuid,
+			lpattackname,
+			"None",
+			lpattackerteam,
+			attackerStance,
+			attackerAds,
+			attackerIsOnGround,
+			isAttackerDefusing,
+			isAttackerPlanting,
+			isAttackerFlashed,
+			attacker.origin,
+			self.name,
+			"None",
+			self.pers["team"], 
+			self getStance(),
+			self playerADS(),
+			self isOnGround(),
+			self.isDefusing,
+			self.isPlanting,
+			self maps\mp\_flashgrenades::isFlashbanged(),
+			self.origin,
+			isTeamkill,
+			isWallbang,
+			sWeapon, 
+			camo,
+			iDamage, 
+			metrestring,
+			sMeansOfDeath, 
+			sHitLoc,
+			inflictorOrigin,
+			time,
+			game["totalroundsplayed"]+1,
+			level.script,
+			level.fps_match_id
+		);
+	}
+
 
 	level thread updateTeamStatus();
 

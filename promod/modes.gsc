@@ -146,6 +146,78 @@ monitorMode()
 	}
 }
 
+monitorMatchId()
+{
+	old_matchId = getDvarInt( "fps_match_id" );
+
+	for(;;)
+	{
+		matchId = getDvarInt( "fps_match_id" );
+
+		if ( matchId != old_matchId )
+		{
+			if ( isDefined( game["state"] ) && game["state"] == "postgame" )
+			{
+				setDvar( "fps_match_id", old_matchId );
+				continue;
+			}
+
+			if ( canChangeMatchId() )
+			{
+				if ( validMatchId( matchId ) )
+				{
+					level notify ( "restarting" );
+
+					iPrintLN( "Changing the ^5FPS MATCH ID to ^7" + matchId + "\nPlease wait while it loads..." );
+					setMatchId( matchId );
+
+					wait 2;
+
+					map_restart( false );
+					thread promod\ac::onMatchIdChange();
+					//setDvar( "promod_mode", mode );
+				}
+				else
+				{
+					if ( isDefined( matchId ) && matchId != -1 )
+						iPrintLN( "Error Changing ^5FPS MATCH ID to ^7" + matchId + "\nFPS MATCH ID must be a number > 0" );
+
+					setDvar( "fps_match_id", old_matchId );
+				}
+			}
+			else
+			{
+				iPrintLn("You cant change ^5FPS MATCH ID ^7on servers genererated by FPSChallenge.eu^1!");
+				setDvar( "fps_match_id", old_matchId );
+			}
+
+		
+		}
+		wait 0.1;
+	}
+}
+
+setMatchId( matchId )
+{
+	level.fps_match_id = matchId;
+}
+
+canChangeMatchId()
+{
+	if( level.fps_match_type == "custom" )
+		return true;
+	else 
+		return false;
+}
+
+validMatchId( matchId )
+{
+	if ( matchId >= 0 )
+		return true;
+	else 
+		return false;
+}
+
 setMode( mode )
 {
 	limited_mode = 0;
