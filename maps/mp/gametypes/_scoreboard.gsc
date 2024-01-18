@@ -10,7 +10,7 @@
 
 init()
 {
-/* 	switch(game["allies"])
+ 	switch(game["allies"])
 	{
 		case "sas":
 			precacheShader("faction_128_sas");
@@ -58,5 +58,5 @@ init()
 	setdvar("g_ScoresColor_Spectator", "0.25 0.25 0.25");
 	setdvar("g_ScoresColor_Free", "0.76 0.78 0.1");
 	setdvar("g_teamColor_MyTeam", "0.6 0.8 0.6" );
-	setdvar("g_teamColor_EnemyTeam", "1 0.45 0.5" ); */
+	setdvar("g_teamColor_EnemyTeam", "1 0.45 0.5" ); 
 }
