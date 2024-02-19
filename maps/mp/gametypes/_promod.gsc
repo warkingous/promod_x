@@ -128,7 +128,6 @@ setClassChoice( classType )
 	if(idef)
 	{
 		self promod\shoutcast::addPlayer();
-		self promod\enemylist::addPlayerInfo();
 	}
 
 	self setClientDvar( "loadout_class", classType );

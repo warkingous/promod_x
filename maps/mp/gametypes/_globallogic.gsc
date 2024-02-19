@@ -69,7 +69,6 @@ init()
 	level.players = [];
 
 	level.shoutbars = [];
-	level.infobars = [];
 
 	registerDvars();
 	registerMatchDvars();
@@ -590,9 +589,6 @@ spawnPlayer()
 
 	// Update player information for Promod shoutcasting
 	self promod\shoutcast::updatePlayer();
-
-	// Update player information for Enemy list
-	self promod\enemylist::updatePlayerInfo();
 }
 
 // Remove weapons for knife round
@@ -1790,9 +1786,6 @@ menuAutoAssign()
 	if(isDefined(self.pers["shoutnum"]))
 		self promod\shoutcast::removePlayer();
 
-	if(isDefined(self.pers["infonum"]))
-		self promod\enemylist::removePlayerInfo();
-
 	self updateObjectiveText();
 
 	if ( level.teamBased )
@@ -1912,9 +1905,6 @@ menuAllies()
 		if(isDefined(self.pers["shoutnum"]))
 			self promod\shoutcast::removePlayer();
 
-		if(isDefined(self.pers["infonum"]))
-			self promod\enemylist::removePlayerInfo();
-
 		self updateObjectiveText();
 
 		if ( level.teamBased )
@@ -2001,9 +1991,6 @@ menuAxis()
 
 		if(isDefined(self.pers["shoutnum"]))
 			self promod\shoutcast::removePlayer();
-		
-		if(isDefined(self.pers["infonum"]))
-			self promod\enemylist::removePlayerInfo();
 
 		self updateObjectiveText();
 
@@ -2064,9 +2051,6 @@ menuKillspec()
 
 	if(isDefined(self.pers["shoutnum"]))
 		self promod\shoutcast::removePlayer();
-
-	if(isDefined(self.pers["infonum"]))
-		self promod\enemylist::removePlayerInfo();
 }
 
 menuSpectator()
@@ -2097,9 +2081,6 @@ menuSpectator()
 
 		if(isDefined(self.pers["shoutnum"]))
 			self promod\shoutcast::removePlayer();
-
-		if(isDefined(self.pers["infonum"]))
-			self promod\enemylist::removePlayerInfo();
 
 		self updateObjectiveText();
 
@@ -3579,7 +3560,6 @@ Callback_PlayerDisconnect()
 		self removeDisconnectedPlayerFromPlacement();
 
 	self promod\shoutcast::removePlayer();
-	self promod\enemylist::removePlayerInfo();
 	self maps\mp\gametypes\_weapons::printStats(true);
 
 	if ( isDefined( self.pers["team"] ) && ( self.pers["team"] == "allies" || self.pers["team"] == "axis" ) )
@@ -3882,9 +3862,6 @@ Callback_PlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, s
 
 	// Shoutcaster healthbar update
 	self promod\shoutcast::updatePlayer();
-
-	// Update player information for Enemy list
-	self promod\enemylist::updatePlayerInfo();
 }
 
 dinkNoise( player1, player2 )
@@ -3955,20 +3932,22 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 		}
 	}
 
-	lpattackGuid = "-1";
-	lpattackname = "-1";
-	lpattackerteam = "-1";
-	attackerStance = "-1";
-	lpattacknum = -1;
-	attackerADS = -1;
-	attackerIsOnGround = -1;
-	isAttackerDefusing = -1;
-	isAttackerPlanting = -1;
-	isAttackerFlashed = -1;
+	lpattackGuid = "0";
+	lpattackname = "0";
+	lpattackerteam = "0";
+	attackerStance = "0";
+	lpattacknum = 0;
+	attackerADS = 0;
+	attackerIsOnGround = 0;
+	isAttackerDefusing = 0;
+	isAttackerPlanting = 0;
+	isAttackerFlashed = 0;
 	isTeamkill = false;	
 	metrestring = 0;
 	isWallbang = isWallbang( attacker, self );
 	camo = "camo_none";
+	isClutchKill = false;
+	clutchKillsCounter = 0;
 
 	prof_end( "PlayerKilled pre constants" );
 
@@ -4021,6 +4000,17 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 			{
 				if (!level.rdyup)
 				{
+
+					// Check for clutch situation
+					checkClutchSituation(attacker);
+
+					// Track clutch kills
+					if (attacker.clutchSituation != "")
+					{
+						attacker.clutchKills++;
+						isClutchKill = true;
+					}
+
 					self thread [[level.onXPEvent]]( "suicide" );
 					self incPersStat( "suicides", 1 );
 					self.suicides = self getPersStat( "suicides" );
@@ -4134,9 +4124,6 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 
 	self promod\shoutcast::updatePlayer();
 
-	// Update player information for Enemy list
-	self promod\enemylist::updatePlayerInfo();
-
 	self.switching_teams = undefined;
 	self.joining_team = undefined;
 	self.leaving_team = undefined;
@@ -4195,6 +4182,9 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 			self.origin,
 			isTeamkill,
 			isWallbang,
+			isClutchKill,
+			attacker.clutchKills,
+			attacker.clutchSituation,
 			sWeapon, 
 			camo,
 			iDamage, 
@@ -4266,6 +4256,60 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 		timePassed = (gettime() - respawnTimerStartTime) / 1000;
 		self thread [[level.spawnClient]]( timePassed );
 	}
+}
+
+checkClutchSituation(attacker)
+{
+    // Get the number of players alive on each team
+    aliveCounts = getPlayersAlive();
+    
+    // Check if the player is the last man standing
+    if (aliveCounts[attacker.sessionteam] == 1)
+    {
+        // Determine the number of enemies alive
+        numEnemiesAlive = 0;
+        if (attacker.sessionteam == "axis")
+            numEnemiesAlive = aliveCounts["allies"];
+        else
+            numEnemiesAlive = aliveCounts["axis"];
+        
+        // Determine the type of clutch situation
+        if (numEnemiesAlive >= 1 && numEnemiesAlive <= 5)
+        {
+            // Update the player's clutch situation and reset their clutch kills
+            attacker.clutchSituation = "1v" + numEnemiesAlive;
+            attacker.clutchKills = 0;
+            
+            // Notify the player that they are in a clutch situation
+            //self notify("clutch_situation");
+        }
+    }else {
+		attacker.clutchSituation = "";
+        attacker.clutchKills = 0;
+	}
+}
+
+getPlayersAlive()
+{
+    aliveCounts = [];
+    
+    // Loop through all players to count the number of alive players on each team
+    for (i = 0; i < level.players.size; i++)
+    {
+        player = level.players[i];
+        
+        // Skip spectators
+        if (player.sessionteam == "spectator")
+            continue;
+        
+        // Increment the count for the player's team
+        if (!isDefined(aliveCounts[player.sessionteam]))
+            aliveCounts[player.sessionteam] = 1;
+        else
+            aliveCounts[player.sessionteam]++;
+    }
+    
+    return aliveCounts;
 }
 
 cancelKillCamOnUse()
