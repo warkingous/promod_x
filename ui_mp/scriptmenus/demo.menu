@@ -49,7 +49,7 @@
 
 		onClose
 		{
-			execNow "vstr record_string";
+			execOnDvarIntValue cl_demoplaying 0 "vstr record_string";
 			setDvar cl_bypassMouseInput "0";
 		}
 	}
