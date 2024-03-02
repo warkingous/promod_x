@@ -162,7 +162,7 @@ checkClipping()
                 crouchStartTime = 0; // Reset the start time
                 //self iPrintlnBold( "^1Clip detected^7 - " + self.name + ", time: " + timeDiff + ", distance: " + self.lastDistance );
                 //visualizeTriggers();           
-                if ( true )//isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 )     
+                if ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 )     
                 {
                     self.pers["clips"]++;
                     thread promod\stats::clipReport( self, game["totalroundsplayed"]+1, timeDiff );
