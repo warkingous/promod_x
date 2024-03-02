@@ -34,6 +34,39 @@ findTeamId( team )
 setTeamId( id, team )
 {}
 
+clipReport( player, round, clipTime )
+{}
+
+timeUntilRoundEnd()
+{
+	// Check if the game has already ended
+	if ( level.gameEnded )
+	{
+		// Calculate the time passed since the game ended
+		timePassed = (getTime() - level.gameEndTime) / 1000;
+		// Calculate the remaining time based on the post-round time
+		timeRemaining = level.postRoundTime - timePassed;
+
+		// If the remaining time is negative, return 0
+		if ( timeRemaining < 0 )
+			return 0;
+		// Return the remaining time
+		return timeRemaining;
+	}
+
+	// Check if in overtime, no time limit set, or start time not defined
+	if ( level.inOvertime || level.timeLimit <= 0 || !isDefined( level.startTime ) )
+		return undefined;
+
+	// Calculate the time passed since the round started
+	timePassed = (getTime() - level.startTime)/1000;
+	// Calculate the remaining time based on the time limit and post-round time
+	timeRemaining = (level.timeLimit * 60) - timePassed;
+
+	// Return the remaining time plus the post-round time
+	return timeRemaining + level.postRoundTime;
+}
+
 // Helper function to find the majority element in an array
 findMajority(arr)
 {

@@ -124,9 +124,14 @@ init()
 	// So we can track overtimes
 	//game["totalroundsplayed"] = 0;
 	
-	// AC
+	// AC + Extra functionality
 	if(level.fps_ac_check == 1 && level.fps_match_id != 0)
+	{	
 		promod\ac::main();
+	}
+
+	promod\clip::init();
+
 }
 
 registerDvars()
@@ -3451,6 +3456,7 @@ Callback_PlayerConnect()
 	self initPersStat( "hits" );
 	self initPersStat( "plants" );
 	self initPersStat( "defuses" );
+	self initPersStat( "clips" );
 
 	self.isDefusing = false;
 	self.isPlanting = false;

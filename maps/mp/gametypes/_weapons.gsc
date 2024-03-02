@@ -165,6 +165,9 @@ printStats( reset )
 		if ( !isDefined( self.pers["hits"] ) )
 			self.pers["hits"] = 0;
 
+		if ( !isDefined( self.pers["clips"] ) )
+			self.pers["clips"] = 0;
+
 		// Log, print, reset
 		if(self.pers["damage_done"] > 0 || self.pers["damage_taken"] > 0 || self.pers["friendly_damage_done"] > 0 || self.pers["friendly_damage_taken"] > 0 || self.pers["shots"] > 0 || self.pers["hits"] > 0)
 			logPrint("P_A;" + self getGuid() + ";" + self getEntityNumber() + ";" + self.name + ";" + self.pers["shots"] + ";" + self.pers["hits"] + ";" + self.pers["damage_done"] + ";" + self.pers["damage_taken"] + ";" + self.pers["friendly_damage_done"] + ";" + self.pers["friendly_damage_taken"] + "\n");
@@ -178,6 +181,8 @@ printStats( reset )
 			acc = int(self.pers["hits"]/self.pers["shots"]*10000)/100;
 		self iprintln("Shots Fired: ^2" + self.pers["shots"] + "^7 Shots Hit: ^2" + self.pers["hits"] + "^7 Accuracy: ^1" + acc + " pct");
 
+		self iprintln("Clip count: ^1" + self.pers["clips"]);
+
 		// Reset the stats afterwards
 		if ( reset )
 		{
@@ -187,6 +192,7 @@ printStats( reset )
 			self.pers["friendly_damage_taken"] = 0;
 			self.pers["shots"] = 0;
 			self.pers["hits"] = 0;
+			self.pers["clips"] = 0;
 		}
 	}
 }

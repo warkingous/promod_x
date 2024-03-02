@@ -180,7 +180,7 @@ xmodel,viewmodel_desert_eagle_mp_mw
 rawfile,maps/mp/mp_dahman_b41_fx.gsc
 rawfile,maps/mp/mp_dahman_b41.gsc
 
-# Liberation side fix
+# Dahman sounds fix
 rawfile,maps/mp/mp_dahman_b41.gsc
 
 # Ping checker 
@@ -195,3 +195,6 @@ stringtable,mp/rankTable.csv
 
 # Statistics
 rawfile,promod/stats.gsc
+
+# Clipping detection
+rawfile,promod/clip.gsc 
