@@ -138,14 +138,10 @@ main()
 	level notify("kill_ru_period");
 	level notify("header_destroy");
 
-	// Send match started info
-	if( game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.players.size > 1 && level.fps_track_stats == 1 && level.fps_is_public == 0 && !game["promod_first_readyup_done"]){
-		thread promod\stats::findTeamId("allies");
-		wait 0.1;
-		thread promod\stats::findTeamId("axis");
-		wait 0.1;
+	// Send match started info TODO
+	if( game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 && level.fps_is_public == 0 && !game["promod_first_readyup_done"] ){ //level.players.size > 1
 		thread promod\stats::mapStarted();
-		wait 0.2;
+		wait 0.1;
 		thread promod\stats::initPlayers();
 	}
 

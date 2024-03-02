@@ -184,7 +184,7 @@ onOvertime()
 		wait 1;
 	}
 
-	thread maps\mp\gametypes\_globallogic::endGame( "tie", game["strings"]["tie"] );
+	thread maps\mp\gametypes\_globallogic::endGame( "tie", game["strings"]["tie"], "draw" );
 }
 
 onDeadEvent( team )
@@ -197,10 +197,10 @@ onDeadEvent( team )
 		if ( level.bombPlanted )
 		{
 			[[level._setTeamScore]]( level.bombPlantedBy, [[level._getTeamScore]]( level.bombPlantedBy ) + 1 );
-			thread maps\mp\gametypes\_globallogic::endGame( level.bombPlantedBy, game["strings"][level.bombPlantedBy+"_mission_accomplished"] );
+			thread maps\mp\gametypes\_globallogic::endGame( level.bombPlantedBy, game["strings"][level.bombPlantedBy+"_mission_accomplished"], "sab" );
 		}
 		else
-			thread maps\mp\gametypes\_globallogic::endGame( "tie", game["strings"]["tie"] );
+			thread maps\mp\gametypes\_globallogic::endGame( "tie", game["strings"]["tie"], "draw" );
 	}
 	else if ( level.bombPlanted )
 	{
@@ -211,12 +211,12 @@ onDeadEvent( team )
 		}
 
 		[[level._setTeamScore]]( level.bombPlantedBy, [[level._getTeamScore]]( level.bombPlantedBy ) + 1 );
-		thread maps\mp\gametypes\_globallogic::endGame( level.bombPlantedBy, game["strings"][level.otherTeam[level.bombPlantedBy]+"_eliminated"] );
+		thread maps\mp\gametypes\_globallogic::endGame( level.bombPlantedBy, game["strings"][level.otherTeam[level.bombPlantedBy]+"_eliminated"], "sab" );
 	}
 	else
 	{
 		[[level._setTeamScore]]( level.otherTeam[team], [[level._getTeamScore]]( level.otherTeam[team] ) + 1 );
-		thread maps\mp\gametypes\_globallogic::endGame( level.otherTeam[team], game["strings"][team+"_eliminated"] );
+		thread maps\mp\gametypes\_globallogic::endGame( level.otherTeam[team], game["strings"][team+"_eliminated"], "sab" );
 	}
 }
 
@@ -493,7 +493,7 @@ onUse( player )
 
 		if ( level.inOverTime && isDefined( level.plantingTeamDead ) )
 		{
-			thread maps\mp\gametypes\_globallogic::endGame( player.pers["team"], game["strings"][level.bombPlantedBy+"_eliminated"] );
+			thread maps\mp\gametypes\_globallogic::endGame( player.pers["team"], game["strings"][level.bombPlantedBy+"_eliminated"], "sab" );
 			return;
 		}
 
@@ -563,7 +563,7 @@ bombPlanted( destroyedObj, team )
 	for ( i = 0; i < level.players.size; i++ )
 		level.players[i] playLocalSound("promod_destroyed");
 
-	thread maps\mp\gametypes\_globallogic::endGame( team, game["strings"]["target_destroyed"] );
+	thread maps\mp\gametypes\_globallogic::endGame( team, game["strings"]["target_destroyed"], "sab" );
 }
 
 playSoundinSpace( alias, origin )

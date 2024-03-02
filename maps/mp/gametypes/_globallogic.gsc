@@ -108,11 +108,18 @@ init()
 		setDvar( "scr_player_maxhealth", 100 );
 
 	// Stats variables
-	if ( !isDefined( game["alliesTeamId"] ) )
+	if ( !isDefined( game["alliesTeamId"] ) ){
 		game["alliesTeamId"] = -1;
+		game["alliesTeamName"] = "Not defined";
+		game["alliesTeamTag"] = "Not defined";
+	}
 
-	if ( !isDefined( game["axisTeamId"] ) )
+	if ( !isDefined( game["axisTeamId"] ) ){
 		game["axisTeamId"] = -1;
+		game["axisTeamName"] = "Not defined";
+		game["axisTeamTag"] = "Not defined";
+	}
+		
 	
 	// So we can track overtimes
 	//game["totalroundsplayed"] = 0;
@@ -259,17 +266,19 @@ default_onDeadEvent( team )
 		makeDvarServerInfo( "ui_text_endreason", game["strings"]["allies_eliminated"] );
 		setDvar( "ui_text_endreason", game["strings"]["allies_eliminated"] );
 
-		thread endGame( "axis", game["strings"]["allies_eliminated"] );
+		thread endGame( "axis", game["strings"]["allies_eliminated"], "allies_eliminated" );
 		logPrint("endGame from 1 \n");
+		iprintln("Allies eliminated from gl");
 	}
 	else if ( team == "axis" )
 	{
 		iPrintLn( game["strings"]["axis_eliminated"] );
 		makeDvarServerInfo( "ui_text_endreason", game["strings"]["axis_eliminated"] );
-		setDvar( "ui_text_endreason", game["strings"]["axis_eliminated"] );
+		setDvar( "ui_text_endreason", game["strings"]["axis_eliminated"]);
 
-		thread endGame( "allies", game["strings"]["axis_eliminated"] );
+		thread endGame( "allies", game["strings"]["axis_eliminated"], "axis_eliminated" );
 		logPrint("endGame from 2 \n");
+		iprintln("Axis eliminated from gl");
 	}
 	else
 	{
@@ -278,12 +287,12 @@ default_onDeadEvent( team )
 
 		if ( level.teamBased )
 		{
-			thread endGame( "tie", game["strings"]["tie"] );
+			thread endGame( "tie", game["strings"]["tie"], "draw" );
 			logPrint("endGame from 3 \n");
 		}
 		else
 		{
-			thread endGame( undefined, game["strings"]["tie"] );
+			thread endGame( undefined, game["strings"]["tie"], "draw" );
 			logPrint("endGame from 4 \n");
 		}
 	}
@@ -294,7 +303,7 @@ default_onOneLeftEvent( team )
 	if ( !level.teamBased )
 	{
 		winner = getHighestScoringPlayer();
-		thread endGame( winner, &"MP_ENEMIES_ELIMINATED" );
+		thread endGame( winner, &"MP_ENEMIES_ELIMINATED", "enemies_eliminated" );
 		logPrint("endGame from 5 \n");
 	}
 }
@@ -325,7 +334,7 @@ default_onTimeLimit()
 	setDvar( "ui_text_endreason", game["strings"]["time_limit_reached"] );
 
 	// Start a thread to end the game
-	thread endGame( winner, game["strings"]["time_limit_reached"] );
+	thread endGame( winner, game["strings"]["time_limit_reached"], "time_limit_reached" );
 	logPrint("endGame from 6 \n");
 }
 
@@ -360,7 +369,7 @@ default_onScoreLimit()
 	level.forcedEnd = true;
 
 	// Start a thread to end the game
-	thread endGame( winner, game["strings"]["score_limit_reached"] );
+	thread endGame( winner, game["strings"]["score_limit_reached"], "score_limit_reached" );
 	logPrint("endGame from 7 \n");
 }
 
@@ -975,7 +984,7 @@ freeGameplayHudElems()
 		self.proxBarText destroyElem();
 }
 
-endGame( winner, endReasonText )
+endGame( winner, endReasonText, reason )
 {
 	// Check if the game state is already "postgame"
 	if ( isDefined( game["state"] ) && game["state"] == "postgame" )
@@ -1039,7 +1048,13 @@ endGame( winner, endReasonText )
 		attack_score = game["teamScores"]["allies"];
 		defence_score = game["teamScores"]["axis"];
 
-		game["promod_scorebot_ticker_buffer"] += "round_winner" + winners + "" + attack_score + "" + defence_score;
+		game["promod_scorebot_ticker_buffer"] += "round_winner" + winners + "" + attack_score + "" + defence_score; 
+	}
+
+	// Stats
+	if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 )
+	{
+		thread promod\stats::roundReport( game["totalroundsplayed"]+1, game["teamScores"]["allies"], game["teamScores"]["axis"], reason, winner );
 	}
 
 	if ( (level.roundLimit > 1 || (!level.roundLimit && level.scoreLimit != 1)) && !level.forcedEnd )
@@ -1194,9 +1209,9 @@ endGame( winner, endReasonText )
 			// Swap teamIds for stats
 			if( level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 && level.fps_is_public == 0 )
 			{
-				old_teamId = game["alliesTeamId"] ;
-				game["alliesTeamId"] = game["axisTeamId"];
-				game["axisTeamId"] = old_teamId;
+				//old_teamId = game["alliesTeamId"];
+				//game["alliesTeamId"] = game["axisTeamId"];
+				//game["axisTeamId"] = old_teamId;
 				//iprintln("switch ot");		
 
 				thread promod\stats::halftime();	
@@ -1477,7 +1492,7 @@ endGame( winner, endReasonText )
 
 	// Send data to api on map end
 	if ( level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 )
-		thread promod\stats::mapFinished( attack_score, defence_score, winnerTeamId );
+		thread promod\stats::mapFinished();
 
 	roundEndWait( level.postRoundTime );
 
@@ -3439,6 +3454,8 @@ Callback_PlayerConnect()
 
 	self.isDefusing = false;
 	self.isPlanting = false;
+	self.clutchKills = 0;
+	self.clutchSituation = false;
 
 	self.lastGrenadeSuicideTime = -1;
 
@@ -3590,8 +3607,8 @@ isWallBang( attacker, victim )
 	start = attacker getEye();
 	end = victim getEye();
 	if( bulletTracePassed( start, end, false, attacker ) )
-		return false;
-	return true;
+		return 0;
+	return 1;
 }
 
 isHeadShot( sWeapon, sHitLoc, sMeansOfDeath )
@@ -3942,12 +3959,11 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	isAttackerDefusing = 0;
 	isAttackerPlanting = 0;
 	isAttackerFlashed = 0;
-	isTeamkill = false;	
+	isTeamkill = 0;	
 	metrestring = 0;
 	isWallbang = isWallbang( attacker, self );
 	camo = "camo_none";
-	isClutchKill = false;
-	clutchKillsCounter = 0;
+	isClutchKill = 0;
 
 	prof_end( "PlayerKilled pre constants" );
 
@@ -4000,17 +4016,6 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 			{
 				if (!level.rdyup)
 				{
-
-					// Check for clutch situation
-					checkClutchSituation(attacker);
-
-					// Track clutch kills
-					if (attacker.clutchSituation != "")
-					{
-						attacker.clutchKills++;
-						isClutchKill = true;
-					}
-
 					self thread [[level.onXPEvent]]( "suicide" );
 					self incPersStat( "suicides", 1 );
 					self.suicides = self getPersStat( "suicides" );
@@ -4049,6 +4054,16 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 			else
 			{
 				prof_begin( "pks1" );
+
+				// Check for clutch situation
+				checkClutchSituation(attacker);
+
+				// Track clutch kills
+				if (attacker.clutchSituation != "0")
+				{
+					attacker.clutchKills++;
+					isClutchKill = 1;
+				}
 
 				if ( sMeansOfDeath == "MOD_HEAD_SHOT" )
 				{
@@ -4153,52 +4168,18 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	else 
 		time = 0;
 
+	if(!isDefined(isClutchKill))
+		isClutchKill = 0;
+
+	attacker_data = lpattackerteam + ";" + attackerStance+ ";" +attackerAds+ ";" +attackerIsOnGround+ ";" +isAttackerDefusing+ ";" +isAttackerPlanting+ ";" +isAttackerFlashed+ ";" +attacker.origin + ";" +isClutchKill;
+	victim_data = self.pers["team"]+ ";" +self getStance()+ ";" +self playerADS()+ ";" +self isOnGround()+ ";" +self.isDefusing+ ";" +self.isPlanting+ ";" +self maps\mp\_flashgrenades::isFlashbanged()+ ";" +self.origin;
+	kill_data = isTeamkill+ ";" +isWallbang+ ";" +sWeapon+ ";" +camo+ ";" +iDamage+ ";" +metrestring+ ";" +sMeansOfDeath+ ";" +sHitLoc+ ";" +inflictorOrigin+ ";" +time+ ";" + (game["totalroundsplayed"]+1)+ ";" +level.script+ ";" +level.fps_match_id;
+
 	if( !level.rdyup && attacker != self && lpattackerteam != "world" && isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 
 		)//|| !level.rdyup && attacker != self && lpattackerteam != "world" && level.fps_track_stats == 1 && level.fps_is_public == 1 )
 	{
-		thread promod\stats::processKillData(	
-			attacker,
-			self,
-			lpattackGuid,
-			lpattackname,
-			"None",
-			lpattackerteam,
-			attackerStance,
-			attackerAds,
-			attackerIsOnGround,
-			isAttackerDefusing,
-			isAttackerPlanting,
-			isAttackerFlashed,
-			attacker.origin,
-			self.name,
-			"None",
-			self.pers["team"], 
-			self getStance(),
-			self playerADS(),
-			self isOnGround(),
-			self.isDefusing,
-			self.isPlanting,
-			self maps\mp\_flashgrenades::isFlashbanged(),
-			self.origin,
-			isTeamkill,
-			isWallbang,
-			isClutchKill,
-			attacker.clutchKills,
-			attacker.clutchSituation,
-			sWeapon, 
-			camo,
-			iDamage, 
-			metrestring,
-			sMeansOfDeath, 
-			sHitLoc,
-			inflictorOrigin,
-			time,
-			game["totalroundsplayed"]+1,
-			level.script,
-			level.fps_match_id
-		);
+		thread promod\stats::processKillData(attacker, self, attacker_data,	victim_data, kill_data );
 	}
-
 
 	level thread updateTeamStatus();
 
@@ -4258,7 +4239,7 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	}
 }
 
-checkClutchSituation(attacker)
+checkClutchSituation( attacker )
 {
     // Get the number of players alive on each team
     aliveCounts = getPlayersAlive();
@@ -4284,7 +4265,7 @@ checkClutchSituation(attacker)
             //self notify("clutch_situation");
         }
     }else {
-		attacker.clutchSituation = "";
+		attacker.clutchSituation = "0";
         attacker.clutchKills = 0;
 	}
 }

@@ -41,7 +41,7 @@ main()
 	setDvar( "attach_allow_specops_silencer", 0 );
 
 	setDvar( "weap_allow_m1014", 1 );
-	setDvar( "weap_allow_winchester1200", 0 );
+	setDvar( "weap_allow_winchester1200", 1 );
 
 	setDvar( "weap_allow_m40a3", 1 );
 	setDvar( "weap_allow_remington700", 1 );
