@@ -10,7 +10,40 @@
 
 main()
 {
+	level endon( "restarting" );
 
+	thread errorMessage();
+
+	for(;;)
+	{
+		if ( getDvarInt( "sv_cheats" ) || isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "strat" )
+			break;
+
+		forceDvar( "authServerName", "cod4master.activision.com" );
+		forceDvar( "sv_disableClientConsole", "0" );
+		forceDvar( "sv_fps", "20" );
+		forceDvar( "sv_pure", "1" );
+		forceDvar( "sv_maxrate", "100000" );
+		forceDvar( "g_gravity", "800" );
+		forceDvar( "g_speed", "190" );
+		forceDvar( "g_knockback", "1000" );
+		forceDvar( "g_playercollisionejectspeed", "25" );
+		forceDvar( "g_dropforwardspeed", "10" );
+		forceDvar( "g_drophorzspeedrand", "100" );
+		forceDvar( "g_dropupspeedbase", "10" );
+		forceDvar( "g_dropupspeedrand", "5" );
+		forceDvar( "g_useholdtime", "0" );
+
+		if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" )
+		{
+			forceDvar( "g_maxdroppedweapons", "16" );
+
+			if ( !game["LAN_MODE"] )
+				forceDvar( "g_smoothclients", "1" );
+		}
+
+		wait 0.1;
+	}
 }
 
 forceDvar(dvar, value)
@@ -43,9 +76,9 @@ errorMessage()
 		if ( (antilag && dedicated == "dedicated LAN server") || (!antilag && dedicated == "dedicated internet server" && !game["PROMOD_PB_OFF"]))
 		 	iprintlnbold("^1Server Violation^7: Modified Connection");
 
-		if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || toLower( getDvar( "fs_game" ) ) == "mods/fps_promod_265" )
+		if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || toLower( getDvar( "fs_game" ) ) == "mods/fps_promod_270" )
 		{
-			if( toLower(getDvar("fs_game")) != "mods/fps_promod_265" )
+			if( toLower(getDvar("fs_game")) != "mods/fps_promod_270" )
 				iprintlnbold("^1Server Violation^7: Invalid fs_game value");
 
 			iwdnames = strToK( getDvar( "sv_iwdnames" ), " " );
@@ -76,8 +109,8 @@ errorMessage()
 							iprintlnbold("^1Server Violation^7: Modified Custom IWD File While In Match Mode");
 						break;
 
-					case "fps_promod_265":
-						if( iwdsums[i] != "959182553" )
+					case "fps_promod_270":
+						if( iwdsums[i] != "-2132590599" )
 							iprintlnbold("^1Server Violation^7: Modified Promod IWD Detected");
 						iwd_loaded = true;
 						break;
