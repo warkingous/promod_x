@@ -24,7 +24,8 @@ main()
 		forceDvar( "sv_disableClientConsole", "0" );
 		forceDvar( "sv_fps", "20" );
 		forceDvar( "sv_pure", "1" );
-		forceDvar( "sv_maxrate", "100000" );
+		// CoD4X supports 100 000, stock client doesnt
+		//forceDvar( "sv_maxrate", "100000" );
 		forceDvar( "g_gravity", "800" );
 		forceDvar( "g_speed", "190" );
 		forceDvar( "g_knockback", "1000" );
@@ -79,8 +80,9 @@ errorMessage()
 		if ( getDvarInt( "sv_cheats" ) || isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "strat" )
 			break;
 
-		if ( !getDvarInt( "sv_punkbuster" ) && !game["LAN_MODE"] && !game["PROMOD_PB_OFF"] )
-			iprintlnbold("^1Server Violation^7: Punkbuster Disabled");
+		// Punkbuster is removed from CoD4X servers
+		//if ( !getDvarInt( "sv_punkbuster" ) && !game["LAN_MODE"] && !game["PROMOD_PB_OFF"] )
+		//	iprintlnbold("^1Server Violation^7: Punkbuster Disabled");
 
 		if ( getDvarInt( "scr_player_maxhealth" ) != 100 && game["HARDCORE_MODE"] != 1 && game["CUSTOM_MODE"] != 1 || getDvarInt( "scr_player_maxhealth" ) != 30 && game["HARDCORE_MODE"] == 1 && game["CUSTOM_MODE"] != 1 )
 			iprintlnbold("^1Server Violation^7: Modified Player Health");
@@ -122,11 +124,17 @@ errorMessage()
 						if ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && iwdsums[i] != "-2064692340" )
 							iprintlnbold("^1Server Violation^7: Modified Custom IWD File While In Match Mode");
 						break;
-
+						
 					case "fps_promod_270":
 						if( iwdsums[i] != "-2132590599" )
 							iprintlnbold("^1Server Violation^7: Modified Promod IWD Detected");
 						iwd_loaded = true;
+						break;
+						
+					// Extra CoD4X files check
+					case "jcod4x_00":
+						if( iwdsums[i] != "94291723" )
+							iprintlnbold("^1Server Violation^7: Modified CoD4X IWD Detected");
 						break;
 
 					default:
