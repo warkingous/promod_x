@@ -13,6 +13,7 @@ main()
 	level endon( "restarting" );
 
 	thread errorMessage();
+	thread backlotCheck();
 
 	for(;;)
 	{
@@ -44,6 +45,19 @@ main()
 
 		wait 0.1;
 	}
+}
+
+backlotCheck()
+{
+	counter = 3;
+
+	for(i = 0; i < counter; i++)
+	{
+		if( level.script == "mp_backlot" || level.script == "mp_backlot_fix")
+			iprintlnbold("^1Warning^7: You should play ^3mp_backlot_x ^7instead of " + level.script);
+
+		wait 10;
+	}	
 }
 
 forceDvar(dvar, value)
