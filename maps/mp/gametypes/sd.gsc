@@ -150,6 +150,7 @@ onSpawnPlayer()
 {
 	self.isPlanting = false;
 	self.isDefusing = false;
+	self.isBombCarrier = false;
 
 	if ( self.pers["team"] == game["attackers"] )
 		spawnPointName = "mp_sd_spawn_attacker";
@@ -173,13 +174,22 @@ onSpawnPlayer()
 	level notify ( "spawned_player" );
 }
 
-sd_endGame( winningTeam, endReasonText )
+sd_endGame( winningTeam, endReasonText, reason )
 {
 	if ( isdefined( winningTeam ) )
 		[[level._setTeamScore]]( winningTeam, [[level._getTeamScore]]( winningTeam ) + 1 );
 
-	thread maps\mp\gametypes\_globallogic::endGame( winningTeam, endReasonText );
+	thread maps\mp\gametypes\_globallogic::endGame( winningTeam, endReasonText, reason );
+	logPrint("endGame from 8 \n");
 }
+
+// onRoundEnd( winner, reason )
+// {
+// 	if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 )
+// 	{
+// 		thread promod\stats::scoreReport( game["totalroundsplayed"]+1, game["teamScores"]["allies"], game["teamScores"]["axis"], reason, winner );
+// 	}
+// }
 
 onDeadEvent( team )
 {
@@ -189,27 +199,51 @@ onDeadEvent( team )
 	if ( team == "all" )
 	{
 		if ( level.bombPlanted )
-			sd_endGame( game["attackers"], game["strings"][game["defenders"]+"_eliminated"] );
+		{
+			sd_endGame( game["attackers"], game["strings"][game["defenders"]+"_eliminated"], "axis_eliminated" );
+			//onRoundEnd( "allies", "axis_eliminated" );
+			logPrint("endGame from 9 \n");
+		}
 		else
-			sd_endGame( game["defenders"], game["strings"][game["attackers"]+"_eliminated"] );
+		{
+			sd_endGame( game["defenders"], game["strings"][game["attackers"]+"_eliminated"], "allies_eliminated" );
+			//onRoundEnd( "axis", "allies_eliminated" );
+			logPrint("endGame from 10 \n");
+		}
 	}
 	else if ( team == game["attackers"] )
 	{
 		if ( level.bombPlanted )
 			return;
 
-		sd_endGame( game["defenders"], game["strings"][game["attackers"]+"_eliminated"] );
+		sd_endGame( game["defenders"], game["strings"][game["attackers"]+"_eliminated"], "allies_eliminated" );
+		//onRoundEnd( "axis", "allies_eliminated" );
+		logPrint("endGame from 11 \n");
+		//iprintln("Axis eliminated");
 	}
 	else if ( team == game["defenders"] )
-		sd_endGame( game["attackers"], game["strings"][game["defenders"]+"_eliminated"] );
+	{
+		sd_endGame( game["attackers"], game["strings"][game["defenders"]+"_eliminated"], "axis_eliminated" );
+		//onRoundEnd( "allies", "axis_eliminated" );
+		logPrint("endGame from 12 \n");
+		//iprintln("Allies eliminated");
+	}
 }
 
 onTimeLimit()
 {
 	if ( level.teamBased )
-		sd_endGame( game["defenders"], game["strings"]["time_limit_reached"] );
+	{
+		sd_endGame( game["defenders"], game["strings"]["time_limit_reached"], "time_limit_reached" );
+		//onRoundEnd( "axis", "time_limit_reached" );
+		logPrint("endGame from 13 \n");
+	}
 	else
-		sd_endGame( undefined, game["strings"]["time_limit_reached"] );
+	{
+		sd_endGame( undefined, game["strings"]["time_limit_reached"], "time_limit_reached" );
+		//onRoundEnd( "draw", "time_limit_reached" );
+		logPrint("endGame from 14 \n");
+	}
 }
 
 updateGametypeDvars()
@@ -371,6 +405,9 @@ onUsePlantObject( player )
 	{
 		if ( !level.hardcoreMode )
 			iPrintLn( &"MP_EXPLOSIVES_PLANTED_BY", player.name );
+		
+		// Player planted a bomb report
+		thread promod\stats::bombReport( player, self.label, "plant", game["totalroundsplayed"]+1 );
 
 		maps\mp\gametypes\_globallogic::givePlayerScore( "plant", player );
 
@@ -392,6 +429,8 @@ onUsePlantObject( player )
 			game["promod_scorebot_ticker_buffer"] += "planted_by" + player.name;
 
 		logPrint("P_P;" + player getGuid() + ";" + player getEntityNumber() + ";" + player.name + "\n");
+
+		player incPersStat( "plants", 1 );
 	}
 }
 
@@ -408,6 +447,9 @@ onUseDefuseObject( player )
 	if ( !level.hardcoreMode )
 		iPrintLn( &"MP_EXPLOSIVES_DEFUSED_BY", player.name );
 
+	// Player defused a bomb report
+	thread promod\stats::bombReport( player, self.label, "defuse", game["totalroundsplayed"]+1 );
+
 	maps\mp\gametypes\_globallogic::givePlayerScore( "defuse", player );
 	player thread [[level.onXPEvent]]( "defuse" );
 
@@ -415,6 +457,8 @@ onUseDefuseObject( player )
 		game["promod_scorebot_ticker_buffer"] += "defused_by" + player.name;
 
 	logPrint("P_D;" + player getGuid() + ";" + player getEntityNumber() + ";" + player.name + "\n");
+
+	player incPersStat( "defuses", 1 );
 }
 
 onDrop( player )
@@ -422,8 +466,10 @@ onDrop( player )
 	if ( !level.bombPlanted )
 	{
 		if ( isDefined( player ) && isDefined( player.name ) )
+		{
+			self.isBombCarrier = false;
 			printOnTeamArg( &"MP_EXPLOSIVES_DROPPED_BY", game["attackers"], player );
-
+		}
 		if ( isDefined( level.scorebot ) && level.scorebot && isDefined( player ) && isDefined( player.name ) )
 			game["promod_scorebot_ticker_buffer"] += "dropped_bomb" + player.name;
 	}
@@ -436,6 +482,8 @@ onDrop( player )
 
 onPickup( player )
 {
+	player.isBombCarrier = true;
+
 	self maps\mp\gametypes\_gameobjects::set3DIcon( "friendly", "waypoint_defend" );
 
 	if ( !level.bombDefused )
@@ -506,6 +554,8 @@ bombPlanted( destroyedObj, player )
 	defuseObject maps\mp\gametypes\_gameobjects::set2DIcon( "friendly", "compass_waypoint_defuse" + label );
 	defuseObject maps\mp\gametypes\_gameobjects::set2DIcon( "enemy", "compass_waypoint_defend" + label );
 
+	level.defuseObject = defuseObject;
+	
 	defuseObject.label = label;
 	defuseObject.onBeginUse = ::onBeginUse;
 	defuseObject.onEndUse = ::onEndUse;
@@ -549,7 +599,9 @@ bombPlanted( destroyedObj, player )
 
 	wait 0.05;
 
-	sd_endGame( game["attackers"], game["strings"]["target_destroyed"] );
+	sd_endGame( game["attackers"], game["strings"]["target_destroyed"], "bomb_destroyed" );
+	//onRoundEnd( "allies", "bomb_destroyed" );
+	logPrint("endGame from 15 \n");
 }
 
 BombTimerWait()
@@ -580,5 +632,12 @@ bombDefused()
 
 	wait 0.05;
 
-	sd_endGame( game["defenders"], game["strings"]["bomb_defused"] );
+	sd_endGame( game["defenders"], game["strings"]["bomb_defused"], "bomb_defused" );
+	//onRoundEnd( "axis", "bomb_defused" );
+	logPrint("endGame from 16 \n");
+}
+
+incPersStat( dataName, increment )
+{
+	self.pers[dataName] += increment;
 }

@@ -50,6 +50,29 @@ sidearmWeapon()
 	if ( sidearmWeapon != "none" && sidearmWeapon != "deserteaglegold" && sidearmWeapon != "deserteagle" && sidearmWeapon != "colt45" && sidearmWeapon != "usp" && sidearmWeapon != "beretta" )
 		sidearmWeapon = getDvar( "class_" + class + "_secondary" );
 
+	//first
+	camos = strtok("camo_gold|camo_twotone|camo_dark|camo_wasteland|camo_mw|camo_asiimov|camo_x|camo_monster", "|");
+	camonum = 0;
+
+	if(isDefined(self.pers[class]["loadout_secondary_camo"]))
+	{
+		for(i= 0 ;i < camos.size; i++)
+			if(self.pers[class]["loadout_secondary_camo"] == camos[i])
+			{
+				camonum = i+1;
+				//iprintln(camonum);
+				break;
+			}
+		//if(self.pers[class]["loadout_secondary_camo"] == "camo_dark" )
+			//iprintln("dark");
+			
+	}
+	else{
+		self.pers[class]["loadout_secondary_camo"] = "camo_none";
+		//iPrintLn("nastavuji none camo");
+	}
+	// Side Arm CAmos end
+
 	if ( sideArmWeapon != "none" )
 	{
 		s = "";
@@ -62,7 +85,7 @@ sidearmWeapon()
 
 		if ( isDefined( level.strat_over ) && level.strat_over && ( !isDefined( game["PROMOD_KNIFEROUND"] ) || !game["PROMOD_KNIFEROUND"] ) || !isDefined( level.strat_over ) )
 		{
-			self giveWeapon( sidearmWeapon );
+			self giveWeapon( sidearmWeapon, camonum );
 			self giveMaxAmmo( sidearmWeapon );
 		}
 	}
@@ -106,9 +129,26 @@ primaryWeapon()
 				camonum = i+1;
 				break;
 			}
-
-		if(self.pers[class]["loadout_camo"] == "camo_gold" && (primaryWeapon == "ak47" || primaryWeapon == "uzi" || primaryWeapon == "m1014"))
+		// Golden Camo
+		if(self.pers[class]["loadout_camo"] == "camo_gold" && (primaryWeapon == "ak47" || primaryWeapon == "uzi" || primaryWeapon == "m1014" || primaryWeapon == "ak74u" || primaryWeapon == "m40a3" || primaryWeapon == "remington700"))
 			camonum = 6;
+		// Dark Camo
+		else if( self.pers[class]["loadout_camo"] == "camo_twotone" )
+			camonum = 7;
+		else if( self.pers[class]["loadout_camo"] == "camo_dark" )
+			camonum = 8;
+		else if( self.pers[class]["loadout_camo"] == "camo_wasteland" )
+			camonum = 9;
+		else if( self.pers[class]["loadout_camo"] == "camo_mw" )
+			camonum = 10;
+		else if( self.pers[class]["loadout_camo"] == "camo_asiimov" )
+			camonum = 11;
+		else if( self.pers[class]["loadout_camo"] == "camo_monster" )
+			camonum = 12;
+		else if( self.pers[class]["loadout_camo"] == "camo_x" )
+			camonum = 13;
+		
+		//iprintln("primary " + camonum);
 	}
 	else
 		self.pers[class]["loadout_camo"] = "camo_none";
@@ -140,6 +180,7 @@ preserveClass( class )
 	CLASS_PRIMARY_ATTACHMENT = "";
 	CLASS_SECONDARY = "";
 	CLASS_SECONDARY_ATTACHMENT = "";
+	CLASS_SECONDARY_CAMO = "";
 	CLASS_GRENADE = "";
 	CLASS_CAMO = "";
 
@@ -149,6 +190,7 @@ preserveClass( class )
 		CLASS_PRIMARY_ATTACHMENT = "ASSAULT_PRIMARY_ATTACHMENT";
 		CLASS_SECONDARY = "ASSAULT_SECONDARY";
 		CLASS_SECONDARY_ATTACHMENT = "ASSAULT_SECONDARY_ATTACHMENT";
+		CLASS_SECONDARY_CAMO = "ASSAULT_SECONDARY_CAMO";
 		CLASS_GRENADE = "ASSAULT_GRENADE";
 		CLASS_CAMO = "ASSAULT_CAMO";
 	}
@@ -158,6 +200,7 @@ preserveClass( class )
 		CLASS_PRIMARY_ATTACHMENT = "SPECOPS_PRIMARY_ATTACHMENT";
 		CLASS_SECONDARY = "SPECOPS_SECONDARY";
 		CLASS_SECONDARY_ATTACHMENT = "SPECOPS_SECONDARY_ATTACHMENT";
+		CLASS_SECONDARY_CAMO = "SPECOPS_SECONDARY_CAMO";
 		CLASS_GRENADE = "SPECOPS_GRENADE";
 		CLASS_CAMO = "SPECOPS_CAMO";
 	}
@@ -167,6 +210,7 @@ preserveClass( class )
 		CLASS_PRIMARY_ATTACHMENT = "DEMOLITIONS_PRIMARY_ATTACHMENT";
 		CLASS_SECONDARY = "DEMOLITIONS_SECONDARY";
 		CLASS_SECONDARY_ATTACHMENT = "DEMOLITIONS_SECONDARY_ATTACHMENT";
+		CLASS_SECONDARY_CAMO = "DEMOLITIONS_SECONDARY_CAMO";
 		CLASS_GRENADE = "DEMOLITIONS_GRENADE";
 		CLASS_CAMO = "DEMOLITIONS_CAMO";
 	}
@@ -176,6 +220,7 @@ preserveClass( class )
 		CLASS_PRIMARY_ATTACHMENT = "SNIPER_PRIMARY_ATTACHMENT";
 		CLASS_SECONDARY = "SNIPER_SECONDARY";
 		CLASS_SECONDARY_ATTACHMENT = "SNIPER_SECONDARY_ATTACHMENT";
+		CLASS_SECONDARY_CAMO = "SNIPER_SECONDARY_CAMO";
 		CLASS_GRENADE = "SNIPER_GRENADE";
 		CLASS_CAMO = "SNIPER_CAMO";
 	}
@@ -184,6 +229,7 @@ preserveClass( class )
 	CLASS_PRIMARY_ATTACHMENT_VALUE = int( tablelookup( "promod/customStatsTable.csv", 1, self.pers[class]["loadout_primary_attachment"], 0 ) );
 	CLASS_SECONDARY_VALUE = int( tablelookup( "promod/customStatsTable.csv", 1, self.pers[class]["loadout_secondary"], 0 ) );
 	CLASS_SECONDARY_ATTACHMENT_VALUE = int( tablelookup( "promod/customStatsTable.csv", 1, self.pers[class]["loadout_secondary_attachment"], 0 ) );
+	CLASS_SECONDARY_CAMO_VALUE = int( tablelookup( "promod/customStatsTable.csv", 1, self.pers[class]["loadout_secondary_camo"], 0 ) );
 	CLASS_GRENADE_VALUE = int( tablelookup( "promod/customStatsTable.csv", 1, self.pers[class]["loadout_grenade"], 0 ) );
 	CLASS_CAMO_VALUE = int( tablelookup( "promod/customStatsTable.csv", 1, self.pers[class]["loadout_camo"], 0 ) );
 
@@ -191,6 +237,7 @@ preserveClass( class )
 	self set_config( CLASS_PRIMARY_ATTACHMENT, CLASS_PRIMARY_ATTACHMENT_VALUE );
 	self set_config( CLASS_SECONDARY, CLASS_SECONDARY_VALUE );
 	self set_config( CLASS_SECONDARY_ATTACHMENT, CLASS_SECONDARY_ATTACHMENT_VALUE );
+	self set_config( CLASS_SECONDARY_CAMO, CLASS_SECONDARY_CAMO_VALUE );
 	self set_config( CLASS_GRENADE, CLASS_GRENADE_VALUE );
 	self set_config( CLASS_CAMO, CLASS_CAMO_VALUE );
 }

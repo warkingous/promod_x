@@ -1,9 +1,7 @@
 /*
   Copyright (c) 2009-2017 Andreas Göransson <andreas.goransson@gmail.com>
   Copyright (c) 2009-2017 Indrek Ardel <indrek@ardel.eu>
-
   This file is part of Call of Duty 4 Promod.
-
   Call of Duty 4 Promod is licensed under Promod Modder Ethical Public License.
   Terms of license can be found in LICENSE.md document bundled with the project.
 */
@@ -186,7 +184,7 @@ onOvertime()
 		wait 1;
 	}
 
-	thread maps\mp\gametypes\_globallogic::endGame( "tie", game["strings"]["tie"] );
+	thread maps\mp\gametypes\_globallogic::endGame( "tie", game["strings"]["tie"], "draw" );
 }
 
 onDeadEvent( team )
@@ -199,10 +197,10 @@ onDeadEvent( team )
 		if ( level.bombPlanted )
 		{
 			[[level._setTeamScore]]( level.bombPlantedBy, [[level._getTeamScore]]( level.bombPlantedBy ) + 1 );
-			thread maps\mp\gametypes\_globallogic::endGame( level.bombPlantedBy, game["strings"][level.bombPlantedBy+"_mission_accomplished"] );
+			thread maps\mp\gametypes\_globallogic::endGame( level.bombPlantedBy, game["strings"][level.bombPlantedBy+"_mission_accomplished"], "sab" );
 		}
 		else
-			thread maps\mp\gametypes\_globallogic::endGame( "tie", game["strings"]["tie"] );
+			thread maps\mp\gametypes\_globallogic::endGame( "tie", game["strings"]["tie"], "draw" );
 	}
 	else if ( level.bombPlanted )
 	{
@@ -213,12 +211,12 @@ onDeadEvent( team )
 		}
 
 		[[level._setTeamScore]]( level.bombPlantedBy, [[level._getTeamScore]]( level.bombPlantedBy ) + 1 );
-		thread maps\mp\gametypes\_globallogic::endGame( level.bombPlantedBy, game["strings"][level.otherTeam[level.bombPlantedBy]+"_eliminated"] );
+		thread maps\mp\gametypes\_globallogic::endGame( level.bombPlantedBy, game["strings"][level.otherTeam[level.bombPlantedBy]+"_eliminated"], "sab" );
 	}
 	else
 	{
 		[[level._setTeamScore]]( level.otherTeam[team], [[level._getTeamScore]]( level.otherTeam[team] ) + 1 );
-		thread maps\mp\gametypes\_globallogic::endGame( level.otherTeam[team], game["strings"][team+"_eliminated"] );
+		thread maps\mp\gametypes\_globallogic::endGame( level.otherTeam[team], game["strings"][team+"_eliminated"], "sab" );
 	}
 }
 
@@ -299,7 +297,7 @@ sabotage()
 		level.sabBomb.onDrop = ::onDrop;
 		level.sabBomb.objPoints["allies"].archived = true;
 		level.sabBomb.objPoints["axis"].archived = true;
-		level.sabBomb.autoResetTime = 60;
+		level.sabBomb.autoResetTime = 60.0;
 	}
 	else
 	{
@@ -364,7 +362,7 @@ onPickup( player )
 {
 	level notify ( "bomb_picked_up" );
 
-	self.autoResetTime = 60;
+	self.autoResetTime = 60.0;
 
 	level.useStartSpawns = false;
 
@@ -416,13 +414,15 @@ onDrop( player )
 
 		playSoundOnPlayers( game["bomb_dropped_sound"], self maps\mp\gametypes\_gameobjects::getOwnerTeam() );
 
-		thread abandonmentThink();
+		thread abandonmentThink( 0.0 );
 	}
 }
 
-abandonmentThink()
+abandonmentThink( delay )
 {
 	level endon ( "bomb_picked_up" );
+
+	wait delay;
 
 	if ( isDefined( self.carrier ) )
 		return;
@@ -465,8 +465,6 @@ onUse( player )
 		if ( isDefined( level.scorebot ) && level.scorebot )
 			game["promod_scorebot_ticker_buffer"] += "planted_by" + player.name;
 
-		logPrint("P_P;" + player getGuid() + ";" + player getEntityNumber() + ";" + player.name + "\n");
-
 		level.bombOwner = player;
 
 		level.sabBomb.autoResetTime = undefined;
@@ -493,11 +491,9 @@ onUse( player )
 		if ( isDefined( level.scorebot ) && level.scorebot )
 			game["promod_scorebot_ticker_buffer"] += "defused_by" + player.name;
 
-		logPrint("P_D;" + player getGuid() + ";" + player getEntityNumber() + ";" + player.name + "\n");
-
 		if ( level.inOverTime && isDefined( level.plantingTeamDead ) )
 		{
-			thread maps\mp\gametypes\_globallogic::endGame( player.pers["team"], game["strings"][level.bombPlantedBy+"_eliminated"] );
+			thread maps\mp\gametypes\_globallogic::endGame( player.pers["team"], game["strings"][level.bombPlantedBy+"_eliminated"], "sab" );
 			return;
 		}
 
@@ -567,7 +563,7 @@ bombPlanted( destroyedObj, team )
 	for ( i = 0; i < level.players.size; i++ )
 		level.players[i] playLocalSound("promod_destroyed");
 
-	thread maps\mp\gametypes\_globallogic::endGame( team, game["strings"]["target_destroyed"] );
+	thread maps\mp\gametypes\_globallogic::endGame( team, game["strings"]["target_destroyed"], "sab" );
 }
 
 playSoundinSpace( alias, origin )

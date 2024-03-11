@@ -19,7 +19,13 @@ main()
 	thread disableBombBag();
 
 	level.timeout_over = false;
-	level.timeout_time_left = 300;
+
+	// If we are in a match making mode, reduce timeout to 2 minutes
+	if ( game["MATCHMAKING_MODE"] )
+		level.timeout_time_left = 120;
+	// Else use 5 mins timer
+	else
+		level.timeout_time_left = 300;
 
 	thread timeoutLoop();
 }

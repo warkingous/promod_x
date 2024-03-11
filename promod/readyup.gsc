@@ -69,21 +69,20 @@ main()
 				player.update = false;
 				player.statusicon = "compassping_enemy";
 				player thread selfLoop();
+
+				// Added nadetraining in ready-up period even if its not strat mode
+				player thread promod\stratmode::nadeTraining();
+				
+				if ( isDefined( player.pers["team"] ) && player.pers["team"] != "spectator" )
+					player thread createExtraHUD();
 			}
+
 
 			player.oldready = player.update;
 
 			if ( player.ready )
 			{
 				player.update = true;
-
-				if ( !isDefined( player.pers["record_reminder_done"] ) && ( isAlive( player ) && isDefined( player.pers["class"] ) && !isDefined( player.inrecmenu ) && !player promod\client::get_config( "PROMOD_RECORD" ) ) )
-				{
-					player.pers["record_reminder_done"] = true;
-
-					player openMenu( game["menu_demo"] );
-					player.inrecmenu = true;
-				}
 			}
 
 			if ( !player.ready || isDefined( player.inrecmenu ) && player.inrecmenu && !player promod\client::get_config( "PROMOD_RECORD" ) )
@@ -117,8 +116,21 @@ main()
 			}
 		}
 
+
+		// Start auto demo record when all players ready-up before 5min timer
 		if ( all_players_ready )
+		{
 			level.ready_up_over = true;
+
+			for ( i = 0; i < level.players.size; i++ )
+			{
+				if ( !level.players[i] promod\client::get_config( "PROMOD_RECORD" ) && !isDefined( level.players[i].pers["isBot"] ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] )
+				{
+					level.players[i] thread startDemoRecord();					
+				}
+			}
+		}
+			
 
 		wait 0.05;
 	}
@@ -126,19 +138,35 @@ main()
 	level notify("kill_ru_period");
 	level notify("header_destroy");
 
-	for(i=0;i<level.players.size;i++)
+	// Send match started info TODO
+	if( game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 && level.fps_is_public == 0 && !game["promod_first_readyup_done"] ){ //level.players.size > 1
+		thread promod\stats::mapStarted();
+		wait 0.1;
+		thread promod\stats::initPlayers();
+	}
+
+	// Public stats
+	if ( level.fps_track_stats == 1 && level.fps_is_public == 1 )
+		thread promod\stats::publicMapStarted();
+
+	for( i = 0;i < level.players.size; i++)
 	{
 		level.players[i] setclientdvars("self_ready","", "ui_hud_hardcore", 1 );
 		level.players[i].statusicon = "";
+
+		// Start automatic demo record when we reach 5min limit in matchmaking mode
+		if ( !level.players[i] promod\client::get_config( "PROMOD_RECORD" ) && !isDefined( level.players[i].pers["isBot"] ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] && game["MATCHMAKING_MODE"] )
+			level.players[i] thread startDemoRecord();
 	}
-	for(i=0;i<level.players.size;i++)
+
+	for( i = 0;i < level.players.size; i++)
 		level.players[i] ShowScoreBoard();
 
 	game["state"] = "postgame";
 
 	visionSetNaked( "mpIntro", 1 );
 
-	matchStartText = createServerFontString( "objective", 1.5 );
+	matchStartText = createServerFontString( "default", 1.5 );
 	matchStartText setPoint( "CENTER", "CENTER", 0, -75 );
 	matchStartText.sort = 1001;
 	matchStartText setText( "All Players are Ready!" );
@@ -148,14 +176,14 @@ main()
 	matchStartText.glowAlpha = 1;
 	matchStartText setPulseFX( 100, 4000, 1000 );
 
-	matchStartText2 = createServerFontString( "objective", 1.5 );
+	matchStartText2 = createServerFontString( "default", 1.5 );
 	matchStartText2 setPoint( "CENTER", "CENTER", 0, -60 );
 	matchStartText2.sort = 1001;
 	matchStartText2 setText( game["strings"]["match_starting_in"] );
 	matchStartText2.foreground = false;
 	matchStartText2.hidewheninmenu = false;
 
-	matchStartTimer = createServerTimer( "objective", 1.4 );
+	matchStartTimer = createServerTimer( "default", 1.4 );
 	matchStartTimer setPoint( "CENTER", "CENTER", 0, -45 );
 	matchStartTimer setTimer( 5 );
 	matchStartTimer.sort = 1001;
@@ -175,6 +203,83 @@ main()
 	game["state"] = "playing";
 
 	map_restart( true );
+}
+
+createExtraHUD()
+{
+	// Hold hint
+	// self.hint1 = newClientHudElem(self);
+	// self.hint1.x = -7;
+	// self.hint1.y = 266;
+	// self.hint1.horzAlign = "right";
+	// self.hint1.vertAlign = "top";
+	// self.hint1.alignX = "center";
+	// self.hint1.alignY = "middle";
+	// self.hint1.fontScale = 1.4;
+	// self.hint1.font = "default";
+	// self.hint1.color = (0.8, 1, 1);
+	// self.hint1.hidewheninmenu = true;
+	// self.hint1 setText( "" );
+
+	// Immunity hint
+	self.hint2 = createFontString( "default", 1.4 );
+	self.hint2 setPoint( "CENTER", "CENTER", 0, 183 );
+	self.hint2.sort = 1001;
+	self.hint2.foreground = false;
+	self.hint2.hidewheninmenu = true;
+	self.hint2 setText( "" );
+
+}
+
+startDemoRecord()
+{
+	map_name = toLower( getDvar( "mapname" ) );
+
+	if( level.fps_match_id != 0 )
+	{
+		demo_name = "FPS_" + level.fps_match_id + "_" + map_name + "_" + generateRandomString(4);
+	}		
+	else if ( game["LAN_MODE"] )
+	{
+		demo_name = "LAN_" + map_name + "_" + generateRandomString(8);
+	}		
+	else 
+	{
+		demo_name = "Match_" + map_name + "_" + generateRandomString(8);
+	}		
+	
+	self setClientDvar("record_string", "stoprecord;record " + demo_name);
+	//self closeMenu();
+	//self closeInGameMenu();
+
+	if( level.gametype == "sd" ){
+		self openMenu( game["menu_demo"] );
+		self closeMenu();
+		self.pers["recording_executed"] = true;
+	}
+}
+
+stopDemoRecord()
+{
+	self setClientDvar("record_string", "stoprecord");
+	self closeMenu();
+	self closeInGameMenu();
+	self openMenu( game["menu_demo"] );
+	self closeMenu();
+}
+
+generateRandomString(length)
+{    
+    list = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    string = "";
+
+    for (i = 0; i < length; i++)
+    {
+        random_int = randomintrange(0, list.size);
+        string += list[random_int];
+    }
+
+    return string;
 }
 
 lastPlayerReady()
@@ -258,16 +363,72 @@ selfLoop()
 	{
 		while ( !isDefined( self.pers["team"] ) || self.pers["team"] == "none" )
 			wait 0.05;
+		
+		// Spectator & bots always ready
+		while ( self.pers["team"] == "spectator" || isDefined( self.pers["isBot"] ) )
+		{
+			self.ready = true;
+			wait 0.05;
+		}
+			
 
 		wait 0.05;
 
-		if ( self useButtonPressed() )
+		// Return back to position fix - so we dont ready up by accident
+		if(isDefined( self.flying ) && self.flying )
+		{
+			//do nothing
+		}
+		else 
+		{
+			if ( self useButtonPressed() )
 			self.ready = !self.ready;
+		}
 
 		while ( self useButtonPressed() )
 			wait 0.1;
+		
+		// Change hint for disabling killing
+		if ( !isDefined( self.ruptally ) || self.ruptally == -1 )
+		{
+			//self.hint1 setText( "" );
+			if( isDefined( self.hint2 ))
+				self.hint2 setText( "" );
+		}
+		else {
+			//self.hint1 setText( "Hold ^3[{+melee}]" );
+			if( isDefined( self.hint2 ))
+				self.hint2 setText( "Hold ^3[{+melee}]^7 for Immunity" );
+		}
+			
+
+		// Add functionality to turn off the ability to be killed or flashed
+		if ( self meleeButtonPressed() )
+		{
+			wait 0.1;
+
+			holdButtonTime = 0;
+			while ( holdButtonTime < 0.5 && self meleeButtonPressed() )
+			{
+				holdButtonTime += 0.05;
+				wait 0.05;
+			}
+
+			if ( holdButtonTime > 0.35 )
+			{
+				if ( isDefined( self.ruptally ) )
+				{
+					self.ruptally = undefined;
+					self setclientdvar("self_kills", "");					
+				}
+			}
+
+			while ( self meleeButtonPressed() )
+				wait 0.05;
+		}
 	}
 }
+
 
 clientHUD()
 {
@@ -276,22 +437,22 @@ clientHUD()
 	if ( !game["promod_first_readyup_done"] )
 		self waittill("spawned_player");
 
-	text = "";
-	if ( !game["promod_first_readyup_done"] )
-		text = "Pre-Match";
-	else if ( game["promod_in_timeout"] )
-		text = "Timeout";
-	else
-		text = "Half-Time";
+	//text = "";
+	//if ( !game["promod_first_readyup_done"] )
+	//	text = "Pre-Match";
+	//else if ( game["promod_in_timeout"] )
+	//	text = "Timeout";
+	//else
+	//	text = "Half-Time";
 
-	self.periodtext = createFontString( "objective", 1.6 );
-	self.periodtext setPoint( "CENTER", "CENTER", 0, -75 );
-	self.periodtext.sort = 1001;
-	self.periodtext setText( text + " Ready-Up Period" );
-	self.periodtext.foreground = false;
-	self.periodtext.hidewheninmenu = true;
+	//self.periodtext = createFontString( "default", 1.6 );
+	//self.periodtext setPoint( "CENTER", "CENTER", 0, -75 );
+	//self.periodtext.sort = 1001;
+	//self.periodtext setText( text + " Ready-Up Period" );
+	//self.periodtext.foreground = false;
+	//self.periodtext.hidewheninmenu = true;
 
-	self.halftimetext = createFontString( "objective", 1.5 );
+	self.halftimetext = createFontString( "default", 1.5 );
 	self.halftimetext.alpha = 0;
 	self.halftimetext setPoint( "CENTER", "CENTER", 0, 200 );
 	self.halftimetext.sort = 1001;
@@ -299,7 +460,7 @@ clientHUD()
 	self.halftimetext.foreground = false;
 	self.halftimetext.hidewheninmenu = true;
 
-	if ( game["promod_first_readyup_done"] && game["promod_in_timeout"] && (!isDefined( game["LAN_MODE"] ) || !game["LAN_MODE"]) )
+	if ( game["promod_first_readyup_done"] && game["promod_in_timeout"] && (!isDefined( game["LAN_MODE"] ) || !game["LAN_MODE"]) || game["MATCHMAKING_MODE"] && !game["promod_first_readyup_done"] && !game["promod_in_timeout"])
 		text = "Remaining";
 	else
 		text = "Elapsed";
@@ -310,8 +471,8 @@ clientHUD()
 
 	level waittill("kill_ru_period");
 
-	if ( isDefined( self.periodtext ) )
-		self.periodtext destroy();
+	//if ( isDefined( self.periodtext ) )
+	//	self.periodtext destroy();
 
 	if ( isDefined( self.halftimetext ) )
 		self.halftimetext destroy();
@@ -331,14 +492,28 @@ onSpawn()
 
 periodAnnounce()
 {
-	level.halftimetimer = createServerTimer( "objective", 1.4 );
+	level.halftimetimer = createServerTimer( "default", 1.4 );
 	level.halftimetimer.alpha = 0;
 	level.halftimetimer setPoint( "CENTER", "CENTER", 0, 215 );
 
 	if ( !game["promod_in_timeout"] || isDefined( game["LAN_MODE"] ) && game["LAN_MODE"] )
 		level.halftimetimer setTimerUp( 0 );
 	else
+	{
+		if( ( game["MATCHMAKING_MODE"] ) )
+			level.halftimetimer setTimer( 120 );
+		else
+			level.halftimetimer setTimer( 300 );
+	}
+
+	if( ( game["MATCHMAKING_MODE"] ) && !game["promod_in_timeout"])
+	{
+		level.timeout_over = false;
 		level.halftimetimer setTimer( 300 );
+		level.timeout_time_left = 300;
+		thread promod\timeout::timeoutLoop();
+	}
+	
 
 	level.halftimetimer.sort = 1001;
 	level.halftimetimer.foreground = false;
@@ -355,13 +530,12 @@ moveOver()
 	level endon("kill_ru_period");
 	self endon("disconnect");
 
-	if( level.rup_txt_fx )
-	{
-		wait 3;
-		self.periodtext MoveOverTime( 2.5 );
-	}
+	//if( level.rup_txt_fx )
+	//{
+	//	wait 3;
+	//	self.periodtext MoveOverTime( 2.5 );
+	//}
 
-	self.periodtext setPoint( "CENTER", "CENTER", 0, 185 );
 
 	if( level.rup_txt_fx )
 	{

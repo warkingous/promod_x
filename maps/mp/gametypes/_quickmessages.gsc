@@ -120,11 +120,11 @@ quickpromod(response)
 			a = "en";
 			if ( self promod\client::toggle("PROMOD_RECORD") )
 				a = "dis";
-			self iprintln("Record reminder has been "+a+"abled");
+			self iprintln("Automatic recording has been "+a+"abled");
 			break;
 
 		case "5":
-			self maps\mp\gametypes\_weapons::printStats();
+			self maps\mp\gametypes\_weapons::printStats(false);
 			break;
 
 		case "silencer":
@@ -212,6 +212,12 @@ quickpromod(response)
 
 		case "killspec":
 			self [[level.killspec]]();
+			break;
+		case "velocity":
+			a = "dis";
+			if ( self promod\client::toggle("PROMOD_VELOCITY") )
+				a = "en";
+			self iprintln("Velocity meter has been "+a+"abled");
 			break;
 	}
 }

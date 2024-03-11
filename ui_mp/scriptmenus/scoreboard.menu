@@ -147,7 +147,7 @@
 			rect		36 22 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
 			origin		0 4
 			exp text	( team( score ) );
-			textfont	UI_FONT_OBJECTIVE
+			textfont	UI_FONT_DEFAULT
 			textscale	0.4
 			textalign	ITEM_ALIGN_LEFT
 			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -159,7 +159,7 @@
 			rect		36 22 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
 			origin		0 4
 			exp text	( team( score ) );
-			textfont	UI_FONT_OBJECTIVE
+			textfont	UI_FONT_DEFAULT
 			textscale	0.4
 			textalign	ITEM_ALIGN_LEFT
 			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -171,7 +171,7 @@
 			rect		36 22 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
 			origin		0 4
 			exp text	( player( score ) );
-			textfont	UI_FONT_OBJECTIVE
+			textfont	UI_FONT_DEFAULT
 			textscale	0.4
 			textalign	ITEM_ALIGN_LEFT
 			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -201,7 +201,7 @@
 			rect		134 22 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
 			origin		0 4
 			exp text	( otherteam( score ) );
-			textfont	UI_FONT_OBJECTIVE
+			textfont	UI_FONT_DEFAULT
 			textscale	0.4
 			textalign	ITEM_ALIGN_LEFT
 			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -261,7 +261,7 @@
 			rect		36 22 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
 			origin		0 4
 			exp text	( marinesfield( score ) );
-			textfont	UI_FONT_OBJECTIVE
+			textfont	UI_FONT_DEFAULT
 			textscale	0.4
 			textalign	ITEM_ALIGN_LEFT
 			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -273,7 +273,7 @@
 			rect		134 22 1 1 HORIZONTAL_ALIGN_LEFT VERTICAL_ALIGN_TOP
 			origin		0 4
 			exp text	( opforfield( score ) );
-			textfont	UI_FONT_OBJECTIVE
+			textfont	UI_FONT_DEFAULT
 			textscale	0.4
 			textalign	ITEM_ALIGN_LEFT
 			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -285,7 +285,7 @@
 			rect		-3 4 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
 			origin		0 22
 			exp text	( secondsAsCountdown( timeLeft() ) );
-			textfont	UI_FONT_OBJECTIVE
+			textfont	UI_FONT_DEFAULT
 			textscale	0.4
 			textalign	ITEM_ALIGN_RIGHT
 			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -297,7 +297,7 @@
 			rect		-3 4 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
 			origin		0 22
 			exp text	( secondsAsCountdown( timeLeft() ) );
-			textfont	UI_FONT_OBJECTIVE
+			textfont	UI_FONT_DEFAULT
 			textscale	0.4
 			textalign	ITEM_ALIGN_RIGHT
 			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE
@@ -310,7 +310,7 @@
 			rect		-3 4 1 1 HORIZONTAL_ALIGN_RIGHT VERTICAL_ALIGN_TOP
 			origin		0 22
 			exp text	( secondsAsCountdown( timeLeft() ) );
-			textfont	UI_FONT_OBJECTIVE
+			textfont	UI_FONT_DEFAULT
 			textscale	0.4
 			textalign	ITEM_ALIGN_RIGHT
 			textstyle	ITEM_TEXTSTYLE_SHADOWEDMORE

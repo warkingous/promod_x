@@ -74,6 +74,7 @@ init()
 	setDvarDefault( "class_assault_secondary_attachment", "none" );
 	setDvarDefault( "class_assault_grenade", "smoke_grenade" );
 	setDvarDefault( "class_assault_camo", "camo_none" );
+	setDvarDefault( "class_assault_secondary_camo", "camo_none" );
 
 	setDvarDefault( "class_specops_primary", "ak74u" );
 	setDvarDefault( "class_specops_primary_attachment", "none" );
@@ -81,6 +82,7 @@ init()
 	setDvarDefault( "class_specops_secondary_attachment", "none" );
 	setDvarDefault( "class_specops_grenade", "smoke_grenade" );
 	setDvarDefault( "class_specops_camo", "camo_none" );
+	setDvarDefault( "class_specops_secondary_camo", "camo_none" );
 
 	setDvarDefault( "class_demolitions_primary", "winchester1200" );
 	setDvarDefault( "class_demolitions_primary_attachment", "none" );
@@ -88,6 +90,7 @@ init()
 	setDvarDefault( "class_demolitions_secondary_attachment", "none" );
 	setDvarDefault( "class_demolitions_grenade", "smoke_grenade" );
 	setDvarDefault( "class_demolitions_camo", "camo_none" );
+	setDvarDefault( "class_demolitions_secondary_camo", "camo_none" );
 
 	setDvarDefault( "class_sniper_primary", "m40a3" );
 	setDvarDefault( "class_sniper_primary_attachment", "none" );
@@ -95,6 +98,7 @@ init()
 	setDvarDefault( "class_sniper_secondary_attachment", "none" );
 	setDvarDefault( "class_sniper_grenade", "smoke_grenade" );
 	setDvarDefault( "class_sniper_camo", "camo_none" );
+	setDvarDefault( "class_sniper_secondary_camo", "camo_none" );
 
 	setDvarDefault( "scr_enable_hiticon", 2, 0, 2 );
 	setDvarDefault( "scr_enable_scoretext", 1, 0, 1 );
@@ -122,7 +126,9 @@ setClassChoice( classType )
 	self.class = classType;
 
 	if(idef)
+	{
 		self promod\shoutcast::addPlayer();
+	}
 
 	self setClientDvar( "loadout_class", classType );
 
@@ -228,6 +234,7 @@ initLoadoutForClass( classType )
 	CLASS_PRIMARY_ATTACHMENT = SSALC + "_PRIMARY_ATTACHMENT";
 	CLASS_SECONDARY = SSALC + "_SECONDARY";
 	CLASS_SECONDARY_ATTACHMENT = SSALC + "_SECONDARY_ATTACHMENT";
+	CLASS_SECONDARY_CAMO = SSALC + "_SECONDARY_CAMO";
 	CLASS_GRENADE = SSALC + "_GRENADE";
 	CLASS_CAMO = SSALC + "_CAMO";
 
@@ -263,6 +270,14 @@ initLoadoutForClass( classType )
 			self.pers[classType]["loadout_secondary_attachment"] = getDvar( "class_" + classType + "_secondary_attachment" );
 	}
 
+	if ( !isDefined( self.pers[classType] ) || !isDefined( self.pers[classType]["loadout_secondary_camo"] ) )
+	{
+		if ( validClass( classType, get_config( CLASS_SECONDARY_CAMO ), "loadout_secondary_camo" ) )
+			self.pers[classType]["loadout_secondary_camo"] = get_config( CLASS_SECONDARY_CAMO );
+		else
+			self.pers[classType]["loadout_secondary_camo"] = getDvar( "class_" + classType + "_secondary_camo" );
+	}
+
 	if ( !isDefined( self.pers[classType] ) || !isDefined( self.pers[classType]["loadout_grenade"] ) )
 	{
 		if ( validClass( classType, get_config( CLASS_GRENADE ), "loadout_grenade" ) )
@@ -289,6 +304,7 @@ validClass( classType, preServed, type )
 	loadout_primary_attachment = "";
 	loadout_secondary = "";
 	loadout_secondary_attachment = "";
+	loadout_secondary_camo = "";
 	loadout_grenade = "";
 	loadout_camo = "";
 
@@ -305,7 +321,8 @@ validClass( classType, preServed, type )
 	loadout_secondary = strTok( "deserteaglegold,deserteagle,colt45,usp,beretta", "," );
 	loadout_secondary_attachment = strTok( "none,silencer", "," );
 	loadout_grenade = strTok( "flash_grenade,smoke_grenade", "," );
-	loadout_camo = strTok( "camo_none,camo_brockhaurd,camo_bushdweller,camo_blackwhitemarpat,camo_tigerred,camo_stagger,camo_gold", "," );
+	loadout_camo = strTok( "camo_none,camo_brockhaurd,camo_bushdweller,camo_blackwhitemarpat,camo_tigerred,camo_stagger,camo_gold,camo_twotone,camo_dark,camo_wasteland,camo_mw,camo_asiimov,camo_x", "," );
+	loadout_secondary_camo = strTok( "camo_none,camo_twotone,camo_dark,camo_wasteland,camo_mw,camo_asiimov,camo_x", "," );
 
 	switch ( type )
 	{
@@ -377,6 +394,16 @@ validClass( classType, preServed, type )
 			}
 			break;
 
+		case "loadout_secondary_camo":
+			for ( i = 0; i < loadout_secondary_camo.size; i++ )
+			{
+				exp = loadout_secondary_camo[i];
+
+				if ( exp == preServed )
+					return true;
+			}
+			break;
+
 		default:
 			return false;
 	}
@@ -391,6 +418,7 @@ setDvarsFromClass( classType )
 		"loadout_primary_attachment", self.pers[classType]["loadout_primary_attachment"],
 		"loadout_secondary", self.pers[classType]["loadout_secondary"],
 		"loadout_secondary_attachment", self.pers[classType]["loadout_secondary_attachment"],
+		"loadout_secondary_camo", self.pers[classType]["loadout_secondary_camo"],
 		"loadout_grenade", self.pers[classType]["loadout_grenade"],
 		"loadout_camo", self.pers[classType]["loadout_camo"] );
 }
@@ -468,7 +496,7 @@ processLoadoutResponse( respString )
 					default:
 						return;
 				}
-
+			// Primary weapon camos
 			case "loadout_camo":
 				switch ( subTokens[1] )
 				{
@@ -477,7 +505,35 @@ processLoadoutResponse( respString )
 					case "camo_bushdweller":
 					case "camo_blackwhitemarpat":
 					case "camo_tigerred":
+					case "camo_twotone":
+					case "camo_dark":
+					case "camo_wasteland":
+					case "camo_mw":
+					case "camo_asiimov":
+					case "camo_x":
 					case "camo_stagger":
+					case "camo_gold":
+						self.pers[self.class][subTokens[0]] = subTokens[1];
+						break;
+					default:
+						return;
+				}
+			// Side arm weapon camos
+			case "loadout_secondary_camo":
+				switch ( subTokens[1] )
+				{
+					case "camo_none":
+					case "camo_brockhaurd":
+					case "camo_bushdweller":
+					case "camo_blackwhitemarpat":
+					case "camo_tigerred":
+					case "camo_stagger":
+					case "camo_twotone":
+					case "camo_dark":
+					case "camo_wasteland":
+					case "camo_mw":
+					case "camo_asiimov":
+					case "camo_x":
 					case "camo_gold":
 						self.pers[self.class][subTokens[0]] = subTokens[1];
 						break;

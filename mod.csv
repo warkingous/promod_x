@@ -25,7 +25,6 @@ menufile,ui_mp/scriptmenus/shoutcast_setup_binds.menu
 menufile,ui_mp/scriptmenus/team_marinesopfor.menu
 menufile,ui_mp/scriptmenus/team_marinesopfor_flipped.menu
 
-rawfile,maps/createfx/mp_backlot_fx.gsc
 rawfile,maps/createfx/mp_bloc_fx.gsc
 rawfile,maps/createfx/mp_bog_fx.gsc
 rawfile,maps/createfx/mp_broadcast_fx.gsc
@@ -122,3 +121,80 @@ stringtable,promod/customStatsTable.csv
 stringtable,promod/destructible.csv
 
 xmodel,com_floodlight_on
+
+# Map fixes
+xmodel,com_plainchair_shardrail
+xmodel,ch_corkboard_metaltrim_4x8
+xmodel,ch_corkboard_metaltrim_3x4
+xmodel,me_concrete_barrier
+xmodel,mil_sandbag_desert_long
+xmodel,mil_sandbag_desert_single_bent
+xmodel,me_dumpster_close
+
+rawfile,promod/matchmaking.gsc
+menufile,ui_mp/weaponinfo.menu
+stringtable,mp/attachmentTable.csv
+
+# Gold camos
+xmodel,viewmodel_ak74u_mp_gold
+xmodel,viewmodel_m40a3_mp_gold
+xmodel,viewmodel_remington700_mp_gold
+
+# Two-tone camos
+xmodel,viewmodel_desert_eagle_mp_twotone
+xmodel,viewmodel_ak47_mp_twotone
+xmodel,viewmodel_ak74u_mp_twotone
+xmodel,viewmodel_m40a3_mp_twotone
+xmodel,viewmodel_remington700_mp_twotone
+
+# Dark camos
+xmodel,viewmodel_desert_eagle_mp_dark
+xmodel,viewmodel_ak74u_mp_dark
+xmodel,viewmodel_ak47_mp_dark
+xmodel,viewmodel_m40a3_mp_dark
+
+# Wasteland camos
+xmodel,viewmodel_ak74u_mp_wasteland
+xmodel,viewmodel_ak47_mp_wasteland
+
+# Asiimov camos
+xmodel,viewmodel_m40a3_mp_asiimov
+xmodel,viewmodel_remington700_mp_asiimov
+xmodel,viewmodel_ak74u_mp_asiimov
+xmodel,viewmodel_ak47_mp_asiimov
+
+# Special camos
+xmodel,viewmodel_m40a3_mp_x
+xmodel,viewmodel_remington700_mp_x
+xmodel,viewmodel_ak74u_mp_x
+xmodel,viewmodel_ak47_mp_x
+
+# MW camos
+xmodel,viewmodel_m40a3_mp_mw
+xmodel,viewmodel_remington700_mp_mw
+xmodel,viewmodel_ak74u_mp_mw
+xmodel,viewmodel_ak47_mp_mw
+xmodel,viewmodel_desert_eagle_mp_mw
+
+# Dahman ambient fix
+rawfile,maps/mp/mp_dahman_b41_fx.gsc
+rawfile,maps/mp/mp_dahman_b41.gsc
+
+# Dahman sounds fix
+rawfile,maps/mp/mp_dahman_b41.gsc
+
+# Ping checker 
+rawfile,maps/mp/_ping.gsc
+
+# Velocity meter 
+rawfile,promod/velocity.gsc
+
+# AC
+rawfile,promod/ac.gsc
+stringtable,mp/rankTable.csv
+
+# Statistics
+rawfile,promod/stats.gsc
+
+# Clipping detection
+rawfile,promod/clip.gsc 

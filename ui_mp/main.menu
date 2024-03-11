@@ -111,7 +111,7 @@
 		}
 		itemDef
 		{
-			text			"Call of Duty 4 Promod"
+			text			"Call of Duty 4 FPS Promod"
 			style			0
 			textscale		0.3
 			textstyle		3
@@ -126,7 +126,7 @@
 		}
 		itemDef
 		{
-			text			"www.codpromod.com"
+			text			"www.fpschallenge.eu"
 			style			0
 			textscale		0.2
 			textstyle		3
@@ -141,7 +141,7 @@
 		}
 		itemDef
 		{
-			text			"Current Promod Version: LIVE V2.20 EU"
+			text			"Current Promod Version: LIVE V2.70 EU"
 			style			0
 			textscale		0.25
 			textstyle		3
@@ -156,7 +156,7 @@
 		}
 		itemDef
 		{
-			text			"Maintained by Ingram"
+			text			"Updated by warking"
 			style			0
 			textscale		0.25
 			textstyle		3
@@ -171,7 +171,7 @@
 		}
 		itemDef
 		{
-			text			"Former developers: raf1, MavLP, bulletworm, Trivve"
+			text			"Old devs: raf1, MavLP, bulletworm, Trivve, Ingram"
 			style			0
 			textscale		0.25
 			textstyle		3
@@ -186,7 +186,7 @@
 		}
 		itemDef
 		{
-			text			"Also thanks to everyone else involved in Promod!"
+			text			"Special thanks to MaxinDruCoD4!"
 			style			0
 			textscale		0.25
 			textstyle		3
@@ -206,7 +206,7 @@
 		{
 			type			ITEM_TYPE_BUTTON
 			rect			CHOICE_RECT( 2 )
-			exp				text( "About Promod" );
+			exp				text( "About FPS Promod" );
 			textfont		CHOICE_TEXTFONT
 			textscale		CHOICE_TEXTSIZE
 			textstyle		CHOICE_TEXTSTYLE

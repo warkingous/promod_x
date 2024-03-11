@@ -61,7 +61,7 @@ initNotifyMessage()
 	titleSize = 2.5;
 	textSize = 1.75;
 	iconSize = 30;
-	font = "objective";
+	font = "default";
 	point = "TOP";
 	relativePoint = "BOTTOM";
 	yOffset = 30;
@@ -347,7 +347,7 @@ teamOutcomeNotify( winner, isRound, endReasonText, delay )
 	textSize = 2;
 	iconSize = 70;
 	spacing = 30;
-	font = "objective";
+	font = "default";
 
 	duration = 60000;
 
@@ -506,7 +506,7 @@ outcomeNotify( winner, endReasonText, delay )
 	otherSize = 1.5;
 	iconSize = 30;
 	spacing = 20;
-	font = "objective";
+	font = "default";
 
 	duration = 60000;
 

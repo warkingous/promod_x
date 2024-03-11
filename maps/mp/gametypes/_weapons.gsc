@@ -141,7 +141,7 @@ shotCounter()
 	}
 }
 
-printStats()
+printStats( reset )
 {
 	if(isDefined(game["PROMOD_MATCH_MODE"]) && game["PROMOD_MATCH_MODE"] == "match" && isDefined(self.hasDoneCombat) && self.hasDoneCombat && isDefined(level.gameEnded) && !level.gameEnded && (!isDefined( game["promod_do_readyup"] ) || !game["promod_do_readyup"]))
 		self iprintln("Can't display stats. Wait for the round to end.");
@@ -165,6 +165,9 @@ printStats()
 		if ( !isDefined( self.pers["hits"] ) )
 			self.pers["hits"] = 0;
 
+		if ( !isDefined( self.pers["clips"] ) )
+			self.pers["clips"] = 0;
+
 		// Log, print, reset
 		if(self.pers["damage_done"] > 0 || self.pers["damage_taken"] > 0 || self.pers["friendly_damage_done"] > 0 || self.pers["friendly_damage_taken"] > 0 || self.pers["shots"] > 0 || self.pers["hits"] > 0)
 			logPrint("P_A;" + self getGuid() + ";" + self getEntityNumber() + ";" + self.name + ";" + self.pers["shots"] + ";" + self.pers["hits"] + ";" + self.pers["damage_done"] + ";" + self.pers["damage_taken"] + ";" + self.pers["friendly_damage_done"] + ";" + self.pers["friendly_damage_taken"] + "\n");
@@ -178,13 +181,19 @@ printStats()
 			acc = int(self.pers["hits"]/self.pers["shots"]*10000)/100;
 		self iprintln("Shots Fired: ^2" + self.pers["shots"] + "^7 Shots Hit: ^2" + self.pers["hits"] + "^7 Accuracy: ^1" + acc + " pct");
 
+		self iprintln("Clip count: ^1" + self.pers["clips"]);
+
 		// Reset the stats afterwards
-		self.pers["damage_done"] = 0;
-		self.pers["damage_taken"] = 0;
-		self.pers["friendly_damage_done"] = 0;
-		self.pers["friendly_damage_taken"] = 0;
-		self.pers["shots"] = 0;
-		self.pers["hits"] = 0;
+		if ( reset )
+		{
+			self.pers["damage_done"] = 0;
+			self.pers["damage_taken"] = 0;
+			self.pers["friendly_damage_done"] = 0;
+			self.pers["friendly_damage_taken"] = 0;
+			self.pers["shots"] = 0;
+			self.pers["hits"] = 0;
+			self.pers["clips"] = 0;
+		}
 	}
 }
 
@@ -312,4 +321,41 @@ onWeaponDamage( eInflictor, sWeapon, meansOfDeath, damage )
 	self endon ( "disconnect" );
 
 	maps\mp\gametypes\_shellshock::shellshockOnDamage( meansOfDeath, damage );
+}
+
+isPrimaryWeapon( weapon )
+{
+	if ( 
+        weapon == "ak47_mp" || 
+        weapon == "ak74u_mp" ||  
+        weapon == "m40a3_mp" || 
+        weapon == "remington700_mp" ||
+        weapon == "none_mp" ||
+        weapon == "m16_mp" ||
+        weapon == "m4_mp" ||
+        weapon == "g3_mp" ||
+        weapon == "g36c_mp" ||
+        weapon == "m14_mp" ||
+        weapon == "mp44_mp" ||
+        weapon == "mp5_mp" ||
+        weapon == "uzi_mp" ||
+        weapon == "winchester1200_mp" ||
+        weapon == "m1014_mp"
+        )
+		return true;
+	
+	return false;
+}
+isSideArm( weapon )
+{
+    if ( 
+        weapon == "deserteaglegold_mp" || 
+        weapon == "deserteagle_mp" ||  
+        weapon == "colt45_mp" ||
+        weapon == "usp_mp" ||
+        weapon == "beretta_mp"
+        )
+		return true;
+	
+	return false;
 }

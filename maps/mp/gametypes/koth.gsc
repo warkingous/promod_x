@@ -190,14 +190,14 @@ HQMainLoop()
 	wait 5;
 
 	timerDisplay = [];
-	timerDisplay["allies"] = createServerTimer( "objective", 1.4, "allies" );
+	timerDisplay["allies"] = createServerTimer( "default", 1.4, "allies" );
 	timerDisplay["allies"] setPoint( "TOPRIGHT", "TOPRIGHT", 0, 0 );
 	timerDisplay["allies"].label = hqSpawningInStr;
 	timerDisplay["allies"].alpha = 0;
 	timerDisplay["allies"].archived = false;
 	timerDisplay["allies"].hideWhenInMenu = true;
 
-	timerDisplay["axis"] = createServerTimer( "objective", 1.4, "axis" );
+	timerDisplay["axis"] = createServerTimer( "default", 1.4, "axis" );
 	timerDisplay["axis"] setPoint( "TOPRIGHT", "TOPRIGHT", 0, 0 );
 	timerDisplay["axis"].label = hqSpawningInStr;
 	timerDisplay["axis"].alpha = 0;
