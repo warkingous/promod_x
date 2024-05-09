@@ -407,7 +407,10 @@ onUsePlantObject( player )
 			iPrintLn( &"MP_EXPLOSIVES_PLANTED_BY", player.name );
 		
 		// Player planted a bomb report
-		thread promod\stats::bombReport( player, self.label, "plant", game["totalroundsplayed"]+1 );
+		if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 )
+		{
+			thread promod\stats::bombReport( player, self.label, "plant", game["totalroundsplayed"]+1 );
+		}
 
 		maps\mp\gametypes\_globallogic::givePlayerScore( "plant", player );
 
@@ -448,7 +451,10 @@ onUseDefuseObject( player )
 		iPrintLn( &"MP_EXPLOSIVES_DEFUSED_BY", player.name );
 
 	// Player defused a bomb report
-	thread promod\stats::bombReport( player, self.label, "defuse", game["totalroundsplayed"]+1 );
+	if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 )
+	{
+		thread promod\stats::bombReport( player, self.label, "defuse", game["totalroundsplayed"]+1 );
+	}
 
 	maps\mp\gametypes\_globallogic::givePlayerScore( "defuse", player );
 	player thread [[level.onXPEvent]]( "defuse" );
