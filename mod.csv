@@ -148,14 +148,11 @@ xmodel,viewmodel_m40a3_mp_twotone
 xmodel,viewmodel_remington700_mp_twotone
 
 # Dark camos
+xmodel,viewmodel_remington700_mp_dark
 xmodel,viewmodel_desert_eagle_mp_dark
 xmodel,viewmodel_ak74u_mp_dark
 xmodel,viewmodel_ak47_mp_dark
 xmodel,viewmodel_m40a3_mp_dark
-
-# Wasteland camos
-xmodel,viewmodel_ak74u_mp_wasteland
-xmodel,viewmodel_ak47_mp_wasteland
 
 # Asiimov camos
 xmodel,viewmodel_m40a3_mp_asiimov
@@ -168,13 +165,25 @@ xmodel,viewmodel_m40a3_mp_x
 xmodel,viewmodel_remington700_mp_x
 xmodel,viewmodel_ak74u_mp_x
 xmodel,viewmodel_ak47_mp_x
+xmodel,viewmodel_desert_eagle_mp_x
 
-# MW camos
-xmodel,viewmodel_m40a3_mp_mw
-xmodel,viewmodel_remington700_mp_mw
-xmodel,viewmodel_ak74u_mp_mw
-xmodel,viewmodel_ak47_mp_mw
-xmodel,viewmodel_desert_eagle_mp_mw
+# Vulcan camos
+xmodel,viewmodel_remington700_mp_vulcan
+xmodel,viewmodel_m40a3_mp_vulcan
+xmodel,viewmodel_ak47_mp_vulcan
+xmodel,viewmodel_ak74u_mp_vulcan
+
+# Monster camos
+xmodel,viewmodel_remington700_mp_monster
+xmodel,viewmodel_m40a3_mp_monster
+xmodel,viewmodel_ak47_mp_monster
+xmodel,viewmodel_ak74u_mp_monster
+
+# Cod camos
+xmodel,viewmodel_remington700_mp_cod
+xmodel,viewmodel_m40a3_mp_cod
+xmodel,viewmodel_ak47_mp_cod
+xmodel,viewmodel_ak74u_mp_cod
 
 # Dahman ambient fix
 rawfile,maps/mp/mp_dahman_b41_fx.gsc

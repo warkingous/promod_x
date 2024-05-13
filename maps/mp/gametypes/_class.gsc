@@ -50,8 +50,8 @@ sidearmWeapon()
 	if ( sidearmWeapon != "none" && sidearmWeapon != "deserteaglegold" && sidearmWeapon != "deserteagle" && sidearmWeapon != "colt45" && sidearmWeapon != "usp" && sidearmWeapon != "beretta" )
 		sidearmWeapon = getDvar( "class_" + class + "_secondary" );
 
-	//first
-	camos = strtok("camo_gold|camo_twotone|camo_dark|camo_wasteland|camo_mw|camo_asiimov|camo_x|camo_monster", "|");
+	//custom camos
+	camos = strtok("camo_brockhaurd|camo_bushdweller|camo_blackwhitemarpat|camo_tigerred|camo_stagger|camo_gold|camo_twotone|camo_dark|camo_asiimov|camo_x|camo_monster|camo_secret|camo_vulcan|camo_cod", "|");
 	camonum = 0;
 
 	if(isDefined(self.pers[class]["loadout_secondary_camo"]))
@@ -132,22 +132,24 @@ primaryWeapon()
 		// Golden Camo
 		if(self.pers[class]["loadout_camo"] == "camo_gold" && (primaryWeapon == "ak47" || primaryWeapon == "uzi" || primaryWeapon == "m1014" || primaryWeapon == "ak74u" || primaryWeapon == "m40a3" || primaryWeapon == "remington700"))
 			camonum = 6;
-		// Dark Camo
+		// Custom Camos
 		else if( self.pers[class]["loadout_camo"] == "camo_twotone" )
 			camonum = 7;
 		else if( self.pers[class]["loadout_camo"] == "camo_dark" )
 			camonum = 8;
-		else if( self.pers[class]["loadout_camo"] == "camo_wasteland" )
-			camonum = 9;
-		else if( self.pers[class]["loadout_camo"] == "camo_mw" )
-			camonum = 10;
 		else if( self.pers[class]["loadout_camo"] == "camo_asiimov" )
-			camonum = 11;
-		else if( self.pers[class]["loadout_camo"] == "camo_monster" )
-			camonum = 12;
+			camonum = 9;
 		else if( self.pers[class]["loadout_camo"] == "camo_x" )
+			camonum = 10;
+		else if( self.pers[class]["loadout_camo"] == "camo_monster" )
+			camonum = 11;
+		else if( self.pers[class]["loadout_camo"] == "camo_secret" )
+			camonum = 12;
+		else if( self.pers[class]["loadout_camo"] == "camo_vulcan" )
 			camonum = 13;
-		
+		else if( self.pers[class]["loadout_camo"] == "camo_cod" )
+			camonum = 14;
+
 		//iprintln("primary " + camonum);
 	}
 	else

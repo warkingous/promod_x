@@ -464,21 +464,40 @@ menuDef
 	//CHOICE_NEWICON_VIS( itemNum, "fps_premium_access", when( 1 ) )
 
 
-// Wasteland Camo
-#define LOCAL_CAMO_WASTELAND( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
-	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "ak47" ) ) \
-	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "ak47" ) ) \
+// Dark Camo
+#define LOCAL_CAMO_DARK( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
+	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "m40a3" || dvarString( loadout_primary ) == "remington700" || dvarString( loadout_primary ) == "ak47" ) ) \
+	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "m40a3" && dvarString( loadout_primary ) != "remington700" && dvarString( loadout_primary ) != "ak47") ) \
+
+// Two-toned Camo
+#define LOCAL_CAMO_TWOTONE( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
+	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "m40a3" || dvarString( loadout_primary ) == "remington700" || dvarString( loadout_primary ) == "ak47" ) ) \
+	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "m40a3" && dvarString( loadout_primary ) != "remington700" && dvarString( loadout_primary ) != "ak47") ) \
 
 // Asiimov Camo
 #define LOCAL_CAMO_ASIIMOV( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
 	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "m40a3" || dvarString( loadout_primary ) == "remington700" || dvarString( loadout_primary ) == "ak47" ) ) \
 	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "m40a3" && dvarString( loadout_primary ) != "remington700" && dvarString( loadout_primary ) != "ak47") ) \
 
-// Dark Camo
-#define LOCAL_CAMO_DARK( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
-	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak47" || dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "m40a3") ) \
-	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak47" && dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "m40a3" ) ) \
-	//CHOICE_NEWICON_VIS( itemNum, "fps_premium_access", when( 1 ) )
+// Special X Camo
+#define LOCAL_CAMO_X( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
+	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "m40a3" || dvarString( loadout_primary ) == "remington700" || dvarString( loadout_primary ) == "ak47" ) ) \
+	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "m40a3" && dvarString( loadout_primary ) != "remington700" && dvarString( loadout_primary ) != "ak47") ) \ 
+
+// Vulcan Camo
+#define LOCAL_CAMO_VULCAN( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
+	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "m40a3" || dvarString( loadout_primary ) == "remington700" || dvarString( loadout_primary ) == "ak47" ) ) \
+	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "m40a3" && dvarString( loadout_primary ) != "remington700" && dvarString( loadout_primary ) != "ak47") ) \
+
+// Monster Camo
+#define LOCAL_CAMO_MONSTER( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
+	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "m40a3" || dvarString( loadout_primary ) == "remington700" || dvarString( loadout_primary ) == "ak47" ) ) \
+	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "m40a3" && dvarString( loadout_primary ) != "remington700" && dvarString( loadout_primary ) != "ak47") ) \
+
+// Cod Camo
+#define LOCAL_CAMO_COD( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
+	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "m40a3" || dvarString( loadout_primary ) == "remington700" || dvarString( loadout_primary ) == "ak47" ) ) \
+	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "m40a3" && dvarString( loadout_primary ) != "remington700" && dvarString( loadout_primary ) != "ak47") ) \
 
 //AK74u Camos
 #define LOCAL_CAMO_AKU( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
@@ -496,16 +515,18 @@ menuDef	\
 	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_sidearm_camo"prefix, 7, (CHOICE_X( 1 )-2), (CHOICE_Y( 1 )+68), ;, execnow "set "UI_FOCUSFIRST" "REF_CAMO_NONE"; set ui_inside_popup camo";, 0 )\
 	onClose{onLeave;} \
 	LOCAL_CAMO_INFO_WINDOW( "ui_camo_highlighted" )\
-	SIDEARM_CAMO_ITEM( 1, "1. Silver", CAMO_NONE, REF_CAMO_NONE, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	SIDEARM_CAMO_ITEM( 1, "1. None", CAMO_NONE, REF_CAMO_NONE, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
 	SIDEARM_CAMO_ITEM( 2, "2. Golden", CAMO_GOLDEN, REF_GOLDEN, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
-	SIDEARM_CAMO_ITEM( 3, "3. Two-Tone", CAMO_TWOTONE, REF_TWOTONE, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
-	SIDEARM_CAMO_ITEM( 4, "4. Dark", CAMO_DARK, REF_DARK, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
-	SIDEARM_CAMO_ITEM( 5, "5. MW", CAMO_MW, REF_MW, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\	
+	SIDEARM_CAMO_ITEM( 3, "3. Dark toned", CAMO_DARK, REF_DARK, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	SIDEARM_CAMO_ITEM( 4, "4. White toned", CAMO_TWOTONE, REF_TWOTONE, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	SIDEARM_CAMO_ITEM( 5, "5. Golden toned", CAMO_X, REF_X, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
 	execKey "1" { LOCAL_CAMO_ACTION(REF_CAMO_NONE); }\
-	execKey "2" { LOCAL_CAMO_ACTION(REF_GOLDEN); }\
-	execKey "3" { LOCAL_CAMO_ACTION(REF_TWOTONE); }\
-	execKey "4" { LOCAL_CAMO_ACTION(REF_DARK); }\
-	execKey "5" { LOCAL_CAMO_ACTION(REF_MW); }\
+	execKey "2" { LOCAL_CAMO_ACTION(REF_BROCKHUARD); }\
+	execKey "3" { LOCAL_CAMO_ACTION(REF_BUSHDWELLER); }\
+	execKey "4" { LOCAL_CAMO_ACTION(REF_BLACKWHITEMARPAT); }\
+	execKey "5" { LOCAL_CAMO_ACTION(REF_TIGERRED); }\
+	execKey "6" { LOCAL_CAMO_ACTION(REF_STAGGER); }\
+	execKey "7" { LOCAL_CAMO_ACTION(REF_GOLDEN); }\
 }
 
 SIDEARM_CAMO_GROUP( "", execnow "set ui_inside_popup attachment" )
@@ -517,8 +538,20 @@ menuDef	\
 	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_sidearm2_camo"prefix, 7, (CHOICE_X( 1 )-2), (CHOICE_Y( 1 )+68), ;, execnow "set "UI_FOCUSFIRST" "REF_CAMO_NONE"; set ui_inside_popup camo";, 0 )\
 	onClose{onLeave;} \
 	LOCAL_CAMO_INFO_WINDOW( "ui_camo_highlighted" )\
-	SIDEARM_CAMO_ITEM( 1, "1. Two-tone", CAMO_TWOTONE, REF_TWOTONE, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
-	execKey "1" { LOCAL_CAMO_ACTION(REF_TWOTONE); }\
+	SIDEARM_CAMO_ITEM( 1, "1. Dark", CAMO_DARK, REF_DARK, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	SIDEARM_CAMO_ITEM( 2, "2. Two-tone", CAMO_TWOTONE, REF_TWOTONE, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	SIDEARM_CAMO_ITEM( 3, "3. Asiimov", CAMO_ASIIMOV, REF_ASIIMOV, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	SIDEARM_CAMO_ITEM( 4, "4. Blue-tone", CAMO_VULCAN, REF_VULCAN, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	SIDEARM_CAMO_ITEM( 5, "5. Monster", CAMO_MONSTER, REF_MONSTER, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	SIDEARM_CAMO_ITEM( 6, "6. Modern", CAMO_COD, REF_COD, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	SIDEARM_CAMO_ITEM( 7, "7. Special", CAMO_X, REF_X, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	execKey "1" { LOCAL_CAMO_ACTION(REF_DARK); }\
+	execKey "2" { LOCAL_CAMO_ACTION(REF_TWOTONE); }\
+	execKey "3" { LOCAL_CAMO_ACTION(REF_ASIIMOV); }\
+	execKey "4" { LOCAL_CAMO_ACTION(REF_VULCAN); }\
+	execKey "5" { LOCAL_CAMO_ACTION(REF_MONSTER); }\
+	execKey "6" { LOCAL_CAMO_ACTION(REF_COD); }\
+	execKey "7" { LOCAL_CAMO_ACTION(REF_X); }\
 }
 
 SIDEARM2_CAMO_GROUP( "", execnow "set ui_inside_popup attachment" )
@@ -555,17 +588,19 @@ menuDef	\
 	onClose{onLeave;} \
 	LOCAL_CAMO_INFO_WINDOW( "ui_camo_highlighted" )\
 	LOCAL_CAMO_DARK( 1, "1. Dark", CAMO_DARK, REF_DARK, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
-	LOCAL_CAMO_ITEM3( 2, "2. Two-tone", CAMO_TWOTONE, REF_TWOTONE, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
-	LOCAL_CAMO_WASTELAND( 3, "3. Wasteland", CAMO_WASTELAND, REF_WASTELAND, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
-	LOCAL_CAMO_ITEM3( 4, "4. MW Green", CAMO_MW, REF_MW, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
-	LOCAL_CAMO_ASIIMOV( 5, "5. Asiimov", CAMO_ASIIMOV, REF_ASIIMOV, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
-	LOCAL_CAMO_ITEM3( 6, "6. Special", CAMO_X, REF_X, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	LOCAL_CAMO_TWOTONE( 2, "2. Two-tone", CAMO_TWOTONE, REF_TWOTONE, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	LOCAL_CAMO_ASIIMOV( 3, "3. Asiimov", CAMO_ASIIMOV, REF_ASIIMOV, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	LOCAL_CAMO_VULCAN( 4, "4. Blue-tone", CAMO_VULCAN, REF_VULCAN, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	LOCAL_CAMO_MONSTER( 5, "5. Monster", CAMO_MONSTER, REF_MONSTER, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	LOCAL_CAMO_COD( 6, "6. Modern", CAMO_COD, REF_COD, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
+	LOCAL_CAMO_X( 7, "7. Special", CAMO_X, REF_X, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
 	execKey "1" { LOCAL_CAMO_ACTION(REF_DARK); }\
 	execKey "2" { LOCAL_CAMO_ACTION(REF_TWOTONE); }\
-	execKey "3" { LOCAL_CAMO_ACTION(REF_WASTELAND); }\
-	execKey "4" { LOCAL_CAMO_ACTION(REF_MW); }\
-	execKey "5" { LOCAL_CAMO_ACTION(REF_ASIIMOV); }\
-	execKey "6" { LOCAL_CAMO_ACTION(REF_X); }\
+	execKey "3" { LOCAL_CAMO_ACTION(REF_ASIIMOV); }\
+	execKey "4" { LOCAL_CAMO_ACTION(REF_VULCAN); }\
+	execKey "5" { LOCAL_CAMO_ACTION(REF_MONSTER); }\
+	execKey "6" { LOCAL_CAMO_ACTION(REF_COD); }\
+	execKey "7" { LOCAL_CAMO_ACTION(REF_X); }\
 }
 
 PRIMARY2_CAMO_GROUP( "", execnow "set ui_inside_popup attachment" )
