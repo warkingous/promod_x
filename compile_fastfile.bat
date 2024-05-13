@@ -19,8 +19,8 @@ xcopy shock ..\..\raw\shock\ /SY
 xcopy sound ..\..\raw\sound\ /SY
 xcopy soundaliases ..\..\raw\soundaliases\ /SY
 xcopy ui_mp ..\..\raw\ui_mp\ /SY
-//xcopy materials ..\..\raw\materials\ /SY
-//xcopy images ..\..\raw\images\ /SY
+xcopy materials ..\..\raw\materials\ /SY
+xcopy images ..\..\raw\images\ /SY
 xcopy xmodel ..\..\raw\xmodel\ /SY
 xcopy xmodelparts ..\..\raw\xmodelparts\ /SY
 xcopy xmodelsurfs ..\..\raw\xmodelsurfs\ /SY

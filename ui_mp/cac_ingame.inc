@@ -377,7 +377,7 @@ LOCAL_MASTER_ATTACHMENT_GROUP( CAC_PRIMARY_ATTACHMENT, "", 1, "primary", -30, "l
 
 menuDef
 {
-	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_secondary", 6, (CHOICE_X( 2 )-2), (CHOICE_Y( 2 )), ;, execnow "set "UI_FOCUSFIRST" "REF_M9BERETTA"; set selected_weapon_class pistol; set ui_inside_popup pistol";, 0 )
+	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_secondary", 6, (CHOICE_X( 2 )-2), (CHOICE_Y( 2 )+100), ;, execnow "set "UI_FOCUSFIRST" "REF_M9BERETTA"; set selected_weapon_class pistol; set ui_inside_popup pistol";, 0 )
 	onClose{execnow "set ui_inside_popup 0";}
 	LOCAL_SIDEARM_INFO_WINDOW( "ui_sidearm_highlighted" )
 	LOCAL_SIDEARM_ITEM( 1, "1. Desert Eagle", STAT_PISTOL_DESERTEAGLE, REF_DESERTEAGLE, "ui_sidearm_highlighted" )
@@ -415,7 +415,7 @@ menuDef
 
 menuDef
 {
-	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_extra", 5, (CHOICE_X( 3 )-2), (CHOICE_Y( 3 )+4), ;, execnow "set "UI_FOCUSFIRST" "REF_FLASH_X1"; set ui_inside_popup sgrenade";, 0 )
+	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_extra", 5, (CHOICE_X( 3 )-2), (CHOICE_Y( 3 )+106), ;, execnow "set "UI_FOCUSFIRST" "REF_FLASH_X1"; set ui_inside_popup sgrenade";, 0 )
 	onClose{ execnow "set ui_inside_popup 0"; }
 	LOCAL_SGRENADE_INFO_WINDOW( "ui_sgrenade_highlighted" )
 	LOCAL_SGRENADE_ITEM( 1, "1. Flash", STAT_FLASH_X1, REF_FLASH_X1, "ui_sgrenade_highlighted" )
@@ -512,7 +512,7 @@ menuDef
 #define SIDEARM_CAMO_GROUP( prefix, onLeave )\
 menuDef	\
 {\
-	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_sidearm_camo"prefix, 7, (CHOICE_X( 1 )-2), (CHOICE_Y( 1 )+68), ;, execnow "set "UI_FOCUSFIRST" "REF_CAMO_NONE"; set ui_inside_popup camo";, 0 )\
+	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_sidearm_camo"prefix, 7, (CHOICE_X( 1 )-2), (CHOICE_Y( 1 )+118), ;, execnow "set "UI_FOCUSFIRST" "REF_CAMO_NONE"; set ui_inside_popup camo";, 0 )\
 	onClose{onLeave;} \
 	LOCAL_CAMO_INFO_WINDOW( "ui_camo_highlighted" )\
 	SIDEARM_CAMO_ITEM( 1, "1. None", CAMO_NONE, REF_CAMO_NONE, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
@@ -556,11 +556,10 @@ menuDef	\
 
 SIDEARM2_CAMO_GROUP( "", execnow "set ui_inside_popup attachment" )
 
-
 #define PRIMARY_CAMO_GROUP( prefix, onLeave )\
 menuDef	\
 {\
-	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_primary_camo"prefix, 7, (CHOICE_X( 1 )-2), (CHOICE_Y( 1 )+68), ;, execnow "set "UI_FOCUSFIRST" "REF_CAMO_NONE"; set ui_inside_popup camo";, 0 )\
+	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_primary_camo"prefix, 7, (CHOICE_X( 1 )-2), (CHOICE_Y( 1 )+2), ;, execnow "set "UI_FOCUSFIRST" "REF_CAMO_NONE"; set ui_inside_popup camo";, 0 )\
 	onClose{onLeave;} \
 	LOCAL_CAMO_INFO_WINDOW( "ui_camo_highlighted" )\
 	LOCAL_CAMO_ITEM( 1, "1. None ", CAMO_NONE, REF_CAMO_NONE, "ui_camo_highlighted", 0, 1 )\
@@ -584,7 +583,7 @@ PRIMARY_CAMO_GROUP( "", execnow "set ui_inside_popup attachment" )
 #define PRIMARY2_CAMO_GROUP( prefix, onLeave )\
 menuDef	\
 {\
-	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_primary2_camo"prefix, 7, (CHOICE_X( 1 )-2), (CHOICE_Y( 1 )+68), ;, execnow "set "UI_FOCUSFIRST" "REF_CAMO_NONE"; set ui_inside_popup camo";, 0 )\
+	IMPROVED_POPUP_SETUP_ONOPEN( "ocd_popup_cac_primary2_camo"prefix, 7, (CHOICE_X( 1 )-2), (CHOICE_Y( 1 )+22), ;, execnow "set "UI_FOCUSFIRST" "REF_CAMO_NONE"; set ui_inside_popup camo";, 0 )\
 	onClose{onLeave;} \
 	LOCAL_CAMO_INFO_WINDOW( "ui_camo_highlighted" )\
 	LOCAL_CAMO_DARK( 1, "1. Dark", CAMO_DARK, REF_DARK, "ui_camo_highlighted", GOLDEN_NEW_BITMASK, 1 )\
