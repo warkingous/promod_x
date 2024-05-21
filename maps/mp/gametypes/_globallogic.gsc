@@ -191,9 +191,11 @@ registerAcDvar()
 
 registerPingWatchDvars()
 {
+	level.fps_ping_force = getDvarInt( "fps_ping_force" );
+
 	// Set server fps_max_ping
 	if ( getDvar( "fps_max_ping" ) == "" )
-		setDvar( "fps_max_ping", 100 );    	
+		setDvar( "fps_max_ping", 100 ); 	
 	else
 		level.fps_max_ping =  getDvarInt( "fps_max_ping" );
 
@@ -3476,7 +3478,7 @@ Callback_PlayerConnect()
 	self.wasAliveAtMatchStart = false;
 
 	self thread maps\mp\_flashgrenades::monitorFlash();
-	self thread maps\mp\_ping::monitorPing();
+	self thread promod\ping::mainLoop();
 	self thread promod\velocity::mainLoop();
 
 	level.players[level.players.size] = self;
