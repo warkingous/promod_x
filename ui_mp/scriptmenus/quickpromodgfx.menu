@@ -191,7 +191,7 @@
 			visible			1
 			decoration
 		}
-		execKey "5" { scriptMenuResponse "5"; close quickpromodgfx }
+		execKey "5" { scriptMenuResponse "7"; close quickpromodgfx }
 
 		itemDef
 		{

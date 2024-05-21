@@ -30,8 +30,6 @@ visualizeTriggers()
         
 }
 
-
-
 drawCircle(start, radius, height)
 {
 	points = [];
@@ -56,6 +54,7 @@ drawCircle(start, radius, height)
 		}
 	}
 }
+
 drawLine(start, end, colour, depth)
 {
 	
@@ -155,18 +154,24 @@ checkClipping()
         }
         else if( self getStance() == "crouch" && crouchStartTime != 0 && !self.sprinting && self isOnGround() )
         {   
+            
             timeDiff = ( gettime() - crouchStartTime ) / 1000;
             if ( timeDiff <= 0.4 && isDefined( self.lastDistance ) && self.lastDistance < 50 )
             {
                 // A clip was detected
                 crouchStartTime = 0; // Reset the start time
-                //self iPrintlnBold( "^1Clip detected^7 - " + self.name + ", time: " + timeDiff + ", distance: " + self.lastDistance );
+
+                if( self promod\client::get_config( "PROMOD_CLIPINFO" ) )
+                    self iPrintln( "^1Clip detected^7" + ", time: " + timeDiff + "s");
                 //visualizeTriggers();           
-                if ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 )     
+
+                if( isDefined( level.strat_over ) && !level.strat_over && isAlive(self) && isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1)
                 {
                     self.pers["clips"]++;
                     thread promod\stats::clipReport( self, game["totalroundsplayed"]+1, timeDiff );
+                    self iprintln("clip");
                 }
+                
                 //self shellshock( "dog_bite", 2);               
             }
             else
@@ -286,6 +291,5 @@ checkSprinting()
         wait 1;       
 
         // The player has stopped sprinting
-
     }
 }

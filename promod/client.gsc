@@ -31,6 +31,33 @@ loopthrough(name, limit)
 	return self set_config(name, value);
 }
 
+loopthroughValues(name, values)
+{
+	index = self get_config(name) + 1;
+	if (index >= values.size) index = 0;
+	self set_config(name, index);
+	return values[index];
+}
+
+loopthroughFOVScale(name, limit)
+{
+    index = self get_config(name) + 1;
+	if (index > limit) index = 0;    
+	self set_config(name, index);
+
+    switch (index)
+    {
+        case 0: return 0.9;
+        case 1: return 0.95;
+        case 2: return 1.0;
+        case 3: return 1.05;
+        case 4: return 1.1;
+        case 5: return 1.125;
+        case 6: return 1.15;
+        default: return 1.0;
+    }
+}
+
 setsunlight(n)
 {
 	sl = 0;
@@ -88,5 +115,6 @@ use_config()
 	"r_texfilterdisable", self get_config("PROMOD_TEXTURE"),
 	"r_filmusetweaks", self get_config("PROMOD_FILMTWEAK"),
 	"r_blur", 0.2*self get_config("PROMOD_GFXBLUR"),
-	"cg_fovscale", 1+int(!self get_config("PROMOD_FOVSCALE"))*0.125);
+	"cg_fovscale", self get_config("PROMOD_FOVSCALE")
+	);
 }

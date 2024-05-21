@@ -219,6 +219,13 @@ quickpromod(response)
 				a = "en";
 			self iprintln("Velocity meter has been "+a+"abled");
 			break;
+
+		case "clipinfo":
+			a = "dis";
+			if ( self promod\client::toggle("PROMOD_CLIPINFO") )
+				a = "en";
+			self iprintln("Clipinfo has been "+a+"abled");
+			break;
 	}
 }
 
@@ -245,12 +252,15 @@ quickpromodgfx(response)
 			break;
 
 		case "5":
-			self setclientdvar("cg_fovscale", 1 + int(!self promod\client::toggle("PROMOD_FOVSCALE")) * 0.125);
+			//self setclientdvar("cg_fovscale", 1 + int(!self promod\client::toggle("PROMOD_FOVSCALE")) * 0.125);
 			break;
 
 		case "6":
 			self setclientdvar("r_blur", 0.2 * self promod\client::loopthrough("PROMOD_GFXBLUR", 5));
 			break;
+		case "7":
+			self setclientdvar("cg_fovscale", self promod\client::loopthroughFOVScale("PROMOD_FOVSCALE", 6));
+		break;
 	}
 }
 
