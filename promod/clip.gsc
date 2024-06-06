@@ -163,15 +163,23 @@ checkClipping()
                 
                 // self shellshock( "hold_breath", 2);
 
-                if( self promod\client::get_config( "PROMOD_CLIPINFO" ) )
-                    self iPrintln( "^1Clip detected^7" + ", time: " + timeDiff + "s");
+                //if( self promod\client::get_config( "PROMOD_CLIPINFO" ) )
+                //    self iPrintln( "^3Clip detected^7" + ", time: " + timeDiff + "s");
                 //visualizeTriggers();           
 
-                if( isDefined( level.strat_over ) && !level.strat_over && isAlive(self) && isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1)
+                if( isDefined( level.strat_over ) && level.strat_over && game["promod_in_timeout"] == 0 && isAlive(self) && isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1)
                 {
                     self.pers["clips"]++;
+
                     thread promod\stats::clipReport( self, game["totalroundsplayed"]+1, timeDiff );
-                    self iprintln("clip");
+
+                    if ( self promod\client::get_config( "PROMOD_CLIPINFO" ) )
+                    {
+                        self iPrintln( "^1Clip detected^7" + ", time: " + timeDiff + "s");
+                    }
+                } else if ( self promod\client::get_config( "PROMOD_CLIPINFO" ) ) 
+                {
+                    self iPrintln( "^3Clip detected^7" + ", time: " + timeDiff + "s");
                 }
                 
                 //self shellshock( "dog_bite", 2);               
