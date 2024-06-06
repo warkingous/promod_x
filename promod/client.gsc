@@ -47,13 +47,24 @@ loopthroughFOVScale(name, limit)
 
     switch (index)
     {
-        case 0: return 0.9;
-        case 1: return 0.95;
-        case 2: return 1.0;
-        case 3: return 1.05;
-        case 4: return 1.1;
-        case 5: return 1.125;
-        case 6: return 1.15;
+        case 0: return 1;
+        case 1: return 1.05;
+        case 2: return 1.1;
+        case 3: return 1.125;
+        default: return 1.0;
+    }
+}
+
+setFOVScale()
+{
+	index = self get_config("PROMOD_FOVSCALE");
+	
+	switch (index)
+    {
+        case 0: return 1;
+        case 1: return 1.05;
+        case 2: return 1.1;
+        case 3: return 1.125;
         default: return 1.0;
     }
 }
@@ -114,7 +125,8 @@ use_config()
 	"r_normalmap", self get_config("PROMOD_NORMALMAP"),
 	"r_texfilterdisable", self get_config("PROMOD_TEXTURE"),
 	"r_filmusetweaks", self get_config("PROMOD_FILMTWEAK"),
-	"r_blur", 0.2*self get_config("PROMOD_GFXBLUR"),
-	"cg_fovscale", self get_config("PROMOD_FOVSCALE")
+	//"r_blur", 0.2*self get_config("PROMOD_GFXBLUR"),
+	"cg_fovscale", self setFOVScale(),
+	"cg_gun_x", 0.2*self get_config("PROMOD_GUN_X")
 	);
 }

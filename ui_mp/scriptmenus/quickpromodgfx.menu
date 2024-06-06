@@ -204,7 +204,7 @@
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
 			textscale		TEXTSIZE_SMALL
 			textaligny		8
-			exp text		( "6. Screen Blur: " + dvarString( r_blur ) )
+			exp text		( "6. Gun X: " + dvarString( cg_gun_x ) )
 			visible			1
 			decoration
 		}

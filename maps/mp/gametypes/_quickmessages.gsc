@@ -255,11 +255,14 @@ quickpromodgfx(response)
 			//self setclientdvar("cg_fovscale", 1 + int(!self promod\client::toggle("PROMOD_FOVSCALE")) * 0.125);
 			break;
 
+		// case "6":
+		// 	self setclientdvar("r_blur", 0.2 * self promod\client::loopthrough("PROMOD_GFXBLUR", 5));
+		// 	break;
 		case "6":
-			self setclientdvar("r_blur", 0.2 * self promod\client::loopthrough("PROMOD_GFXBLUR", 5));
+			self setclientdvar("cg_gun_x", 0.2 * self promod\client::loopthrough("PROMOD_GUN_X", 5));
 			break;
 		case "7":
-			self setclientdvar("cg_fovscale", self promod\client::loopthroughFOVScale("PROMOD_FOVSCALE", 6));
+			self setclientdvar("cg_fovscale", self promod\client::loopthroughFOVScale("PROMOD_FOVSCALE", 3));
 		break;
 	}
 }

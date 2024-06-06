@@ -1,7 +1,7 @@
 init()
 {
     level thread players();
-    //precacheShellShock( "tank_rumble" );
+    precacheShellShock( "tank_rumble" );
 }
 
 players()
@@ -160,6 +160,8 @@ checkClipping()
             {
                 // A clip was detected
                 crouchStartTime = 0; // Reset the start time
+                
+                // self shellshock( "hold_breath", 2);
 
                 if( self promod\client::get_config( "PROMOD_CLIPINFO" ) )
                     self iPrintln( "^1Clip detected^7" + ", time: " + timeDiff + "s");
