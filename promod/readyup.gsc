@@ -509,8 +509,8 @@ periodAnnounce()
 	if( ( game["MATCHMAKING_MODE"] ) && !game["promod_in_timeout"])
 	{
 		level.timeout_over = false;
-		level.halftimetimer setTimer( 300 );
-		level.timeout_time_left = 300;
+		level.halftimetimer setTimer( 180 );
+		level.timeout_time_left = 180;
 		thread promod\timeout::timeoutLoop();
 	}
 	
