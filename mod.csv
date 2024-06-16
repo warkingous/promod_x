@@ -207,3 +207,6 @@ rawfile,promod/stats.gsc
 
 # Clipping detection
 rawfile,promod/clip.gsc 
+
+# Custom Maps faction support
+stringtable,mp/mapstable.csv
