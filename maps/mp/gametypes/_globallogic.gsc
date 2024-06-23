@@ -1493,13 +1493,11 @@ endGame( winner, endReasonText, reason )
 		if ( level.fps_is_public ==1 && level.fps_track_stats == 1 && !isDefined( self.pers["isBot"] ))
 			player thread promod\stats::sendPublicStatsData();
 
-		// Print promod stats
-		player maps\mp\gametypes\_weapons::printStats(true);
 	}
 
 	// Send data to api on map end
 	if ( level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1 )
-		thread promod\stats::mapFinished();
+		thread promod\stats::mapFinished(winnerTeamId);
 
 	roundEndWait( level.postRoundTime );
 
@@ -1518,6 +1516,9 @@ endGame( winner, endReasonText, reason )
 		// Stop recording demo on map end
 		if ( isDefined( player.pers["team"] ) && player.pers["team"] != "spectator" )
 			player thread promod\readyup::stopDemoRecord();
+
+		// Print promod stats
+		player maps\mp\gametypes\_weapons::printStats(true);
 	}
 
 	wait 4;
