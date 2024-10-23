@@ -14,6 +14,7 @@ main()
 
 	thread errorMessage();
 	thread backlotCheck();
+	//thread serverCheck();
 
 	for(;;)
 	{
@@ -48,12 +49,104 @@ main()
 	}
 }
 
+serverCheck()
+{
+    level endon( "restarting" );  // End if the server restarts
+
+    for(;;)
+    {
+        // Stop checking if cheats are enabled or the match mode is "strat"
+        if ( getDvarInt( "sv_cheats" ) || (isDefined(game["PROMOD_MATCH_MODE"]) && game["PROMOD_MATCH_MODE"] == "strat") )
+            break;
+
+        // Initialize variables to track if all checks are successful
+        allPluginsLoaded = true;
+        allSettingsCorrect = true;
+
+        // Check individual plugins
+        ipPluginLoaded = getDvarInt("ipPluginLoaded");
+        if (!ipPluginLoaded) {
+            iprintlnbold("^1Plugin Check Failed^7: IP Plugin is not loaded.");
+            allPluginsLoaded = false;
+        }
+
+        ddPluginLoaded = getDvarInt("ddPluginLoaded");
+        if (!ddPluginLoaded) {
+            iprintlnbold("^1Plugin Check Failed^7: DD Plugin is not loaded.");
+            allPluginsLoaded = false;
+        }
+
+        // chatPluginLoaded = getDvarInt("chatPluginLoaded");
+        // if (!chatPluginLoaded) {
+        //     iprintlnbold("^1Plugin Check Failed^7: Chat Plugin is not loaded.");
+        //     allPluginsLoaded = false;
+        // }
+
+        demoPluginLoaded = getDvarInt("demoPluginLoaded");
+        if (!demoPluginLoaded) {
+            iprintlnbold("^1Plugin Check Failed^7: Demo Plugin is not loaded.");
+            allPluginsLoaded = false;
+        }
+
+        authPluginLoaded = getDvarInt("authPluginLoaded");
+        if (!authPluginLoaded) {
+            iprintlnbold("^1Plugin Check Failed^7: Auth Plugin is not loaded.");
+            allPluginsLoaded = false;
+        }
+
+        // Server settings checks
+        steamForce = getDvar("sv_steamforce");
+        if (steamForce != "Require Steam but use PlayerIDs") {
+            iprintlnbold("^1Server Violation^7: sv_steamforce is not set to 2.");
+            allSettingsCorrect = false;
+        }
+
+        noSteamNames = getDvarInt("sv_nosteamnames");
+        if (!noSteamNames) {
+            iprintlnbold("^1Server Violation^7: sv_nosteamnames is not enabled.");
+            allSettingsCorrect = false;
+        }
+
+        friendlyBlock = getDvarInt("g_friendlyPlayerCanBlock");
+        if (!friendlyBlock) {
+            iprintlnbold("^1Server Violation^7: g_friendlyPlayerCanBlock is not enabled.");
+            allSettingsCorrect = false;
+        }
+
+        // antilag = getDvarInt("g_antilag");
+        // if (!antilag) {
+        //     iprintlnbold("^1Server Violation^7: g_antilag is not enabled.");
+        //     allSettingsCorrect = false;
+        // }
+
+        svFps = getDvarInt("sv_fps");
+        if (svFps != 20) {
+            iprintlnbold("^1Server Violation^7: sv_fps is not set to 20.");
+            allSettingsCorrect = false;
+        }
+
+        // If all plugins and settings are correct, set serverReady to true
+        if (allPluginsLoaded && allSettingsCorrect) {
+            serverReady = true;
+            //iprintlnbold("^2Server setup complete! All plugins and settings are correctly configured.");
+        } else {
+            serverReady = false;
+        }
+
+        // Wait 2 seconds before repeating the checks
+        wait 2;
+    }
+}
+
 backlotCheck()
 {
 	counter = 3;
 
 	for(i = 0; i < counter; i++)
 	{
+		if ( getDvarInt( "sv_cheats" ) || (isDefined(game["PROMOD_MATCH_MODE"]) && game["PROMOD_MATCH_MODE"] == "strat") )
+            break;
+
 		if( level.script == "mp_backlot" || level.script == "mp_backlot_fix")
 			iprintlnbold("^1Warning^7: You should play ^3mp_backlot_x ^7instead of " + level.script);
 
@@ -92,9 +185,9 @@ errorMessage()
 		if ( (antilag && dedicated == "dedicated LAN server") || (!antilag && dedicated == "dedicated internet server" && !game["PROMOD_PB_OFF"]))
 		 	iprintlnbold("^1Server Violation^7: Modified Connection");
 
-		if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || toLower( getDvar( "fs_game" ) ) == "mods/fps_promod_272" )
+		if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || toLower( getDvar( "fs_game" ) ) == "mods/fps_promod_273" )
 		{
-			if( toLower(getDvar("fs_game")) != "mods/fps_promod_272" )
+			if( toLower(getDvar("fs_game")) != "mods/fps_promod_273" )
 				iprintlnbold("^1Server Violation^7: Invalid fs_game value");
 
 			iwdnames = strToK( getDvar( "sv_iwdnames" ), " " );
@@ -125,8 +218,8 @@ errorMessage()
 							iprintlnbold("^1Server Violation^7: Modified Custom IWD File While In Match Mode");
 						break;
 						
-					case "fps_promod_272":
-						if( iwdsums[i] != "-682756089" )
+					case "fps_promod_273":
+						if( iwdsums[i] != "1429856917" )
 							iprintlnbold("^1Server Violation^7: Modified Promod IWD Detected");
 						iwd_loaded = true;
 						break;

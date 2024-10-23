@@ -37,7 +37,8 @@ validMode( mode )
 	}
 
 	keys = strtok(mode, "_");
-	if(keys.size <= 1) return false;
+	if ( keys.size <= 1 ) return false;
+
 	switches = [];
 	switches["match_knockout"] = false;
 	switches["1v1_2v2"] = false;
@@ -50,45 +51,55 @@ validMode( mode )
 	switches["league"] = false;
 	switches["mm"] = false;
 
-	for(i=0;i<keys.size;i++)
+	for ( i = 0; i < keys.size; i++ )
 	{
-		switch(keys[i])
+		switch ( keys[i] )
 		{
 			case "match":
 			case "knockout":
-				if(switches["match_knockout"]) return false;
+				if ( switches["match_knockout"] ) return false;
 				switches["match_knockout"] = true;
 				break;
 			case "1v1":
 			case "2v2":
-				if(switches["1v1_2v2"]) return false;
+				if ( switches["1v1_2v2"] ) return false;
 				switches["1v1_2v2"] = true;
 				break;
 			case "lan":
 			case "pb":
-				if(switches["lan_pb"]) return false;
+				if ( switches["lan_pb"] ) return false;
 				switches["lan_pb"] = true;
 				break;
 			case "league":
-				if(switches["league"]) return false;
+				if ( switches["league"] ) return false;
 				switches["league"] = true;
 				break;
 			case "mm":
-				if(switches["mm"]) return false;
-				switches["mm"] = true;
+				if ( switches["mm"] ) return false;
+
+				// Set matchmaking mode only if level.fps_match_id is defined and non-zero
+				if ( isDefined(level.fps_match_id) && level.fps_match_id != 0 )
+				{
+					switches["mm"] = true;
+					game["MATCHMAKING_MODE"] = 1;
+				}
+				else
+				{
+					return false;
+				}
 				break;
 			case "knife":
-				if(switches["scores_done"]) return false;
+				if ( switches["scores_done"] ) return false;
 			case "hc":
-				if(switches[keys[i]+"_done"]) return false;
+				if ( switches[keys[i]+"_done"] ) return false;
 				switches[keys[i]+"_done"] = true;
 				break;
 			default:
-				if(keys[i] != "mr" && isSubStr(keys[i],"mr") && "mr"+int(strtok(keys[i], "mr")[0]) == keys[i] && int(strtok(keys[i], "mr")[0]) > 0 && !switches["mr_done"])
+				if ( keys[i] != "mr" && isSubStr(keys[i],"mr") && "mr"+int(strtok(keys[i], "mr")[0]) == keys[i] && int(strtok(keys[i], "mr")[0]) > 0 && !switches["mr_done"] )
 					switches["mr_done"] = true;
 				else if ( keys[i] != "ot" && isSubStr(keys[i],"ot") && "ot"+int(strtok(keys[i], "ot")[0]) == keys[i] && int(strtok(keys[i], "ot")[0]) > 0 )
 					switches["ot_done"] = true;
-				else if ( ( isSubStr( keys[i], ":" ) ) && strtok( keys[i], ":" ).size == 2 && int(strtok( keys[i], ":" )[0]) >= 0 && int(strtok( keys[i], ":" )[1]) >= 0 && !switches["scores_done"] && !switches["knife_done"] )
+				else if ( isSubStr(keys[i], ":") && strtok(keys[i], ":").size == 2 && int(strtok(keys[i], ":")[0]) >= 0 && int(strtok(keys[i], ":")[1]) >= 0 && !switches["scores_done"] && !switches["knife_done"] )
 					switches["scores_done"] = true;
 				else
 					return false;
@@ -98,53 +109,66 @@ validMode( mode )
 	return switches["match_knockout"];
 }
 
+
 monitorMode()
 {
-	o_mode = toLower( getDvar( "promod_mode" ) );
-	o_cheats = getDvarInt( "sv_cheats" );
+    o_mode = toLower( getDvar( "promod_mode" ) );
+    o_cheats = getDvarInt( "sv_cheats" );
 
-	for(;;)
-	{
-		mode = toLower( getDvar( "promod_mode" ) );
-		cheats = getDvarInt( "sv_cheats" );
+    for (;;)
+    {
+        mode = toLower( getDvar( "promod_mode" ) );
+        cheats = getDvarInt( "sv_cheats" );
 
-		if ( mode != o_mode )
-		{
-			if ( isDefined( game["state"] ) && game["state"] == "postgame" )
-			{
-				setDvar( "promod_mode", o_mode );
-				continue;
-			}
+        if ( mode != o_mode )
+        {
+            if ( isDefined( game["state"] ) && game["state"] == "postgame" )
+            {
+                setDvar( "promod_mode", o_mode );
+                continue;
+            }
 
-			if ( validMode( mode ) )
-			{
-				level notify ( "restarting" );
+            // Check if the mode contains "mm" but fps_match_id is not set or is zero
+            if ( isSubStr( mode, "mm" ) && ( !isDefined( level.fps_match_id ) || level.fps_match_id == 0 ) )
+            {
+                // Print error message for invalid matchmaking mode
+                iPrintLN( "Error: Cannot set matchmaking mode without a valid fps_match_id.\nPlease set a valid fps_match_id or change the mode." );
+                
+                // Revert to original mode
+                setDvar( "promod_mode", o_mode );
+                continue;
+            }
 
-				iPrintLN( "Changing To Mode: ^1" + mode + "\nPlease Wait While It Loads..." );
-				setMode( mode );
+            if ( validMode( mode ) )
+            {
+                level notify( "restarting" );
 
-				wait 2;
+                iPrintLN( "Changing To Mode: ^1" + mode + "\nPlease Wait While It Loads..." );
+                setMode( mode );
 
-				map_restart( false );
-				setDvar( "promod_mode", mode );
-			}
-			else
-			{
-				if ( isDefined( mode ) && mode != "" )
-					iPrintLN( "Error Changing To Mode: ^1" + mode + "\nSyntax: match|knockout_lan|pb_hc_knife_1v1|2v2_mr#_#:#,\nNormal Modes: comp_public(_lan), comp_public_hc(_lan), custom_public(_lan), strat" );
+                wait 2;
 
-				setDvar( "promod_mode", o_mode );
-			}
-		}
-		else if ( cheats != o_cheats )
-		{
-			map_restart( false );
-			break;
-		}
+                map_restart( false );
+                setDvar( "promod_mode", mode );
+            }
+            else
+            {
+                if ( isDefined( mode ) && mode != "" )
+                    iPrintLN( "Error Changing To Mode: ^1" + mode + "\nSyntax: match|knockout_lan|pb_hc_knife_1v1|2v2_mr#_#:#,\nNormal Modes: comp_public(_lan), comp_public_hc(_lan), custom_public(_lan), strat" );
 
-		wait 0.1;
-	}
+                setDvar( "promod_mode", o_mode );
+            }
+        }
+        else if ( cheats != o_cheats )
+        {
+            map_restart( false );
+            break;
+        }
+
+        wait 0.1;
+    }
 }
+
 
 monitorMatchId()
 {
@@ -168,7 +192,7 @@ monitorMatchId()
 				{
 					level notify ( "restarting" );
 
-					iPrintLN( "Changing the ^5FPS MATCH ID to ^7" + matchId + "\nPlease wait while it loads..." );
+					iPrintLN( "Changing the ^5FPS MATCH ID ^7to " + matchId + "\nPlease wait while it loads..." );
 					setMatchId( matchId );
 
 					wait 2;
@@ -204,10 +228,10 @@ setMatchId( matchId )
 
 canChangeMatchId()
 {
-	if( level.fps_match_type == "custom" )
-		return true;
-	else 
-		return false;
+	//if( level.fps_match_type == "custom" )
+	return true;
+	// else 
+	// 	return false;
 }
 
 validMatchId( matchId )

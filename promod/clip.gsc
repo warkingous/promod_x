@@ -167,7 +167,7 @@ checkClipping()
                 //    self iPrintln( "^3Clip detected^7" + ", time: " + timeDiff + "s");
                 //visualizeTriggers();           
 
-                if( isDefined( level.strat_over ) && level.strat_over && game["promod_in_timeout"] == 0 && isAlive(self) && isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0 && level.fps_ac_check == 1 && level.fps_match_id != 0 && level.fps_track_stats == 1)
+                if( isDefined( level.strat_over ) && level.strat_over && game["promod_in_timeout"] == 0 && isAlive(self) && isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && game["PROMOD_KNIFEROUND"] == 0 && level.fps_match_id != 0 ) //&& level.gametype == "sd"
                 {
                     self.pers["clips"]++;
 

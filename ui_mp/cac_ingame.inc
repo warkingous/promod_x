@@ -481,8 +481,8 @@ menuDef
 
 // Special X Camo
 #define LOCAL_CAMO_X( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
-	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "m40a3" || dvarString( loadout_primary ) == "remington700" || dvarString( loadout_primary ) == "ak47" ) ) \
-	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "m40a3" && dvarString( loadout_primary ) != "remington700" && dvarString( loadout_primary ) != "ak47") ) \ 
+	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "m40a3" || dvarString( loadout_primary ) == "remington700" || dvarString( loadout_primary ) == "ak47" || dvarString( loadout_primary ) == "m4") ) \
+	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "m40a3" && dvarString( loadout_primary ) != "remington700" && dvarString( loadout_primary ) != "ak47" && dvarString( loadout_primary ) != "m4") ) \ 
 
 // Vulcan Camo
 #define LOCAL_CAMO_VULCAN( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\

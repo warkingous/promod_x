@@ -145,10 +145,6 @@
 #define REF_ASIIMOV						"camo_asiimov"
 #define REF_X						    "camo_x"
 #define REF_MONSTER					    "camo_monster"
-#define REF_AERIS						"camo_aeris"
-#define REF_SK						    "camo_sk"
-#define REF_REASON						"camo_reason"
-#define REF_KOLEGA						"camo_kolega"
 #define REF_SECRET						"camo_secret"
 #define REF_VULCAN						"camo_vulcan"
 #define REF_COD						    "camo_cod"
@@ -166,9 +162,6 @@
 #define CAMO_ASIIMOV					tablelookup( "mp/attachmenttable.csv", 4, REF_ASIIMOV, 11 )
 #define CAMO_X					        tablelookup( "mp/attachmenttable.csv", 4, REF_X, 11 )
 #define CAMO_MONSTER					tablelookup( "mp/attachmenttable.csv", 4, REF_MONSTER, 11 )
-#define CAMO_AERIS				        tablelookup( "mp/attachmenttable.csv", 4, REF_AERIS, 11 )
-#define CAMO_SK				            tablelookup( "mp/attachmenttable.csv", 4, REF_SK, 11 )
-#define CAMO_REASON				        tablelookup( "mp/attachmenttable.csv", 4, REF_REASON, 11 )
 #define CAMO_KOLEGA				        tablelookup( "mp/attachmenttable.csv", 4, REF_KOLEGA, 11 )
 #define CAMO_SECRET				        tablelookup( "mp/attachmenttable.csv", 4, REF_SECRET, 11 )
 #define CAMO_VULCAN				        tablelookup( "mp/attachmenttable.csv", 4, REF_VULCAN, 11 )

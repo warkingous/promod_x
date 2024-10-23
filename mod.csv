@@ -25,6 +25,7 @@ menufile,ui_mp/scriptmenus/shoutcast_setup_binds.menu
 menufile,ui_mp/scriptmenus/team_marinesopfor.menu
 menufile,ui_mp/scriptmenus/team_marinesopfor_flipped.menu
 
+rawfile,maps/createfx/mp_backlot_fx.gsc
 rawfile,maps/createfx/mp_bloc_fx.gsc
 rawfile,maps/createfx/mp_bog_fx.gsc
 rawfile,maps/createfx/mp_broadcast_fx.gsc
@@ -166,6 +167,7 @@ xmodel,viewmodel_remington700_mp_x
 xmodel,viewmodel_ak74u_mp_x
 xmodel,viewmodel_ak47_mp_x
 xmodel,viewmodel_desert_eagle_mp_x
+xmodel,viewmodel_m4_mp_x
 
 # Vulcan camos
 xmodel,viewmodel_remington700_mp_vulcan

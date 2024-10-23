@@ -17,6 +17,7 @@ onPlayerConnect()
 
 onMatchIdChange()
 {
+
     for ( i = 0; i < level.players.size; i++ )
 	{
         player = level.players[i];
@@ -24,6 +25,9 @@ onMatchIdChange()
 
         if( !isDefined(player.pers["onAnticheat"] ))
             player thread monitorAC();
+        
+        player thread promod\readyup::stopDemoRecord();
+        //player thread promod\readyup::startDemoRecord();
     }
 }
 
@@ -65,9 +69,11 @@ getAcStatus()
     iprintln("Getting AC Status for match " + level.fps_match_id);
     wait 1;
     iprintln("AC Online");
-    self.pers["onAnticheat"] = true;
-    self notify("ac_online");
-   
+    if(isDefined(self))
+    {
+        self.pers["onAnticheat"] = true;
+        self notify("ac_online");
+    }
     entityNumber = self getEntityNumber();
 
     if (entityNumber % 2 == 0)

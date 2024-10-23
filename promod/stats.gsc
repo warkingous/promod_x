@@ -7,7 +7,7 @@ publicMapStarted()
 initPlayers( )
 {}
 
-processKillData()
+processKillData( attacker, victim, attacker_data, victim_data, kill_data ) 
 {}
 
 sendData()
@@ -22,7 +22,7 @@ findTeamName( team )
 findTeamTag( team )
 {}
 
-roundReport( round, allies_score, axis_score, endRoundReason )
+roundReport( round, allies_score, axis_score, endRoundReason, winner, knife_round, ot_active, ot_count )
 {}
 
 bombReport( player, label, type, round )
@@ -36,6 +36,37 @@ setTeamId( id, team )
 
 clipReport( player, round, clipTime )
 {}
+
+startServerRecord( ent )
+{
+    //exec( "record " + ent);
+}
+
+stopServerRecord()
+{
+    //exec( "stoprecord all" );
+}
+
+cancelMatch( ids )
+{
+    iprintln("Match cancelled");
+}
+
+dmFinished( player )
+{
+    if( isDefined( player ))
+        iprintln( player.name );
+}
+
+updateGunX( player, value )
+{
+    //iprintln("updated gunx " + value);
+}
+
+updateFovScale( player, value )
+{
+    //iprintln("updated fovscale " + value);
+}
 
 // Helper function to find the majority element in an array
 findMajority(arr)
@@ -100,7 +131,7 @@ bubbleSort(arr)
 gameStartedCallback( handle )
 {}
 
-mapFinished()
+mapFinished( winner )
 {}
 
 sendPublicStatsData()

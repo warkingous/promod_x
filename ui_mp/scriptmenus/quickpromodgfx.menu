@@ -39,21 +39,6 @@
 			group			ingamebox
 			rect			16 20 0 0
 			origin			ORIGIN_QUICKMESSAGEWINDOW
-			forecolor		1 1 1 0.7
-			textfont		UI_FONT_NORMAL
-			textstyle		ITEM_TEXTSTYLE_SHADOWED
-			textscale		TEXTSIZE_SMALL
-			textaligny		8
-			text			"Visibility:"
-			visible			1
-			decoration
-		}
-		itemDef
-		{
-			name			"window"
-			group			ingamebox
-			rect			16 38 0 0
-			origin			ORIGIN_QUICKMESSAGEWINDOW
 			forecolor		1 1 1 1
 			textfont		UI_FONT_NORMAL
 			textstyle		ITEM_TEXTSTYLE_SHADOWED
@@ -69,7 +54,7 @@
 		{
 			name			"window"
 			group			ingamebox
-			rect			16 54 0 0
+			rect			16 36 0 0
 			origin			ORIGIN_QUICKMESSAGEWINDOW
 			forecolor		1 1 1 1
 			textfont		UI_FONT_NORMAL
@@ -84,7 +69,7 @@
 		{
 			name			"window"
 			group			ingamebox
-			rect			16 54 0 0
+			rect			16 36 0 0 
 			origin			ORIGIN_QUICKMESSAGEWINDOW
 			forecolor		1 1 1 1
 			textfont		UI_FONT_NORMAL
@@ -101,22 +86,7 @@
 		{
 			name			"window"
 			group			ingamebox
-			rect			16 74 0 0
-			origin			ORIGIN_QUICKMESSAGEWINDOW
-			forecolor		1 1 1 0.7
-			textfont		UI_FONT_NORMAL
-			textstyle		ITEM_TEXTSTYLE_SHADOWED
-			textscale		TEXTSIZE_SMALL
-			textaligny		8
-			text			"Textures:"
-			visible			1
-			decoration
-		}
-		itemDef
-		{
-			name			"window"
-			group			ingamebox
-			rect			16 92 0 0
+			rect			16 52 0 0
 			origin			ORIGIN_QUICKMESSAGEWINDOW
 			forecolor		1 1 1 1
 			textfont		UI_FONT_NORMAL
@@ -131,7 +101,7 @@
 		{
 			name			"window"
 			group			ingamebox
-			rect			16 92 0 0
+			rect			16 52 0 0
 			origin			ORIGIN_QUICKMESSAGEWINDOW
 			forecolor		1 1 1 1
 			textfont		UI_FONT_NORMAL
@@ -148,7 +118,7 @@
 		{
 			name			"window"
 			group			ingamebox
-			rect			16 108 0 0
+			rect			16 68 0 0
 			origin			ORIGIN_QUICKMESSAGEWINDOW
 			forecolor		1 1 1 1
 			textfont		UI_FONT_NORMAL
@@ -165,22 +135,7 @@
 		{
 			name			"window"
 			group			ingamebox
-			rect			16 128 0 0
-			origin			ORIGIN_QUICKMESSAGEWINDOW
-			forecolor		1 1 1 0.7
-			textfont		UI_FONT_NORMAL
-			textstyle		ITEM_TEXTSTYLE_SHADOWED
-			textscale		TEXTSIZE_SMALL
-			textaligny		8
-			text			"Miscellaneous:"
-			visible			1
-			decoration
-		}
-		itemDef
-		{
-			name			"window"
-			group			ingamebox
-			rect			16 146 0 0
+			rect			16 84 0 0
 			origin			ORIGIN_QUICKMESSAGEWINDOW
 			forecolor		1 1 1 1
 			textfont		UI_FONT_NORMAL
@@ -191,13 +146,13 @@
 			visible			1
 			decoration
 		}
-		execKey "5" { scriptMenuResponse "7"; close quickpromodgfx }
+		execKey "5" { scriptMenuResponse "5"; close quickpromodgfx }
 
 		itemDef
 		{
 			name			"window"
 			group			ingamebox
-			rect			16 162 0 0
+			rect			16 100 0 0
 			origin			ORIGIN_QUICKMESSAGEWINDOW
 			forecolor		1 1 1 1
 			textfont		UI_FONT_NORMAL
@@ -209,6 +164,23 @@
 			decoration
 		}
 		execKey "6" { scriptMenuResponse "6"; close quickpromodgfx }
+
+		itemDef
+		{
+			name			"window"
+			group			ingamebox
+			rect			16 116 0 0
+			origin			ORIGIN_QUICKMESSAGEWINDOW
+			forecolor		1 1 1 1
+			textfont		UI_FONT_NORMAL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textscale		TEXTSIZE_SMALL
+			textaligny		8
+			exp text		( "7. Toggle Sound Faction" )
+			visible			1
+			decoration
+		}
+		execKey "7" { scriptMenuResponse "7"; close quickpromodgfx }
 
 		itemDef
 		{

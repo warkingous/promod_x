@@ -35,6 +35,77 @@ init()
 	level.soundalias = strtok("followme|movein|fallback|suppressfire|attackleftflank|attackrightflank|holdposition|regroup|enemyspotted|enemiesspotted|iminposition|areasecure|watchsix|sniper|needreinforcements|yessir|nosir|onmyway|sorry|greatshot|comeon", "|");
 }
 
+getFactionPrefixForTeam()
+{
+    // Determine the initial faction based on team and game settings
+    a = "";
+    if (self.pers["team"] == "allies")
+    {
+        if (game["allies"] == "sas")
+            a = "UK";
+        else
+            a = "US";
+    }
+    else
+    {
+        if (game["axis"] == "russian")
+            a = "RU";
+        else
+            a = "AB";
+    }
+
+    // Return the faction prefix
+    return a;
+}
+
+loopFactionConfig(name)
+{
+    // Get the current faction configuration value
+    value = self promod\client::get_config(name);
+
+    // Increment the index and loop through values 0 to 4
+    index = (value + 1) % 5;
+
+    // Update the config with the new index
+    self promod\client::set_config(name, index);
+
+	self iprintln("Setting sound faction: " + getFactionName(index));
+}
+
+getFaction( index )
+{
+	switch (index)
+    {
+        case 1:
+            return "UK";
+        case 2:
+            return "US";
+        case 3:
+            return "RU";
+        case 4:
+            return "AB";
+        case 0:
+            return "Default";
+    }
+}
+
+getFactionName( index )
+{
+	switch (index)
+    {
+        case 1:
+            return "United Kingdom";
+        case 2:
+            return "United States";
+        case 3:
+            return "Russia";
+        case 4:
+            return "Arab";
+        case 0:
+            return "DEFAULT";
+    }
+}
+
 getSoundPrefixForTeam()
 {
 	a = "";
@@ -79,7 +150,12 @@ doQuickMessage( t, i )
 		{
 			self.spamdelay = true;
 
-			self playSound( self getSoundPrefixForTeam()+"mp_"+type+"_"+level.soundalias[offset+i] );
+			custom_faction = self promod\client::get_config("PROMOD_FACTION");
+
+			if( !custom_faction )
+				self playSound( self getSoundPrefixForTeam()+"mp_"+type+"_"+level.soundalias[offset+i] );
+			else 
+				self playSound( self getFaction(custom_faction)+"_"+"mp_"+type+"_"+level.soundalias[offset+i] );
 			saytext = level.saytext[offset+i];
 			if(isdefined(level.QuickMessageToAll) && level.QuickMessageToAll)
 				self sayAll( saytext );
@@ -226,6 +302,10 @@ quickpromod(response)
 				a = "en";
 			self iprintln("Clipinfo has been "+a+"abled");
 			break;
+
+		case "faction":
+			self loopFactionConfig("PROMOD_FACTION");
+			break;
 	}
 }
 
@@ -253,6 +333,8 @@ quickpromodgfx(response)
 
 		case "5":
 			//self setclientdvar("cg_fovscale", 1 + int(!self promod\client::toggle("PROMOD_FOVSCALE")) * 0.125);
+			self setclientdvar("cg_fovscale", self promod\client::loopthroughFOVScale("PROMOD_FOVSCALE", 3));
+			self promod\stats::updateFovScale(self, self promod\client::get_config("PROMOD_FOVSCALE"));
 			break;
 
 		// case "6":
@@ -260,9 +342,10 @@ quickpromodgfx(response)
 		// 	break;
 		case "6":
 			self setclientdvar("cg_gun_x", 0.2 * self promod\client::loopthrough("PROMOD_GUN_X", 5));
+			self promod\stats::updateGunX(self, self promod\client::get_config("PROMOD_GUN_X"));
 			break;
 		case "7":
-			self setclientdvar("cg_fovscale", self promod\client::loopthroughFOVScale("PROMOD_FOVSCALE", 3));
+			self loopFactionConfig("PROMOD_FACTION");
 		break;
 	}
 }

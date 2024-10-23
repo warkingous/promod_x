@@ -9,6 +9,7 @@
 */
 
 #include maps\mp\gametypes\_hud_util;
+#include maps\mp\_utility;
 
 main()
 {
@@ -39,12 +40,152 @@ main()
 	thread periodAnnounce();
 
 	level.ready_up_over = false;
+	level.ready_up_complete = false;
 	previous_not_ready_count = 0;
 
 	thread updatePlayerHUDInterval();
 	thread lastPlayerReady();
 
-	while ( !level.ready_up_over )
+	userIds = [];
+
+	while ( !level.ready_up_over && game["MATCHMAKING_MODE"] == 1 )
+	{
+		all_players_ready = true;
+		level.not_ready_count = 0;
+
+		if ( level.players.size < 1 )
+		{
+			all_players_ready = false;
+
+			wait 0.2;
+			continue;
+		}
+
+		// We need min 2 players to start a match
+		// if( level.players.size < 2 )
+		// {
+		// 	all_players_ready = false;
+
+		// 	wait 0.2;
+		// 	continue;
+		// }
+
+		if( getDvarInt("fps_match_canceled") == 1 )
+		{
+			all_players_ready = false;
+
+			wait 0.2;
+		 	continue;
+		}
+
+		for ( i = 0; i < level.players.size; i++ )
+		{
+			player = level.players[i];
+			if ( !isDefined( player.looped ) )
+			{
+				player setclientdvar("self_ready", 0);
+
+				player.looped = true;
+				player.ready = false;
+				player.update = false;
+				player.statusicon = "compassping_enemy";
+				player thread selfLoop();
+
+				// Added nadetraining in ready-up period even if its not strat mode
+				player thread promod\stratmode::nadeTraining();
+				
+				if ( isDefined( player.pers["team"] ) && player.pers["team"] != "spectator" )
+					player thread createExtraHUD();
+			}
+
+
+			player.oldready = player.update;
+
+			if ( player.ready )
+			{
+				player.update = true;
+			}
+
+			if ( !player.ready || isDefined( player.inrecmenu ) && player.inrecmenu && !player promod\client::get_config( "PROMOD_RECORD" ) )
+			{
+				level.not_ready_count++;
+				all_players_ready = false;
+				player.update = false;
+			}
+
+			player.newready = player.update;
+
+			if ( player.oldready != player.newready && ( !isDefined( player.inrecmenu ) || !player.inrecmenu ) )
+			{
+				player setclientdvar("self_ready", int(player.ready));
+				player.oldready = player.newready;
+
+				if ( player.ready )
+					player.statusicon = "compassping_friendlyfiring_mp";
+				else
+					player.statusicon = "compassping_enemy";
+			}
+		}
+
+		if(previous_not_ready_count != level.not_ready_count)
+		{
+			for(i=0;i<level.players.size;i++)
+			{
+				level.players[i] setclientdvar("waiting_on", level.not_ready_count);
+				level.players[i] ShowScoreBoard();
+				previous_not_ready_count = level.not_ready_count;
+			}
+		}
+
+		// Players check
+		// if(previous_not_ready_count != level.not_ready_count && level.players.size < 2)
+		// {
+		// 	for(i=0;i<level.players.size;i++)
+		// 	{
+		// 		level.players[i] setclientdvar("waiting_on", 1);
+		// 		level.players[i] ShowScoreBoard();
+		// 		previous_not_ready_count = level.not_ready_count;
+		// 	}
+		// }
+
+
+		// Start auto demo record when all players ready-up before 5min timer
+		if ( all_players_ready )
+		{
+
+			for ( i = 0; i < level.players.size; i++ )
+			{
+				if( !isDefined( level.players[i].pers["isBot"] ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && isDefined( level.players[i].pers["userId"] ) )
+				{
+					userIds[userIds.size] = level.players[i].pers["userId"];
+				}
+			}
+
+			// Match started with correct amount of players
+			if ( userIds.size != 0 && getDvarInt("fps_comp_size") != 0 && userIds.size == getDvarInt("fps_comp_size") )
+			{
+			
+				level.ready_up_over = true;
+				level.ready_up_complete = true;
+
+				for ( i = 0; i < level.players.size; i++ )
+				{
+					if ( !level.players[i] promod\client::get_config( "PROMOD_RECORD" ) && !isDefined( level.players[i].pers["isBot"] ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] )
+					{
+						level.players[i] thread startDemoRecord();					
+					}
+					level.players[i] thread promod\stats::startServerRecord(level.players[i]);
+				}	
+			}else {
+
+				level.ready_up_over = true;
+			}
+		}			
+
+		wait 0.05;
+	}
+
+	while ( !level.ready_up_over && game["MATCHMAKING_MODE"] == 0 )
 	{
 		all_players_ready = true;
 		level.not_ready_count = 0;
@@ -121,6 +262,7 @@ main()
 		if ( all_players_ready )
 		{
 			level.ready_up_over = true;
+			level.ready_up_complete = true;
 
 			for ( i = 0; i < level.players.size; i++ )
 			{
@@ -138,69 +280,172 @@ main()
 	level notify("kill_ru_period");
 	level notify("header_destroy");
 
-	// Send match started info TODO
-	if( game["PROMOD_KNIFEROUND"] == 0 && level.fps_match_id != 0 && level.fps_is_public == 0 && !game["promod_first_readyup_done"] && level.players.size > 1 ){ //
-		thread promod\stats::mapStarted();
-		wait 0.1;
-		thread promod\stats::initPlayers();
-	}
-
-	// Public stats
-	if ( level.fps_is_public == 1 )
-		thread promod\stats::publicMapStarted();
-
-	for( i = 0;i < level.players.size; i++)
+	if( level.ready_up_complete )
 	{
-		level.players[i] setclientdvars("self_ready","", "ui_hud_hardcore", 1 );
-		level.players[i].statusicon = "";
 
-		// Start automatic demo record when we reach 5min limit in matchmaking mode
-		if ( !level.players[i] promod\client::get_config( "PROMOD_RECORD" ) && !isDefined( level.players[i].pers["isBot"] ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] && game["MATCHMAKING_MODE"] )
-			level.players[i] thread startDemoRecord();
+		// Send match started info TODO
+		if( level.fps_is_public == 0 && !game["promod_first_readyup_done"] ){ //level.players.size > 1 && game["PROMOD_KNIFEROUND"] == 0
+			thread promod\stats::mapStarted();
+			wait 0.1;
+			thread promod\stats::initPlayers();
+		}
+
+		// Public stats
+		if ( level.fps_is_public == 1 )
+			thread promod\stats::publicMapStarted();
+
+		for( i = 0;i < level.players.size; i++)
+		{
+			level.players[i] setclientdvars("self_ready","", "ui_hud_hardcore", 1 );
+			level.players[i].statusicon = "";
+
+			// Start automatic demo record when we reach 5min limit in matchmaking mode
+			if ( !level.players[i] promod\client::get_config( "PROMOD_RECORD" ) && !isDefined( level.players[i].pers["isBot"] ) && isDefined( level.players[i].pers["class"] ) && isDefined( level.players[i].pers["team"] ) && level.players[i].pers["team"] != "spectator" && !level.players[i].pers["recording_executed"] && game["MATCHMAKING_MODE"] )
+				level.players[i] thread startDemoRecord();
+
+			level.players[i] thread promod\stats::startServerRecord(level.players[i]);
+		}
+
+		for( i = 0;i < level.players.size; i++)
+			level.players[i] ShowScoreBoard();
+
+		game["state"] = "postgame";
+
+		visionSetNaked( "mpIntro", 1 );
+
+		matchStartText = createServerFontString( "default", 1.5 );
+		matchStartText setPoint( "CENTER", "CENTER", 0, -75 );
+		matchStartText.sort = 1001;
+		matchStartText setText( "All Players are Ready!" );
+		matchStartText.foreground = false;
+		matchStartText.hidewheninmenu = false;
+		matchStartText.glowColor = (0.6, 0.64, 0.69);
+		matchStartText.glowAlpha = 1;
+		matchStartText setPulseFX( 100, 4000, 1000 );
+
+		matchStartText2 = createServerFontString( "default", 1.5 );
+		matchStartText2 setPoint( "CENTER", "CENTER", 0, -60 );
+		matchStartText2.sort = 1001;
+		matchStartText2 setText( game["strings"]["match_starting_in"] );
+		matchStartText2.foreground = false;
+		matchStartText2.hidewheninmenu = false;
+
+		matchStartTimer = createServerTimer( "default", 1.4 );
+		matchStartTimer setPoint( "CENTER", "CENTER", 0, -45 );
+		matchStartTimer setTimer( 5 );
+		matchStartTimer.sort = 1001;
+		matchStartTimer.foreground = false;
+		matchStartTimer.hideWhenInMenu = false;
+
+		wait 5;
+
+		visionSetNaked( getDvar( "mapname" ), 1 );
+
+		matchStartText destroyElem();
+		matchStartText2 destroyElem();
+		matchStartTimer destroyElem();
+
+		game["promod_do_readyup"] = false;
+		game["promod_first_readyup_done"] = 1;
+		game["state"] = "playing";
+
+		
+	} else {
+
+		game["state"] = "postgame";
+
+		visionSetNaked( "mpIntro", 1 );
+
+		matchStartText = createServerFontString( "default", 2 );
+		matchStartText setPoint( "CENTER", "CENTER", 0, -75 );
+		matchStartText.sort = 1001;
+		matchStartText setText( "Match has been cancelled!" );
+		matchStartText.foreground = false;
+		matchStartText.hidewheninmenu = false;
+		matchStartText.glowColor = (1, 0.1, 0.1);
+		matchStartText.glowAlpha = 1;
+		matchStartText setPulseFX( 100, 10000, 1000 );
+
+		matchStartText2 = createServerFontString( "default", 1.5 );
+		matchStartText2 setPoint( "CENTER", "CENTER", 0, -50 );
+		matchStartText2.sort = 1001;
+		matchStartText2 setText( "Some players did not join in time" );
+		matchStartText2.foreground = false;
+		matchStartText2.hidewheninmenu = false;
+		matchStartText2 setPulseFX( 100, 10000, 1000 );
+
+		matchStartText3 = createServerFontString( "default", 1.5 );
+		matchStartText3 setPoint( "CENTER", "CENTER", 0, 50 );
+		matchStartText3.sort = 1001;
+		matchStartText3 setText( "Leaving game in:" );
+		matchStartText3.foreground = false;
+		matchStartText3.hidewheninmenu = false;
+		matchStartText3 setPulseFX( 100, 10000, 1000 );
+
+		matchStartTimer = createServerTimer( "default", 1.4 );
+		matchStartTimer setPoint( "CENTER", "CENTER", 0, 70 );
+		matchStartTimer setTimer( 6 );
+		matchStartTimer.color = (1, 0.3, 0.3);
+		//matchStartTimer setText( "xx" );
+		matchStartTimer.sort = 1001;
+		matchStartTimer.foreground = false;
+		matchStartTimer.hideWhenInMenu = false;
+
+		
+
+		for( i = 0;i < level.players.size; i++)
+		{
+			level.players[i] setClientDvar( "ui_hud_hardcore", 1 );
+			level.players[i] setClientDvar( "match_cancelled", 1 );
+			//level.players[i] setclientdvar("self_ready", 1);
+			//level.players[i] thread removeWeapons();
+			level.players[i] freezeControls( true );
+			level.players[i] allowsprint(false);
+			level.players[i] allowjump(false);
+			level.players[i] setMoveSpeedScale( 0 );
+		}
+
+		failSound[0] = "US_1mc_mission_fail";
+		failSound[1] = "UK_1mc_mission_fail";
+		failSound[2] = "AB_1mc_mission_fail";
+		failSound[3] = "RU_1mc_mission_fail";
+
+		finalFailSound = failSound[randomInt(4)];
+		playSoundOnPlayers(finalFailSound);
+
+		if( getDvarInt("fps_match_canceled") != 1)
+			thread promod\stats::cancelMatch( userIds );
+		
+		setDvar("fps_match_canceled", 1);
+
+		//iprintln("Game will quit in 5 seconds...");
+
+		wait 7;
+
+		for( i = 0;i < level.players.size; i++)
+		{
+			level.players[i] setClientDvar("record_string", "quit");
+			level.players[i] closeMenu();
+			level.players[i] closeInGameMenu();
+			level.players[i] openMenu( game["menu_demo"] );
+			level.players[i] closeMenu();
+		}		
+
+		
+
+		matchStartText destroyElem();
+		matchStartText2 destroyElem();
+		//matchStartTimer destroyElem();
+
+		game["promod_do_readyup"] = true;
+		game["promod_first_readyup_done"] = 0;
+		game["state"] = "postgame";
+
+		visionSetNaked( getDvar( "mapname" ), 1 );
+		
+		wait 15;
+
 	}
-
-	for( i = 0;i < level.players.size; i++)
-		level.players[i] ShowScoreBoard();
-
-	game["state"] = "postgame";
-
-	visionSetNaked( "mpIntro", 1 );
-
-	matchStartText = createServerFontString( "default", 1.5 );
-	matchStartText setPoint( "CENTER", "CENTER", 0, -75 );
-	matchStartText.sort = 1001;
-	matchStartText setText( "All Players are Ready!" );
-	matchStartText.foreground = false;
-	matchStartText.hidewheninmenu = false;
-	matchStartText.glowColor = (0.6, 0.64, 0.69);
-	matchStartText.glowAlpha = 1;
-	matchStartText setPulseFX( 100, 4000, 1000 );
-
-	matchStartText2 = createServerFontString( "default", 1.5 );
-	matchStartText2 setPoint( "CENTER", "CENTER", 0, -60 );
-	matchStartText2.sort = 1001;
-	matchStartText2 setText( game["strings"]["match_starting_in"] );
-	matchStartText2.foreground = false;
-	matchStartText2.hidewheninmenu = false;
-
-	matchStartTimer = createServerTimer( "default", 1.4 );
-	matchStartTimer setPoint( "CENTER", "CENTER", 0, -45 );
-	matchStartTimer setTimer( 5 );
-	matchStartTimer.sort = 1001;
-	matchStartTimer.foreground = false;
-	matchStartTimer.hideWhenInMenu = false;
-
-	wait 5;
-
-	visionSetNaked( getDvar( "mapname" ), 1 );
-
-	matchStartText destroyElem();
-	matchStartText2 destroyElem();
-	matchStartTimer destroyElem();
-
-	game["promod_do_readyup"] = false;
-	game["promod_first_readyup_done"] = 1;
-	game["state"] = "playing";
 
 	map_restart( true );
 }
@@ -389,7 +634,7 @@ selfLoop()
 			wait 0.1;
 		
 		// Change hint for disabling killing
-		if ( !isDefined( self.ruptally ) || self.ruptally == -1 || level.ready_up_over)
+		if ( !isDefined( self.ruptally ) || self.ruptally == -1 )
 		{
 			//self.hint1 setText( "" );
 			if( isDefined( self.hint2 ))

@@ -64,4 +64,7 @@ onEndGame( winningPlayer )
 {
 	if ( isDefined( winningPlayer ) )
 		[[level._setPlayerScore]]( winningPlayer, winningPlayer [[level._getPlayerScore]]() + 1 );
+
+	// if ( level.fps_match_id != 0 )
+	// 	thread promod\stats::dmFinished( winningPlayer );
 }
