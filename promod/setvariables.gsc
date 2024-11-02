@@ -36,5 +36,5 @@ main()
 	game["promod_overtime_count"] = 0;
 
 	game["promod_first_readyup_done"] = 0;
-	game["PROMOD_VERSION"] = "^5FPSChallenge.eu ^1Promod ^7V2.74";
+	game["PROMOD_VERSION"] = "^5FPSChallenge.eu ^1Promod ^7V2.75";
 }

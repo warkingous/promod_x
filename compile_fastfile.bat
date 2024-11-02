@@ -21,7 +21,7 @@ xcopy soundaliases ..\..\raw\soundaliases\ /SY
 xcopy ui_mp ..\..\raw\ui_mp\ /SY
 xcopy materials ..\..\raw\materials\ /SY
 xcopy images ..\..\raw\images\ /SY
-xcopy xmanim ..\..\raw\xanim\ /SY
+xcopy xanim ..\..\raw\xanim\ /SY
 xcopy xmodel ..\..\raw\xmodel\ /SY
 xcopy xmodelparts ..\..\raw\xmodelparts\ /SY
 xcopy xmodelsurfs ..\..\raw\xmodelsurfs\ /SY
@@ -31,7 +31,7 @@ copy mod.csv ..\..\zone_source /Y
 cd ..\..\bin
 linker_pc.exe -language english -compress -cleanup mod -verbose
 
-cd ..\mods\fps_promod_274
+cd ..\mods\fps_promod_275
 copy ..\..\zone\english\mod.ff
 
 pause

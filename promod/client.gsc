@@ -118,7 +118,7 @@ use_config()
 	"r_specularcolorscale", 0,
 	"r_zfeather", 0,
 	"fx_drawclouds", 0,
-	"rate", 100000,
+	//"rate", 100000,
 	"cl_maxpackets", 125,
 	"developer", 0,
 	"phys_gravity", -800,

@@ -113,11 +113,11 @@ STATE COMBAT
 		}
 		weapon_position ads
 		{
-			both pb_crouch_ads
+			both pb_crouch_ads duration 1
 		}
 		default
 		{
-			both pb_crouch_alert
+			both pb_crouch_alert duration 1
 		}
 	}
 	idleprone
@@ -1279,18 +1279,7 @@ knife_melee_charge
 
 dropweapon
 {
-	movetype prone
-	{
-		torso pt_prone_pullout_pose
-	}
-	movetype crouching
-	{
-		torso pt_crouch_pullout_pose
-	}
-	default
-	{
-		torso pt_stand_pullout_pose
-	}
+
 }
 
 raiseweapon
