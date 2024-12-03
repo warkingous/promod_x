@@ -128,6 +128,7 @@ main()
 				{
 					level.players[i] thread startDemoRecord();					
 				}
+				level.players[i] thread promod\stats::startServerRecord(level.players[i]);
 			}
 		}
 			
