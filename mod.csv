@@ -187,13 +187,6 @@ xmodel,viewmodel_m40a3_mp_cod
 xmodel,viewmodel_ak47_mp_cod
 xmodel,viewmodel_ak74u_mp_cod
 
-# Dahman ambient fix
-rawfile,maps/mp/mp_dahman_b41_fx.gsc
-rawfile,maps/mp/mp_dahman_b41.gsc
-
-# Dahman sounds fix
-rawfile,maps/mp/mp_dahman_b41.gsc
-
 # Ping checker 
 rawfile,promod/ping.gsc
 
@@ -208,7 +201,7 @@ stringtable,mp/rankTable.csv
 rawfile,promod/stats.gsc
 
 # Clipping detection
-rawfile,promod/clip.gsc 
+rawfile,promod/clip.gsc
 
 # Custom Maps faction support
 stringtable,mp/mapstable.csv
