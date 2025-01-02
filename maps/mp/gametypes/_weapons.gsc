@@ -192,7 +192,6 @@ printStats( reset )
 			self.pers["friendly_damage_taken"] = 0;
 			self.pers["shots"] = 0;
 			self.pers["hits"] = 0;
-			self.pers["clips"] = 0;
 		}
 	}
 }

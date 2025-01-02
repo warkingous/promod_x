@@ -295,14 +295,6 @@ quickpromod(response)
 				a = "en";
 			self iprintln("Velocity meter has been "+a+"abled");
 			break;
-
-		case "clipinfo":
-			a = "dis";
-			if ( self promod\client::toggle("PROMOD_CLIPINFO") )
-				a = "en";
-			self iprintln("Clipinfo has been "+a+"abled");
-			break;
-
 		case "faction":
 			self loopFactionConfig("PROMOD_FACTION");
 			break;

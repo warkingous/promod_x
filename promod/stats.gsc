@@ -34,9 +34,6 @@ findTeamId( team )
 setTeamId( id, team )
 {}
 
-clipReport( player, round, clipTime )
-{}
-
 startServerRecord( ent )
 {
     //exec( "record " + ent);
