@@ -25,6 +25,7 @@ xcopy xanim ..\..\raw\xanim\ /SY
 xcopy xmodel ..\..\raw\xmodel\ /SY
 xcopy xmodelparts ..\..\raw\xmodelparts\ /SY
 xcopy xmodelsurfs ..\..\raw\xmodelsurfs\ /SY
+xcopy fx ..\..\raw\fx\ /SY
 
 copy mod.csv ..\..\zone_source /Y
 
