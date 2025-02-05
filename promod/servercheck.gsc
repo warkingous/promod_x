@@ -26,7 +26,7 @@ main()
 		forceDvar( "sv_fps", "20" );
 		forceDvar( "sv_pure", "1" );
 		// CoD4X supports 100 000, stock client doesnt
-		forceDvar( "sv_maxrate", "25000" );
+		//forceDvar( "sv_maxrate", "100000" );
 		forceDvar( "g_gravity", "800" );
 		forceDvar( "g_speed", "190" );
 		forceDvar( "g_knockback", "1000" );
@@ -185,9 +185,9 @@ errorMessage()
 		if ( (antilag && dedicated == "dedicated LAN server") || (!antilag && dedicated == "dedicated internet server" && !game["PROMOD_PB_OFF"]))
 		 	iprintlnbold("^1Server Violation^7: Modified Connection");
 
-		if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || toLower( getDvar( "fs_game" ) ) == "mods/fps_promod_275" )
+		if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || toLower( getDvar( "fs_game" ) ) == "mods/fps_promod_276" )
 		{
-			if( toLower(getDvar("fs_game")) != "mods/fps_promod_275" )
+			if( toLower(getDvar("fs_game")) != "mods/fps_promod_276" )
 				iprintlnbold("^1Server Violation^7: Invalid fs_game value");
 
 			iwdnames = strToK( getDvar( "sv_iwdnames" ), " " );
@@ -218,8 +218,8 @@ errorMessage()
 							iprintlnbold("^1Server Violation^7: Modified Custom IWD File While In Match Mode");
 						break;
 						
-					case "fps_promod_275":
-						if( iwdsums[i] != "1429856917" )
+					case "fps_promod_276":
+						if( iwdsums[i] != "523046345" )
 							iprintlnbold("^1Server Violation^7: Modified Promod IWD Detected");
 						iwd_loaded = true;
 						break;

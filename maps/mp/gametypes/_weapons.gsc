@@ -181,7 +181,7 @@ printStats( reset )
 			acc = int(self.pers["hits"]/self.pers["shots"]*10000)/100;
 		self iprintln("Shots Fired: ^2" + self.pers["shots"] + "^7 Shots Hit: ^2" + self.pers["hits"] + "^7 Accuracy: ^1" + acc + " pct");
 
-		self iprintln("Clip count: ^1" + self.pers["clips"]);
+		//self iprintln("Clip count: ^1" + self.pers["clips"]);
 
 		// Reset the stats afterwards
 		if ( reset )

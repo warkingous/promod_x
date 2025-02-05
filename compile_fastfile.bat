@@ -32,7 +32,7 @@ copy mod.csv ..\..\zone_source /Y
 cd ..\..\bin
 linker_pc.exe -language english -compress -cleanup mod -verbose
 
-cd ..\mods\fps_promod_275
+cd ..\mods\fps_promod_276
 copy ..\..\zone\english\mod.ff
 
 pause
