@@ -3728,7 +3728,7 @@ Callback_PlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, s
 	// Scope hitbox arms fix
 	if ( isDefined(sWeapon) && isDefined(sHitLoc) && isDefined(eAttacker) && isPlayer(eAttacker) && eAttacker != self ) 
 	{
-		if (sHitLoc == "left_arm_lower" || sHitLoc == "right_arm_lower" &&  (sWeapon == "remington700_mp" || sWeapon == "m40a3_mp") && iDFlags != 8 )		    
+		if ( (sHitLoc == "left_arm_lower" || sHitLoc == "right_arm_lower") &&  (sWeapon == "remington700_mp" || sWeapon == "m40a3_mp") && iDFlags != 8 )		    
 		{
 			// If players are looking to each other, make shot to arm a kill
 			distance = distance(self.origin, eAttacker.origin);
