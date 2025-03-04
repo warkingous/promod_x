@@ -2748,27 +2748,6 @@ startGame()
 	level notify("header_destroy");
 	level.timerStopped = false;
 
-	if ( isDefined( level.scorebot ) && level.scorebot )
-	{
-		if ( isDefined(game["PROMOD_KNIFEROUND"]) && game["PROMOD_KNIFEROUND"] )
-			game["promod_scorebot_ticker_buffer"] += "knife_round";
-		else
-		{
-			sb_text = "";
-
-			if ( !game["roundsplayed"] && !game["promod_in_timeout"] )
-				sb_text = "1st_half_started";
-			else if ( isDefined( level.roundswitch ) && level.roundswitch > 0 && game["roundsplayed"] % level.roundswitch == 0 && !game["promod_in_timeout"] )
-				sb_text = "2nd_half_started";
-			else if ( game["promod_in_timeout"] )
-				sb_text = "match_resumed";
-			else
-				sb_text = "round_start";
-
-			game["promod_scorebot_ticker_buffer"] += "" + sb_text + "" + ( game["roundsplayed"] + 1 );
-		}
-	}
-
 	game["promod_in_timeout"] = 0;
 
 	if ( !isDefined( game["PROMOD_KNIFEROUND"] ) || !game["PROMOD_KNIFEROUND"] || game["PROMOD_MATCH_MODE"] == "pub" )
