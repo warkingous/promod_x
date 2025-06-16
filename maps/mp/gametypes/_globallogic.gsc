@@ -3353,7 +3353,8 @@ checkRoundSwitch()
 				else 
 					game["promod_do_readyup"] = true;
 
-				playHalfTimeSound();
+				if ( !checkOvertimeSwitch() )
+					playHalfTimeSound();
 			}			
 
 			game["promod_timeout_called"] = false;
