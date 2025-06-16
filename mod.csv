@@ -24,6 +24,7 @@ menufile,ui_mp/scriptmenus/shoutcast_setup.menu
 menufile,ui_mp/scriptmenus/shoutcast_setup_binds.menu
 menufile,ui_mp/scriptmenus/team_marinesopfor.menu
 menufile,ui_mp/scriptmenus/team_marinesopfor_flipped.menu
+menufile,ui/options_graphics_pc.menu
 
 rawfile,maps/createfx/mp_backlot_fx.gsc
 rawfile,maps/createfx/mp_bloc_fx.gsc

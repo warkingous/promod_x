@@ -10,10 +10,11 @@
 
 #include "ui/menudef.h"
 
-#define TEAM_IS_MARINES		(localVarString( ui_team ) == "marines")
-#define TEAM_IS_OPFOR		(localVarString( ui_team ) == "opfor")
-#define NOT_SPECTATING		(!spectatingClient())
+#define TEAM_IS_MARINES		( localVarString( ui_team ) == "marines" )
+#define TEAM_IS_OPFOR		( localVarString( ui_team ) == "opfor" )
+#define NOT_SPECTATING		( !spectatingClient() )
 #define DVAR_ENFORCER		( !dvarint( sv_cheats ) && team( name ) != "TEAM_SPECTATOR" && ( dvarint( com_maxfps ) > 250 || dvarint( com_maxfps ) < 125 || dvarint( cl_maxpackets ) != 125 || dvarint( rate ) < 25000 || dvarint( dynent_active ) || dvarfloat( cg_hudDamageIconWidth ) != 128 || dvarfloat( cg_hudDamageIconHeight ) != 64 || dvarint( cg_huddamageiconinscope ) || dvarfloat( cg_huddamageiconoffset ) != 128 || dvarint( cg_huddamageicontime ) != 2000 || dvarfloat( cg_viewZSmoothingMin ) != 1 || dvarfloat( cg_viewZSmoothingMax ) != 16 || dvarfloat( cg_viewZSmoothingTime ) != 0.1 || dvarint( r_filmtweakInvert ) || dvarint( r_dlightlimit ) || dvarfloat( r_lodscalerigid ) != 1 || dvarfloat( r_lodscaleskinned ) != 1 || dvarint( sm_enable ) || dvarint( cg_nopredict ) || dvarint( developer ) || dvarint( r_zfeather ) || dvarfloat( phys_gravity ) != "-800" ) )
+#define LOD_ENFORCER        ( !dvarint( sv_cheats ) && team( name ) != "TEAM_SPECTATOR" && ( dvarfloat( r_lodbiasrigid ) != "-1000" || dvarfloat( r_lodbiasskinned ) != "-1000" ) )
 #define DVAR_ENFORCER_NOSND ( !dvarint( sv_cheats ) && team( name ) != "TEAM_SPECTATOR" && ( dvarint( aim_automelee_enabled ) || dvarfloat( compassplayerwidth ) != dvarfloat( compassplayerheight ) || dvarfloat( compassfriendlywidth ) != dvarfloat( compassfriendlyheight ) ) )
 #define DVAR_BLANK			( dvarString( ui_showmenuonly ) == "" )
 #define HUD_ALPHA 0.65
@@ -300,7 +301,7 @@
 	{
 		name			"xpbar"
 		fullScreen		0
-		visible			when( DVAR_ENFORCER );
+		visible			when( DVAR_ENFORCER || LOD_ENFORCER);
 		soundloop		"weap_ak47_fire_plr"
 	}
 
@@ -1005,7 +1006,7 @@
 		rect			FULLSCREEN_WIDE
 		style			WINDOW_STYLE_FILLED
 		fullScreen		MENU_FALSE
-		visible			when( DVAR_ENFORCER || DVAR_ENFORCER_NOSND )
+		visible			when( DVAR_ENFORCER || LOD_ENFORCER || DVAR_ENFORCER_NOSND )
 
 		ENFORCE( dvarint( cl_maxpackets ) != 125, "SET CL_MAXPACKETS TO 125", -210 );
 		ENFORCE( dvarint( r_dlightlimit ), "SET R_DLIGHTLIMIT TO 0", -190 );
@@ -1013,6 +1014,8 @@
 		ENFORCE( dvarint( rate ) < 25000, "SET RATE WITHIN 25K-100K", -170 );
 		ENFORCE( dvarfloat( r_lodscaleskinned ) != 1, "SET R_LODSCALESKINNED TO 1", -150 );
 		ENFORCE( dvarfloat( r_lodscalerigid ) != 1, "SET R_LODSCALERIGID TO 1", -130 );
+		ENFORCE( dvarfloat( r_lodbiasskinned ) != "-1000", "SET R_LODBIASSKINNED TO -1000", -110 );
+        ENFORCE( dvarfloat( r_lodbiasrigid ) != "-1000", "SET R_LODBIASRIGID TO -1000", -90 );
 		ENFORCE( dvarint( dynent_active ), "SET DYNENT_ACTIVE TO 0", -90 );
 		ENFORCE( dvarfloat( cg_hudDamageIconHeight ) != 64, "SET CG_HUDDAMAGEICONHEIGHT TO 64", -70 );
 		ENFORCE( dvarfloat( cg_hudDamageIconWidth ) != 128, "SET CG_HUDDAMAGEICONWIDTH TO 128", -50 );

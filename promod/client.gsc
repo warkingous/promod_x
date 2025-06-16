@@ -100,6 +100,8 @@ use_config()
 	"r_dlightlimit", 0,
 	"r_lodscalerigid", 1,
 	"r_lodscaleskinned", 1,
+	"r_lodbiasrigid", -1000,
+	"r_lodbiasskinned", -1000,
 	"cg_drawcrosshairnames", 0,
 	"cg_descriptivetext", 0,
 	"cg_viewzsmoothingmin", 1,
