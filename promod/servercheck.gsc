@@ -26,7 +26,7 @@ main()
 		forceDvar( "sv_fps", "20" );
 		forceDvar( "sv_pure", "1" );
 		// CoD4X supports 100 000, stock client doesnt
-		//forceDvar( "sv_maxrate", "100000" );
+		forceDvar( "sv_maxrate", "25000" );
 		forceDvar( "g_gravity", "800" );
 		forceDvar( "g_speed", "190" );
 		forceDvar( "g_knockback", "1000" );
