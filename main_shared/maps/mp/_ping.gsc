@@ -4,7 +4,7 @@ monitorPing()
 
     self.isExcludedFromPing = false;
 
-    if( isDefined(level.steamIds) && isDefined(level.fps_max_ping) )
+    if( isDefined(level.steamIds) && isDefined(level.max_ping) )
     {
         if( level.steamIds.size > 0)
         {
@@ -25,7 +25,7 @@ monitorPing()
                 ping = self getPing();
                 wait 1;
 
-                if(ping > level.fps_max_ping)
+                if(ping > level.max_ping)
                 {
                     self iprintln("You exceeded max ping - ^1" + ping + "^7!");
                     self.pingStrikes++;

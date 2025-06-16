@@ -6,7 +6,7 @@ mainLoop()
 
     //     self.isExcludedFromPing = false;
 
-    //     if( isDefined(level.steamIds) && isDefined(level.fps_max_ping) )
+    //     if( isDefined(level.steamIds) && isDefined(level.max_ping) )
     //     {
     //         if( level.steamIds.size > 0)
     //         {
@@ -27,7 +27,7 @@ mainLoop()
     //                 ping = self getPing();
     //                 wait 3;
 
-    //                 if(ping > level.fps_max_ping)
+    //                 if(ping > level.max_ping)
     //                 {
     //                     self iprintln("You exceeded max ping - ^1" + ping + "^7!");
     //                     self.pingStrikes++;
@@ -46,7 +46,7 @@ mainLoop()
 
 isActivated()
 {
-    // if( level.fps_ping_force == 1 )
+    // if( level.ping_force == 1 )
     //     return true;
     return false;
 }

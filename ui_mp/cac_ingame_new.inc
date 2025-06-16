@@ -60,7 +60,7 @@ menuDef	{
 
 	#define BACK_OPEN;
 	#include "ui_mp/navcontrols.inc"
-	//#include "ui_mp/fps_big_logo.inc"
+	//#include "ui_mp/big_logo.inc"
 
 	#define CAC_SETUP_ACTION1 \
 		play "mouse_click"; \
@@ -461,7 +461,7 @@ menuDef
 #define LOCAL_CAMO_ITEM3( itemNum, camoName, pnum, camoRef, highlight_dvar, bitMask, visArg )\
 	CHOICE_BUTTON_FOCUS_VIS( itemNum, camoName, LOCAL_CAMO_ACTION( camoRef );, execnow "set "highlight_dvar" "camoRef;, ;, when( dvarString( loadout_primary ) == "ak47" || dvarString( loadout_primary ) == "ak74u" || dvarString( loadout_primary ) == "m40a3" || dvarString( loadout_primary ) == "remington700" ) ) \
 	CHOICE_DBUTTON_VIS( itemNum, camoName, when( dvarString( loadout_primary ) != "ak47" && dvarString( loadout_primary ) != "ak74u" && dvarString( loadout_primary ) != "m40a3" && dvarString( loadout_primary ) != "remington700") ) \
-	//CHOICE_NEWICON_VIS( itemNum, "fps_premium_access", when( 1 ) )
+	//CHOICE_NEWICON_VIS( itemNum, "premium_access", when( 1 ) )
 	
 
 

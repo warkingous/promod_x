@@ -77,8 +77,8 @@ validMode( mode )
 			case "mm":
 				if ( switches["mm"] ) return false;
 
-				// Set matchmaking mode only if level.fps_match_id is defined and non-zero
-				if ( isDefined(level.fps_match_id) && level.fps_match_id != 0 )
+				// Set matchmaking mode only if level.match_id is defined and non-zero
+				if ( isDefined(level.match_id) && level.match_id != 0 )
 				{
 					switches["mm"] = true;
 					game["MATCHMAKING_MODE"] = 1;
@@ -128,11 +128,11 @@ monitorMode()
                 continue;
             }
 
-            // Check if the mode contains "mm" but fps_match_id is not set or is zero
-            if ( isSubStr( mode, "mm" ) && ( !isDefined( level.fps_match_id ) || level.fps_match_id == 0 ) )
+            // Check if the mode contains "mm" but match_id is not set or is zero
+            if ( isSubStr( mode, "mm" ) && ( !isDefined( level.match_id ) || level.match_id == 0 ) )
             {
                 // Print error message for invalid matchmaking mode
-                iPrintLN( "Error: Cannot set matchmaking mode without a valid fps_match_id.\nPlease set a valid fps_match_id or change the mode." );
+                iPrintLN( "Error: Cannot set matchmaking mode without a valid match_id.\nPlease set a valid match_id or change the mode." );
                 
                 // Revert to original mode
                 setDvar( "promod_mode", o_mode );
@@ -172,17 +172,17 @@ monitorMode()
 
 monitorMatchId()
 {
-	old_matchId = getDvarInt( "fps_match_id" );
+	old_matchId = getDvarInt( "match_id" );
 
 	for(;;)
 	{
-		matchId = getDvarInt( "fps_match_id" );
+		matchId = getDvarInt( "match_id" );
 
 		if ( matchId != old_matchId )
 		{
 			if ( isDefined( game["state"] ) && game["state"] == "postgame" )
 			{
-				setDvar( "fps_match_id", old_matchId );
+				setDvar( "match_id", old_matchId );
 				continue;
 			}
 
@@ -192,7 +192,7 @@ monitorMatchId()
 				{
 					level notify ( "restarting" );
 
-					iPrintLN( "Changing the ^5FPS MATCH ID ^7to " + matchId + "\nPlease wait while it loads..." );
+					iPrintLN( "Changing the ^5MATCH ID ^7to " + matchId + "\nPlease wait while it loads..." );
 					setMatchId( matchId );
 
 					wait 2;
@@ -204,15 +204,15 @@ monitorMatchId()
 				else
 				{
 					if ( isDefined( matchId ) && matchId != -1 )
-						iPrintLN( "Error Changing ^5FPS MATCH ID to ^7" + matchId + "\nFPS MATCH ID must be a number > 0" );
+						iPrintLN( "Error Changing ^5MATCH ID to ^7" + matchId + "\nMATCH ID must be a number > 0" );
 
-					setDvar( "fps_match_id", old_matchId );
+					setDvar( "match_id", old_matchId );
 				}
 			}
 			else
 			{
-				iPrintLn("You cant change ^5FPS MATCH ID ^7on servers genererated by FPSChallenge.eu^1!");
-				setDvar( "fps_match_id", old_matchId );
+				iPrintLn("You cant change ^5MATCH ID ^7on these servers^1!");
+				setDvar( "match_id", old_matchId );
 			}
 
 		
@@ -223,15 +223,12 @@ monitorMatchId()
 
 setMatchId( matchId )
 {
-	level.fps_match_id = matchId;
+	level.match_id = matchId;
 }
 
 canChangeMatchId()
 {
-	//if( level.fps_match_type == "custom" )
 	return true;
-	// else 
-	// 	return false;
 }
 
 validMatchId( matchId )

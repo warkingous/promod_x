@@ -140,14 +140,14 @@ main()
 	level notify("header_destroy");
 
 	// Send match started info TODO
-	if( game["PROMOD_KNIFEROUND"] == 0 && level.fps_match_id != 0 && level.fps_is_public == 0 && !game["promod_first_readyup_done"] && level.players.size > 1 ){ //
+	if( game["PROMOD_KNIFEROUND"] == 0 && level.match_id != 0 && level.is_public == 0 && !game["promod_first_readyup_done"] && level.players.size > 1 ){ //
 		thread promod\stats::mapStarted();
 		wait 0.1;
 		thread promod\stats::initPlayers();
 	}
 
 	// Public stats
-	if ( level.fps_is_public == 1 )
+	if ( level.is_public == 1 )
 		thread promod\stats::publicMapStarted();
 
 	for( i = 0;i < level.players.size; i++)
@@ -236,9 +236,12 @@ startDemoRecord()
 {
 	map_name = toLower( getDvar( "mapname" ) );
 
-	if( level.fps_match_id != 0 )
+	if( level.match_id != 0 )
 	{
-		demo_name = "FPS_" + level.fps_match_id + "_" + map_name + "_" + generateRandomString(4);
+		if( level.branding )
+			demo_name = level.branding_name + "_" + level.match_id + "_" + map_name + "_" + generateRandomString(4);
+		else 
+			demo_name = "Match_" + level.match_id + "_" + map_name + "_" + generateRandomString(4);
 	}		
 	else if ( game["LAN_MODE"] )
 	{

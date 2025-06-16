@@ -124,7 +124,7 @@ init()
 	//game["totalroundsplayed"] = 0;
 	
 	// AC + Extra functionality
-	if( level.fps_match_id != 0 )
+	if( level.match_id != 0 )
 	{	
 		promod\ac::main();
 	}
@@ -139,57 +139,61 @@ registerDvars()
 
 registerMatchDvars()
 {
-	// Set server fps_match_id
-	if ( getDvar( "fps_match_id" ) == "" )
+	// Set custom branding
+	if ( getDvar( "branding" ) == "" )
 	{
-		setDvar( "fps_match_id", 0 );
-		level.fps_match_id = 0;
+		setDvar( "branding", 0 );
+		level.branding = 0;
+	}    	
+	else {
+		level.branding = 1;
+		level.branding_name = getDvar( "branding_name" );
+		level.branding_shortcut = getDvar( "branding_shortcut" );
+		level.branding_url = getDvar( "branding_url" );
+	}
+
+	// Set server match_id
+	if ( getDvar( "match_id" ) == "" )
+	{
+		setDvar( "match_id", 0 );
+		level.match_id = 0;
 	}    	
 	else
-		level.fps_match_id =  getDvarInt( "fps_match_id" );
+		level.match_id =  getDvarInt( "match_id" );
 
-	// Set server fps_match_type
-	// if ( getDvar( "fps_match_type" ) == "" )
-	// {
-	// 	setDvar( "fps_match_type", "custom" );
-	// 	level.fps_match_type = "custom";
-	// }    	
-	// else
-	// 	level.fps_match_type = getDvar( "fps_match_type" );
-
-	//Set server fps_track_stats
-	if ( getDvar( "fps_track_stats" ) == "" )
+	//Set server track_pub_stats
+	if ( getDvar( "track_pub_stats" ) == "" )
 	{
-		setDvar( "fps_track_stats", 0 );
-		level.fps_track_stats = 0;
+		setDvar( "track_pub_stats", 0 );
+		level.track_pub_stats = 0;
 	}    	
 	else
-		level.fps_track_stats = getDvarInt( "fps_track_stats" );
+		level.track_pub_stats = getDvarInt( "track_pub_stats" );
 
 	// Set server type
-	if ( getDvar( "fps_is_public" ) == "" )
+	if ( getDvar( "is_public" ) == "" )
 	{
-		setDvar( "fps_is_public", 0 );
-		level.fps_is_public = 0;
+		setDvar( "is_public", 0 );
+		level.is_public = 0;
 	}    	
 	else
-		level.fps_is_public = getDvarInt( "fps_is_public" );
+		level.is_public = getDvarInt( "is_public" );
 }
 
 registerPingWatchDvars()
 {
-	level.fps_ping_force = getDvarInt( "fps_ping_force" );
+	level.ping_force = getDvarInt( "ping_force" );
 
-	// Set server fps_max_ping
-	if ( getDvar( "fps_max_ping" ) == "" )
-		setDvar( "fps_max_ping", 100 ); 	
+	// Set server max_ping
+	if ( getDvar( "max_ping" ) == "" )
+		setDvar( "max_ping", 100 ); 	
 	else
-		level.fps_max_ping =  getDvarInt( "fps_max_ping" );
+		level.max_ping =  getDvarInt( "max_ping" );
 
-	if ( getDvar( "fps_ping_allowed_players" ) == "" )
-		setDvar (  "fps_ping_allowed_players", 0 );
+	if ( getDvar( "ping_allowed_players" ) == "" )
+		setDvar (  "ping_allowed_players", 0 );
 	else {
-		level.steamIds = strtok(getDvar("fps_ping_allowed_players"), ",");
+		level.steamIds = strtok(getDvar("ping_allowed_players"), ",");
 	}
 		
 }
@@ -575,7 +579,7 @@ spawnPlayer()
 	if (!isDefined(self.pers["recording_executed"]))
 		self.pers["recording_executed"] = false;
 
-	if ( !isDefined( self.pers["isBot"] ) && isDefined( self.pers["team"] ) && self.pers["team"] != "spectator" && game["roundsplayed"] > 0 && level.fps_is_public == 0 ) //level.gametype == "sd"
+	if ( !isDefined( self.pers["isBot"] ) && isDefined( self.pers["team"] ) && self.pers["team"] != "spectator" && game["roundsplayed"] > 0 && level.is_public == 0 ) //level.gametype == "sd"
     {
 		if( !self promod\client::get_config( "PROMOD_RECORD" ) && !self.pers["recording_executed"] )
         	self thread promod\readyup::startDemoRecord();
@@ -1051,7 +1055,7 @@ endGame( winner, endReasonText, reason )
 	}
 
 	// Stats
-	if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.fps_match_id != 0 ) //&& level.gametype == "sd" 
+	if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.match_id != 0 ) //&& level.gametype == "sd" 
 	{
 		thread promod\stats::roundReport( game["totalroundsplayed"]+1, game["teamScores"]["allies"], game["teamScores"]["axis"], reason, winner, game["PROMOD_KNIFEROUND"], game["promod_overtime_active"], game["promod_overtime_count"] );
 	}
@@ -1206,7 +1210,7 @@ endGame( winner, endReasonText, reason )
 			game["teamScores"]["axis"] = old_score;
 
 			// Swap teamIds for stats
-			if( level.fps_match_id != 0 && level.fps_is_public == 0 )
+			if( level.match_id != 0 && level.is_public == 0 )
 			{
 				//old_teamId = game["alliesTeamId"];
 				//game["alliesTeamId"] = game["axisTeamId"];
@@ -1307,7 +1311,7 @@ endGame( winner, endReasonText, reason )
 			thread maps\mp\gametypes\_promod::updateClassAvailability( "axis" );
 
 			// Swap teamIds for stats
-			if( level.fps_match_id != 0 && level.fps_is_public == 0 )
+			if( level.match_id != 0 && level.is_public == 0 )
 			{
 				old_teamId = game["alliesTeamId"] ;
 				game["alliesTeamId"] = game["axisTeamId"];
@@ -1469,7 +1473,7 @@ endGame( winner, endReasonText, reason )
 		player setClientDvars( "ui_hud_hardcore", 1, "cg_drawSpectatorMessages", 0, "g_compassShowEnemies", 0 );
 
 		// Players stats
-		if( level.fps_match_id != 0 && level.fps_is_public == 0 )
+		if( level.match_id != 0 && level.is_public == 0 )
 		{
 			// Send players stats to api on map end
 			if ( isDefined( player.pers["teamId"] ) && player.pers["teamId"] != 0 )
@@ -1484,7 +1488,7 @@ endGame( winner, endReasonText, reason )
 		}
 
 		// Public stats
-		if ( level.fps_is_public ==1 && !isDefined( self.pers["isBot"] ))
+		if ( level.is_public ==1 && !isDefined( self.pers["isBot"] ))
 			player thread promod\stats::sendPublicStatsData();
 		
 		// Stop recording demo on map end
@@ -1498,7 +1502,7 @@ endGame( winner, endReasonText, reason )
 	wait 1;
 
 	// Send data to api on map end
-	if ( level.fps_match_id != 0 )
+	if ( level.match_id != 0 )
 		thread promod\stats::mapFinished(winnerTeamId);
 
 	// Sounds
@@ -3587,11 +3591,11 @@ Callback_PlayerConnect()
 Callback_PlayerDisconnect()
 {
 	// Players stats
-	if ( level.fps_match_id != 0 && isDefined( self.pers["teamId"] ))
+	if ( level.match_id != 0 && isDefined( self.pers["teamId"] ))
 		self promod\stats::sendStatsData();
 
 	// Public stats
-	if ( level.fps_track_stats == 1 && level.fps_is_public == 1 )
+	if ( level.track_pub_stats == 1 && level.is_public == 1 )
 		self promod\stats::sendPublicStatsData();
 
 	self removePlayerOnDisconnect();
@@ -4249,9 +4253,9 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 
 	attacker_data = lpattackerteam + ";" + attackerStance+ ";" +attackerAds+ ";" +attackerIsOnGround+ ";" +isAttackerDefusing+ ";" +isAttackerPlanting+ ";" +isAttackerFlashed+ ";" +attacker.origin + ";" +isClutchKill;
 	victim_data = self.pers["team"]+ ";" +self getStance()+ ";" +self playerADS()+ ";" +self isOnGround()+ ";" +self.isDefusing+ ";" +self.isPlanting+ ";" +self maps\mp\_flashgrenades::isFlashbanged()+ ";" +self.origin;
-	kill_data = isTeamkill+ ";" +isWallbang+ ";" +sWeapon+ ";" +camo+ ";" +iDamage+ ";" +metrestring+ ";" +sMeansOfDeath+ ";" +sHitLoc+ ";" +inflictorOrigin+ ";" + death_by_barell +";" + death_by_bombsite +";"+ death_by_falling +";" +time+ ";" + (game["totalroundsplayed"]+1)+ ";" +level.script+ ";" +level.fps_match_id;
+	kill_data = isTeamkill+ ";" +isWallbang+ ";" +sWeapon+ ";" +camo+ ";" +iDamage+ ";" +metrestring+ ";" +sMeansOfDeath+ ";" +sHitLoc+ ";" +inflictorOrigin+ ";" + death_by_barell +";" + death_by_bombsite +";"+ death_by_falling +";" +time+ ";" + (game["totalroundsplayed"]+1)+ ";" +level.script+ ";" +level.match_id;
 
-	if( !level.rdyup && isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.fps_match_id != 0 && level.fps_is_public == 0 ) //&& level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0
+	if( !level.rdyup && isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.match_id != 0 && level.is_public == 0 ) //&& level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0
 	{
 		thread promod\stats::processKillData(attacker, self, attacker_data,	victim_data, kill_data);
 	}
@@ -4462,7 +4466,7 @@ setSpawnVariables()
 
 notifyConnecting()
 {
-	if( level.fps_match_id != 0 )
+	if( level.match_id != 0 )
 		self promod\ac::setPlayerRank();
 	else
 		self setRank( 0, 1 );

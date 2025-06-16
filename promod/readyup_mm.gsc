@@ -70,7 +70,7 @@ main()
 		// 	continue;
 		// }
 
-		if( getDvarInt("fps_match_canceled") == 1 )
+		if( getDvarInt("match_canceled") == 1 )
 		{
 			all_players_ready = false;
 
@@ -137,18 +137,6 @@ main()
 			}
 		}
 
-		// Players check
-		// if(previous_not_ready_count != level.not_ready_count && level.players.size < 2)
-		// {
-		// 	for(i=0;i<level.players.size;i++)
-		// 	{
-		// 		level.players[i] setclientdvar("waiting_on", 1);
-		// 		level.players[i] ShowScoreBoard();
-		// 		previous_not_ready_count = level.not_ready_count;
-		// 	}
-		// }
-
-
 		// Start auto demo record when all players ready-up before 5min timer
 		if ( all_players_ready )
 		{
@@ -162,7 +150,7 @@ main()
 			}
 
 			// Match started with correct amount of players
-			if ( userIds.size != 0 && getDvarInt("fps_comp_size") != 0 && userIds.size == getDvarInt("fps_comp_size") )
+			if ( userIds.size != 0 && getDvarInt("comp_size") != 0 && userIds.size == getDvarInt("comp_size") )
 			{
 			
 				level.ready_up_over = true;
@@ -285,14 +273,14 @@ main()
 	{
 
 		// Send match started info TODO
-		if( level.fps_is_public == 0 && !game["promod_first_readyup_done"] ){ //level.players.size > 1 && game["PROMOD_KNIFEROUND"] == 0
+		if( level.is_public == 0 && !game["promod_first_readyup_done"] ){ //level.players.size > 1 && game["PROMOD_KNIFEROUND"] == 0
 			thread promod\stats::mapStarted();
 			wait 0.1;
 			thread promod\stats::initPlayers();
 		}
 
 		// Public stats
-		if ( level.fps_is_public == 1 )
+		if ( level.is_public == 1 )
 			thread promod\stats::publicMapStarted();
 
 		for( i = 0;i < level.players.size; i++)
@@ -414,10 +402,10 @@ main()
 		finalFailSound = failSound[randomInt(4)];
 		playSoundOnPlayers(finalFailSound);
 
-		if( getDvarInt("fps_match_canceled") != 1)
+		if( getDvarInt("match_canceled") != 1)
 			thread promod\stats::cancelMatch( userIds );
 		
-		setDvar("fps_match_canceled", 1);
+		setDvar("match_canceled", 1);
 
 		//iprintln("Game will quit in 5 seconds...");
 
@@ -481,9 +469,13 @@ startDemoRecord()
 {
 	map_name = toLower( getDvar( "mapname" ) );
 
-	if( level.fps_match_id != 0 )
+	if( level.match_id != 0 )
 	{
-		demo_name = "FPS_" + level.fps_match_id + "_" + map_name + "_" + generateRandomString(4);
+		if( level.branding )
+			demo_name = level.branding_name + "_" + level.match_id + "_" + map_name + "_" + generateRandomString(4);
+		else 
+			demo_name = "Match_" + level.match_id + "_" + map_name + "_" + generateRandomString(4);
+
 	}		
 	else if ( game["LAN_MODE"] )
 	{

@@ -212,7 +212,10 @@ main()
 	setDvar( "scr_hardcore", 0 ); // [0-1]
 
 	// website
-	setDvar( "promod_hud_website", "www.fpschallenge.eu" ); // (avoid "//" here)
+	if ( getDvar("branding_url") != "" )
+		setDvar ( "promod_hud_website", getDvar("branding_url") );	
+	else 
+		setDvar( "promod_hud_website", "www.codtv.eu" ); // (avoid "//" here)
 
 	// messagecenter
 	setDvar( "promod_mc_enable", 0 ); // [0-1]
