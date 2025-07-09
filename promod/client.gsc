@@ -69,6 +69,29 @@ setFOVScale()
     }
 }
 
+toggleNameFadeout()
+{
+    toggled = self promod\client::toggle("PROMOD_TOGGLE_NAMES");
+
+    if (toggled)
+        self setClientDvar("cg_friendlynamefadeout", 2147483647);
+    else
+        self setClientDvar("cg_friendlynamefadeout", 1500);
+
+	return toggled;
+}
+
+getNameFadeoutValue()
+{
+    index = self get_config("PROMOD_TOGGLE_NAMES");
+
+    switch (index)
+	{
+		case 0: return 1500;
+        case 1: return 2147483647;
+	}
+}
+
 setsunlight(n)
 {
 	sl = 0;
@@ -129,6 +152,7 @@ use_config()
 	"r_filmusetweaks", self get_config("PROMOD_FILMTWEAK"),
 	//"r_blur", 0.2*self get_config("PROMOD_GFXBLUR"),
 	"cg_fovscale", self setFOVScale(),
-	"cg_gun_x", 0.2*self get_config("PROMOD_GUN_X")
+	"cg_gun_x", 0.2*self get_config("PROMOD_GUN_X"),
+	"cg_friendlynamefadeout", getNameFadeoutValue()
 	);
 }
