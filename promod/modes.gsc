@@ -455,10 +455,35 @@ setMode( mode )
 		setDvar( "scr_" + level.gametype + "_ot_roundlimit", mr_overtime );		
 	}
 
-	if ( level.gametype != "sd" || !knockout_mode && game["SCORES_ATTACK"] + game["SCORES_DEFENCE"] > maxscore || knockout_mode && ( ( game["SCORES_ATTACK"] > maxscore || game["SCORES_DEFENCE"] > maxscore ) || ( game["SCORES_ATTACK"] + game["SCORES_DEFENCE"] >= int( mr_rating ) * 2 ) ) )
+	// Overtimes support
+	if ( level.gametype != "sd" )
 	{
 		game["SCORES_ATTACK"] = 0;
 		game["SCORES_DEFENCE"] = 0;
+	}
+	else if ( mr_overtime <= 0 )
+	{
+		if ( !knockout_mode && game["SCORES_ATTACK"] + game["SCORES_DEFENCE"] > maxscore || knockout_mode && ( game["SCORES_ATTACK"] > maxscore || game["SCORES_DEFENCE"] > maxscore ||	game["SCORES_ATTACK"] + game["SCORES_DEFENCE"] >= int( mr_rating ) * 2 ) )
+		{
+			game["SCORES_ATTACK"] = 0;
+			game["SCORES_DEFENCE"] = 0;
+		}
+	}
+	else // mr_overtime > 0
+	{
+		totalRounds = game["SCORES_ATTACK"] + game["SCORES_DEFENCE"];
+		baseRounds = mr_rating * 2;
+		overtimeBlock = mr_overtime * 2;
+
+		if ( totalRounds >= baseRounds ) // in overtime
+		{
+			game["promod_timeout_called"] = false;
+			game["promod_overtime_active"] = true;
+			game["promod_overtime_count"] = int( ( totalRounds - baseRounds ) / overtimeBlock ) + 1;
+			//iprintln("OT Count:" + game["promod_overtime_count"]);
+		}
+
+		
 	}
 
 	if( game["PROMOD_PB_OFF"] && getDvarInt( "sv_cheats" ) && !getDvarInt( "sv_punkbuster" ) )
