@@ -17,9 +17,5 @@ a0,b1,c2,d3,e4,f5,g6,h7,i8,j9,k10,l11,
 9,,camo,"Dark",camo_dark,,weapon_missing_image,"Dark camouflage finish.",PERKS_UNLOCK_EVERYTHING_IN,,32768,8,
 10,,camo,"Asiimov",camo_asiimov,,weapon_missing_image,"Asiimov camouflage finish.",PERKS_UNLOCK_EVERYTHING_IN,,32768,8,
 11,,camo,"Special",camo_x,,weapon_missing_image,"Special camouflage finish.",PERKS_UNLOCK_EVERYTHING_IN,,32768,8,
-12,,camo,"Monster",camo_monster,,weapon_missing_image,"Monster camouflage finish.",PERKS_UNLOCK_EVERYTHING_IN,,32768,8,
-13,,camo,"Secret",camo_secret,,weapon_missing_image,"Secret camouflage finish.",PERKS_UNLOCK_EVERYTHING_IN,,32768,8,
-14,,camo,"Blue-toned",camo_vulcan,,weapon_missing_image,"Blue-toned camouflage finish.",PERKS_UNLOCK_EVERYTHING_IN,,32768,8,
-15,,camo,"Modern",camo_cod,,weapon_missing_image,"Modern camouflage finish.",PERKS_UNLOCK_EVERYTHING_IN,,32768,8,
 
 

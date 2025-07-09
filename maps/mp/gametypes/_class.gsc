@@ -51,7 +51,7 @@ sidearmWeapon()
 		sidearmWeapon = getDvar( "class_" + class + "_secondary" );
 
 	//custom camos
-	camos = strtok("camo_brockhaurd|camo_bushdweller|camo_blackwhitemarpat|camo_tigerred|camo_stagger|camo_gold|camo_twotone|camo_dark|camo_asiimov|camo_x|camo_monster|camo_secret|camo_vulcan|camo_cod", "|");
+	camos = strtok("camo_brockhaurd|camo_bushdweller|camo_blackwhitemarpat|camo_tigerred|camo_stagger|camo_gold|camo_twotone|camo_dark|camo_asiimov|camo_x|camo_secret", "|");
 	camonum = 0;
 
 	if(isDefined(self.pers[class]["loadout_secondary_camo"]))
@@ -141,14 +141,8 @@ primaryWeapon()
 			camonum = 9;
 		else if( self.pers[class]["loadout_camo"] == "camo_x" )
 			camonum = 10;
-		else if( self.pers[class]["loadout_camo"] == "camo_monster" )
-			camonum = 11;
 		else if( self.pers[class]["loadout_camo"] == "camo_secret" )
 			camonum = 12;
-		else if( self.pers[class]["loadout_camo"] == "camo_vulcan" )
-			camonum = 13;
-		else if( self.pers[class]["loadout_camo"] == "camo_cod" )
-			camonum = 14;
 
 		//iprintln("primary " + camonum);
 	}

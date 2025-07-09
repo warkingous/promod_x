@@ -144,10 +144,6 @@ xmodel,viewmodel_remington700_mp_gold
 
 # Two-tone camos
 xmodel,viewmodel_desert_eagle_mp_twotone
-xmodel,viewmodel_ak47_mp_twotone
-xmodel,viewmodel_ak74u_mp_twotone
-xmodel,viewmodel_m40a3_mp_twotone
-xmodel,viewmodel_remington700_mp_twotone
 
 # Dark camos
 xmodel,viewmodel_remington700_mp_dark
@@ -157,36 +153,11 @@ xmodel,viewmodel_ak47_mp_dark
 xmodel,viewmodel_m40a3_mp_dark
 
 # Asiimov camos
-xmodel,viewmodel_m40a3_mp_asiimov
-xmodel,viewmodel_remington700_mp_asiimov
 xmodel,viewmodel_ak74u_mp_asiimov
-xmodel,viewmodel_ak47_mp_asiimov
 
 # Special camos
-xmodel,viewmodel_m40a3_mp_x
-xmodel,viewmodel_remington700_mp_x
-xmodel,viewmodel_ak74u_mp_x
-xmodel,viewmodel_ak47_mp_x
 xmodel,viewmodel_desert_eagle_mp_x
 xmodel,viewmodel_m4_mp_x
-
-# Vulcan camos
-xmodel,viewmodel_remington700_mp_vulcan
-xmodel,viewmodel_m40a3_mp_vulcan
-xmodel,viewmodel_ak47_mp_vulcan
-xmodel,viewmodel_ak74u_mp_vulcan
-
-# Monster camos
-xmodel,viewmodel_remington700_mp_monster
-xmodel,viewmodel_m40a3_mp_monster
-xmodel,viewmodel_ak47_mp_monster
-xmodel,viewmodel_ak74u_mp_monster
-
-# Cod camos
-xmodel,viewmodel_remington700_mp_cod
-xmodel,viewmodel_m40a3_mp_cod
-xmodel,viewmodel_ak47_mp_cod
-xmodel,viewmodel_ak74u_mp_cod
 
 # Ping checker 
 rawfile,promod/ping.gsc

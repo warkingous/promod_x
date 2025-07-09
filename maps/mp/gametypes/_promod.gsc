@@ -321,8 +321,8 @@ validClass( classType, preServed, type )
 	loadout_secondary = strTok( "deserteaglegold,deserteagle,colt45,usp,beretta", "," );
 	loadout_secondary_attachment = strTok( "none,silencer", "," );
 	loadout_grenade = strTok( "flash_grenade,smoke_grenade", "," );
-	loadout_camo = strTok( "camo_none,camo_brockhaurd,camo_bushdweller,camo_blackwhitemarpat,camo_tigerred,camo_stagger,camo_gold,camo_twotone,camo_dark,camo_asiimov,camo_x,camo_monster,camo_vulcan,camo_cod,camo_secret", "," );
-	loadout_secondary_camo = strTok( "camo_none,camo_gold,camo_twotone,camo_dark,camo_asiimov,camo_x,camo_monster,camo_secret,camo_vulcan,camo_cod", "," );
+	loadout_camo = strTok( "camo_none,camo_brockhaurd,camo_bushdweller,camo_blackwhitemarpat,camo_tigerred,camo_stagger,camo_gold,camo_twotone,camo_dark,camo_asiimov,camo_x,camo_secret", "," );
+	loadout_secondary_camo = strTok( "camo_none,camo_gold,camo_twotone,camo_dark,camo_asiimov,camo_x,camo_secret", "," );
 
 	switch ( type )
 	{
@@ -511,10 +511,7 @@ processLoadoutResponse( respString )
 					case "camo_dark":
 					case "camo_asiimov":
 					case "camo_x":
-					case "camo_monster":
 					case "camo_secret":
-					case "camo_vulcan":
-					case "camo_cod":
 						self.pers[self.class][subTokens[0]] = subTokens[1];
 						break;
 					default:
@@ -535,10 +532,7 @@ processLoadoutResponse( respString )
 					case "camo_dark":
 					case "camo_asiimov":
 					case "camo_x":
-					case "camo_monster":
 					case "camo_secret":
-					case "camo_vulcan":
-					case "camo_cod":
 						self.pers[self.class][subTokens[0]] = subTokens[1];
 						break;
 					default:
