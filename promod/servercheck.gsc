@@ -272,4 +272,27 @@ isCustomMap()
 			return false;
 	}
 	return true;
+
+	// xmodels count per map
+	// mp_citystreets - 986  
+	// mp_crossfire - 975
+	// mp_broadcast - 961  
+	// mp_vacant - 940  
+	// mp_backlot - 935  
+	// mp_convoy - 918  
+	// mp_crash_snow - 916  
+	// mp_crash - 912  
+	// mp_carentan - 892  
+	// mp_strike - 875  
+	// mp_bog - 865  
+	// mp_pipeline - 840  
+	// mp_farm - 837  
+	// mp_overgrown - 818  
+	// mp_creek - 777  
+	// mp_bloc - 774  
+	// mp_cargoship - 774  
+	// mp_showdown - 786  
+	// mp_countdown - 737  
+	// mp_shipment - 709  
+	// mp_killhouse - 703 
 }

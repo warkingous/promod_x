@@ -144,10 +144,7 @@
 #define REF_DARK						"camo_dark"
 #define REF_ASIIMOV						"camo_asiimov"
 #define REF_X						    "camo_x"
-#define REF_MONSTER					    "camo_monster"
 #define REF_SECRET						"camo_secret"
-#define REF_VULCAN						"camo_vulcan"
-#define REF_COD						    "camo_cod"
 
 #define REF_PRESTIGE					"camo_prestige"
 #define CAMO_BLACKWHITEMARPAT			tablelookup( "mp/attachmenttable.csv", 4, REF_BLACKWHITEMARPAT, 11 )
@@ -161,11 +158,7 @@
 #define CAMO_DARK					    tablelookup( "mp/attachmenttable.csv", 4, REF_DARK, 11 )
 #define CAMO_ASIIMOV					tablelookup( "mp/attachmenttable.csv", 4, REF_ASIIMOV, 11 )
 #define CAMO_X					        tablelookup( "mp/attachmenttable.csv", 4, REF_X, 11 )
-#define CAMO_MONSTER					tablelookup( "mp/attachmenttable.csv", 4, REF_MONSTER, 11 )
-#define CAMO_KOLEGA				        tablelookup( "mp/attachmenttable.csv", 4, REF_KOLEGA, 11 )
 #define CAMO_SECRET				        tablelookup( "mp/attachmenttable.csv", 4, REF_SECRET, 11 )
-#define CAMO_VULCAN				        tablelookup( "mp/attachmenttable.csv", 4, REF_VULCAN, 11 )
-#define CAMO_COD				        tablelookup( "mp/attachmenttable.csv", 4, REF_COD, 11 )
 #define CAMO_PRESTIGE					tablelookup( "mp/attachmenttable.csv", 4, REF_PRESTIGE, 11 )
 
 // --------- weapon attachments ----------
@@ -293,17 +286,9 @@
 #define CAMO9 PREPROC_CAMO( CAMO_X, \
 "Special", ORIGIN_POPUP1, WEAPON_SLOT10, WEAPON_SLOT9, REF_X )
 
-#define CAMO10 PREPROC_CAMO( CAMO_MONSTER, \
-"Monster", ORIGIN_POPUP1, WEAPON_SLOT11, WEAPON_SLOT10, REF_MONSTER )
-
 #define CAMO11 PREPROC_CAMO( CAMO_SECRET, \
 "Secret", ORIGIN_POPUP1, WEAPON_SLOT12, WEAPON_SLOT11, REF_SECRET )
 
-#define CAMO12 PREPROC_CAMO( CAMO_VULCAN, \
-"Vulcan", ORIGIN_POPUP1, WEAPON_SLOT13, WEAPON_SLOT12, REF_VULCAN )
-
-#define CAMO13 PREPROC_CAMO( CAMO_COD, \
-"Cod", ORIGIN_POPUP1, WEAPON_SLOT14, WEAPON_SLOT13, REF_COD )
 
 
 // ============================================================================================

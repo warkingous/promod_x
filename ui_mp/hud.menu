@@ -458,7 +458,7 @@
 	{
 		name			"scorebars"
 		rect			(BOTTOM_RECT_X+SCORE_OFFSET_X) (BOTTOM_RECT_Y+SCORE_OFFSET_Y) 640 480 HORIZONTAL_ALIGN_FULLSCREEN VERTICAL_ALIGN_FULLSCREEN
-		exp				rect Y( BOTTOM_RECT_Y - 10 );
+		exp				rect Y( BOTTOM_RECT_Y - 16 );
 		fullScreen		0
 		visible			when( !inkillcam() && !ui_active() && !dvarint( ui_hud_hardcore ) && (!dvarint( sv_cheats ) || dvarint( sv_cheats ) && !dvarint( promod_movie_hidescorebar ) ) );
 

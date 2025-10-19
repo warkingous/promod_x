@@ -298,6 +298,12 @@ quickpromod(response)
 		case "faction":
 			self loopFactionConfig("PROMOD_FACTION");
 			break;
+		case "toggle_friendly_names":
+			a = "dis";
+			if ( self promod\client::toggleNameFadeout() )
+				a = "en";
+			self iprintln("Friendly names are now "+a+"abled");
+			break;
 	}
 }
 
