@@ -24,86 +24,319 @@ init()
 		entities[i] thread dmg();
 }
 
+veh_hud(msg, attacker)
+{
+    // if (isdefined(attacker) && isPlayer(attacker))
+    // {
+    //     attacker iprintln("^3[VEH]^7 " + msg);
+    //     return;
+    // }
+
+    // Fallback: broadcast to everyone
+    // players = getentarray("player", "classname");
+    // pcount = int(players.size);
+    // for (i = 0; i < pcount; i++)
+    //     players[i] iprintln("^3[VEH]^7 " + msg);
+}
+
+// Returns a world-space position by offsetting vehicle origin along its local
+// forward/right/up axes. Useful to synthesize undercarriage/low points.
+__ax(offF, offR, offU)
+{
+    f = anglestoforward(self.angles);
+    r = anglestoright(self.angles);
+    u = anglestoup(self.angles);
+    return self.origin + f*offF + r*offR + u*offU;
+}
+
+// Gathers points to aim the LOS rays at:
+//  - entity center
+//  - synthetic low/undercarriage points (help with curbs/ledges)
+//  - all model parts (names cached on the entity in __losAllParts), with stride+cap
+// ---- gathers LOS target points (center + undercarriage + filtered parts)
+__collectLosTargets()
+{
+    pts = [];
+
+    // center
+    pts[pts.size] = self.origin;
+
+    // synthetic undercarriage points (helps with curbs)
+    base = -20;
+    pts[pts.size] = __ax(  50,   0, base);
+    pts[pts.size] = __ax( -50,   0, base);
+    pts[pts.size] = __ax(   0,  30, base);
+    pts[pts.size] = __ax(   0, -30, base);
+    pts[pts.size] = __ax(  50,  30, base);
+    pts[pts.size] = __ax(  50, -30, base);
+    pts[pts.size] = __ax( -50,  30, base);
+    pts[pts.size] = __ax( -50, -30, base);
+
+    // cap & stride (no ceil/ternary)
+    maxPts = 96;
+    count = 0;
+    if (isdefined(self.__losAllParts))
+        count = int(self.__losAllParts.size);
+
+    stride = 1;
+    if (count > maxPts)
+    {
+        q = int(count / maxPts);
+        r = count - q * maxPts;
+        if (r > 0) q += 1;
+        stride = q; // ~= ceil(count/maxPts)
+    }
+
+    // horizontal radius cap to ignore mirrors/bumper corners
+    keepXY2 = 44 * 44; // 2D squared
+
+    used = 0;
+    for (i = 0; i < count && used < maxPts; i += stride)
+    {
+        name = self.__losAllParts[i];
+        if (!isdefined(name))
+            continue;
+
+        pt = self gettagorigin(name);
+
+        dx = pt[0] - self.origin[0];
+        dy = pt[1] - self.origin[1];
+        dist2 = dx*dx + dy*dy;
+
+        if (dist2 <= keepXY2)
+        {
+            pts[pts.size] = pt;
+            used++;
+        }
+    }
+
+    return pts;
+}
+
+
+
+// ---- world-only line trace: WORLD blocks; car/props ignored
+__losTraceWorldOnly(s, t)
+{
+    maxSkips = 12;
+    eps = 2;
+
+    for (k = 0; k < maxSkips; k++)
+    {
+        hit = bulletTrace(s, t, 1, self); // includeDetail=1, ignore=self
+
+        if (hit["fraction"] >= 1)
+            return true; // clear (no hit)
+
+        if (!isdefined(hit["entity"]))
+            return false; // WORLD brush blocks
+
+        ent = hit["entity"];
+
+        // safe classname (GSC nemá ?:)
+        entClass = "";
+        if (isdefined(ent.classname))
+            entClass = ent.classname;
+
+        // explicit worldspawn should block too (někdy ho engine vrátí místo undefined)
+        if (entClass == "worldspawn")
+            return false;
+
+        // jediný whitelist co přeskakujeme:
+        //  - naše auto (self)
+        //  - hráče
+        //  - dropnuté zbraně / aktivní granáty
+        //  - jiná destructible auta (mají .destructible_type)
+        if ( ent == self
+          || isPlayer(ent)
+          || entClass == "weapon"
+          || entClass == "grenade"
+          || isdefined(ent.destructible_type) )
+        {
+            dir = vectornormalize(t - s);
+            if (distance((0,0,0), dir) == 0) dir = (0,0,1);
+            s = hit["position"] + dir * eps; // posuň start za překážku a pokračuj
+            continue;
+        }
+
+        // všechno ostatní (vč. script_model/misc_model/script_vehicle/door apod.) BLOKUJE
+        return false;
+    }
+
+    return false; // safety
+}
+
+
+
+__horizDist2D(a, b)
+{
+    dx = a[0] - b[0];
+    dy = a[1] - b[1];
+    return sqrt(dx*dx + dy*dy);
+}
+
+// Performs a strict line-of-sight test from the explosion point to the vehicle,
+// with DETAIL brushes enabled so walls actually block.
+__isVisibleFromExplosion(start, attacker)
+{
+    pts = __collectLosTargets();
+
+    // tight seed cloud (no tall lifts, minimal XY jitter)
+    seeds = [];
+    seeds[seeds.size] = start + (0, 0, 0);
+    seeds[seeds.size] = start + (0, 0, 2);
+    seeds[seeds.size] = start + (0, 0, 4);
+    seeds[seeds.size] = start + ( 3,  0, 2);
+    seeds[seeds.size] = start + (-3,  0, 2);
+    seeds[seeds.size] = start + ( 0,  3, 2);
+    seeds[seeds.size] = start + ( 0, -3, 2);
+    seeds[seeds.size] = start + ( 2,  2, 2);
+    seeds[seeds.size] = start + (-2,  2, 2);
+    seeds[seeds.size] = start + ( 2, -2, 2);
+    seeds[seeds.size] = start + (-2, -2, 2);
+
+    for (si = 0; si < seeds.size; si++)
+    {
+        s = seeds[si];
+
+        // seed-guard: seed must be in same "room" as start
+        if (!__losTraceWorldOnly(start, s))
+            continue;
+
+        for (i = 0; i < pts.size; i++)
+        {
+            t = pts[i];
+
+            if (__losTraceWorldOnly(s, t))
+                return true;
+
+            // tiny epsilon trim (won't bypass wall due to guard)
+            dir = vectornormalize(t - s);
+            if (distance((0,0,0), dir) == 0) dir = (0,0,1);
+            s2 = s + dir * 2;
+            t2 = t - dir * 2;
+
+            if (__losTraceWorldOnly(s2, t2))
+                return true;
+        }
+    }
+
+    return false;
+}
+
 dmg()
 {
-	self endon("explosion");
+    self endon("explosion");
 
-	dt = self.destructible_type;
-	precachemodel(dt+"_destroyed");
-	precachemodel(dt+"_mirror_R");
-	precachemodel(dt+"_mirror_L");
+    dt = self.destructible_type;
+    precachemodel(dt+"_destroyed");
+    precachemodel(dt+"_mirror_R");
+    precachemodel(dt+"_mirror_L");
 
-	// Hide damaged parts
-	mdl = self.model;
-	np = getnumparts(mdl);
-	while(np)
-	{
-		np--;
-		pn = getpartname(mdl, np);
-		if(isdefined(pn) && getsubstr(pn, pn.size-2) == "_d")
-			self hidepart(pn);
-	}
+    mdl = self.model;
+    np = int(getnumparts(mdl));
+    while (np)
+    {
+        np--;
+        pn = getpartname(mdl, int(np));
+        if (isdefined(pn) && getsubstr(pn, pn.size-2) == "_d")
+            self hidepart(pn);
+    }
 
-	self setcandamage(1);
-	self.damageTaken = 0;
-	self.damageOwner = undefined;
-	smk = true;
-	brn = true;
-	self thread explosion();
+    self setcandamage(1);
+    self.damageTaken = 0;
+    self.damageOwner = undefined;
+    smk = true;
+    brn = true;
 
-	for(;;)
-	{
-		self waittill("damage", damage, attacker, direction_vec, point, type, modelname, tagname, partname);
+    self thread explosion();
 
-		if(isdefined(damage) && isdefined(partname) && partname != "left_wheel_01_jnt" && partname != "right_wheel_01_jnt" && partname != "left_wheel_02_jnt" && partname != "right_wheel_02_jnt")
-		{
-			if(isdefined(level.destructible_breakable_objects[partname]))
-				self breakpart(partname);
-			else if(type != "MOD_MELEE" && type != "MOD_IMPACT")
-			{
-				if(type == "MOD_GRENADE" || type == "MOD_GRENADE_SPLASH" || type == "MOD_PROJECTILE" || type == "MOD_PROJECTILE_SPLASH" || type == "MOD_EXPLOSIVE")
-				{
-					numparts = getnumparts(mdl);
-					closest = undefined;
-					distance = distance(point, self.origin);
-					for(i=0;i<numparts;i++)
-					{
-						part = getpartname(mdl, i);
-						dist = distance(point, self gettagorigin(part));
-						if(dist <= 256 && isdefined(level.destructible_breakable_objects[part]))
-							self breakpart(part);
+    // cache all part names once
+    self.__losAllParts = [];
+    n = int(getnumparts(mdl));
+    for (i = 0; i < n; i++)
+    {
+        part = getpartname(mdl, int(i));
+        if (isdefined(part))
+            self.__losAllParts[self.__losAllParts.size] = part;
+    }
 
-						if(!isdefined(closest) || dist < closest)
-							closest = dist;
+    self.__isVisibleFromExplosion = ::__isVisibleFromExplosion;
+    self.__collectLosTargets      = ::__collectLosTargets;
+    self.__ax                     = ::__ax;
 
-						if((isSubStr(part, "tag_hood") || isSubStr(part, "tag_trunk") || isSubStr(part, "tag_door_") || isSubStr(part, "tag_bumper_")) && dist < distance)
-							distance = dist;
-					}
-					if(!isdefined(closest))
-						closest = distance;
+    for (;;)
+    {
+        self waittill("damage", damage, attacker, direction_vec, point, type, modelname, tagname, partname);
 
-					damage = int(11 * damage - 5.6 * distance + 4 * closest);
-				}
+        if (isdefined(damage) && isdefined(partname)
+            && partname != "left_wheel_01_jnt" && partname != "right_wheel_01_jnt"
+            && partname != "left_wheel_02_jnt" && partname != "right_wheel_02_jnt")
+        {
+            if (isdefined(level.destructible_breakable_objects[partname]))
+            {
+                self breakpart(partname);
+            }
+            else if (type != "MOD_MELEE" && type != "MOD_IMPACT")
+            {
+                if (type == "MOD_GRENADE" || type == "MOD_GRENADE_SPLASH"
+                 || type == "MOD_PROJECTILE" || type == "MOD_PROJECTILE_SPLASH"
+                 || type == "MOD_EXPLOSIVE")
+                {
+                    start = point; // seeds already add small Z
 
-				if(damage > 0)
-				{
-					self.damageOwner = attacker;
-					self.damageTaken += damage;
-				}
-			}
-		}
+                    if (!self __isVisibleFromExplosion(start, attacker))
+                        continue;
 
-		if(self.damageTaken > 250 && smk)
-		{
-			smk = false;
-			self thread smoke();
-		}
-		if(self.damageTaken > 550 && brn)
-		{
-			brn = false;
-			self thread burn();
-		}
-	}
+                    numparts = int(getnumparts(mdl));
+                    closest = undefined;
+                    distCenter = distance(point, self.origin);
+
+                    for (i = 0; i < numparts; i++)
+                    {
+                        part = getpartname(mdl, int(i));
+                        dist = distance(point, self gettagorigin(part));
+
+                        if (dist <= 256 && isdefined(level.destructible_breakable_objects[part]))
+                            self breakpart(part);
+
+                        if (!isdefined(closest) || dist < closest)
+                            closest = dist;
+
+                        if ((isSubStr(part, "tag_hood") || isSubStr(part, "tag_trunk")
+                          || isSubStr(part, "tag_door_") || isSubStr(part, "tag_bumper_"))
+                          && dist < distCenter)
+                        {
+                            distCenter = dist;
+                        }
+                    }
+
+                    if (!isdefined(closest))
+                        closest = distCenter;
+
+                    old = damage;
+                    damage = int(11 * damage - 5.6 * distCenter + 4 * closest);
+                }
+
+                if (damage > 0)
+                {
+                    self.damageOwner = attacker;
+                    self.damageTaken += damage;
+                }
+            }
+        }
+
+        if (self.damageTaken > 250 && smk)
+        {
+            smk = false;
+            self thread smoke();
+        }
+        if (self.damageTaken > 550 && brn)
+        {
+            brn = false;
+            self thread burn();
+        }
+    }
 }
 
 breakpart(partname)
