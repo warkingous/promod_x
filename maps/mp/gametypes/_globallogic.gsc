@@ -989,8 +989,12 @@ freeGameplayHudElems()
 
 endGame( winner, endReasonText, reason )
 {
-	// Check if the game state is already "postgame"
+	// Check if the game state is already "postgame" or if rounds are already incremented
 	if ( isDefined( game["state"] ) && game["state"] == "postgame" )
+		return;
+	
+	// Check if rounds were already incremented for this round end (prevent double increment)
+	if ( isDefined( game["roundsIncremented"] ) && game["roundsIncremented"] )
 		return;
 
 	// Call the onEndGame function if defined
@@ -1054,10 +1058,22 @@ endGame( winner, endReasonText, reason )
 		game["promod_scorebot_ticker_buffer"] += "round_winner" + winners + "" + attack_score + "" + defence_score; 
 	}
 
+	// Increment the number of rounds played (but not for knife rounds or forced ends)
+	// This must be done BEFORE roundReport to ensure correct round number
+	if ( !isDefined( game["PROMOD_KNIFEROUND"] ) || !game["PROMOD_KNIFEROUND"] )
+	{
+		if ( (level.roundLimit > 1 || (!level.roundLimit && level.scoreLimit != 1)) && !level.forcedEnd )
+		{
+			game["roundsplayed"]++;
+			game["totalroundsplayed"]++;
+			game["roundsIncremented"] = true;
+		}
+	}
+
 	// Stats
 	if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.match_id != 0 ) //&& level.gametype == "sd" 
 	{
-		thread promod\stats::roundReport( game["totalroundsplayed"]+1, game["teamScores"]["allies"], game["teamScores"]["axis"], reason, winner, game["PROMOD_KNIFEROUND"], game["promod_overtime_active"], game["promod_overtime_count"] );
+		thread promod\stats::roundReport( game["totalroundsplayed"], game["teamScores"]["allies"], game["teamScores"]["axis"], reason, winner, game["PROMOD_KNIFEROUND"], game["promod_overtime_active"], game["promod_overtime_count"] );
 	}
 
 	if ( (level.roundLimit > 1 || (!level.roundLimit && level.scoreLimit != 1)) && !level.forcedEnd )
@@ -1098,10 +1114,6 @@ endGame( winner, endReasonText, reason )
 			else
 				roundEndWait( level.roundEndDelay );
 		}
-
-		 // Increment the number of rounds played
-		game["roundsplayed"]++;
-		game["totalroundsplayed"]++;
 
 		logPrint("ROUNDS" + game["roundsplayed"]);
 
@@ -1391,6 +1403,7 @@ endGame( winner, endReasonText, reason )
 
 				game["roundsplayed"]--;
 				game["totalroundsplayed"]--;
+				game["roundsIncremented"] = false;
 				[[level._setTeamScore]]( "allies", 0 );
 				[[level._setTeamScore]]( "axis", 0 );
 
@@ -1413,6 +1426,7 @@ endGame( winner, endReasonText, reason )
 		if ( !hitRoundLimit() && !hitScoreLimit() )
 		{
 			game["state"] = "playing";
+			game["roundsIncremented"] = false;
 			map_restart( true );
 			return;
 		}
@@ -3034,6 +3048,7 @@ Callback_StartGameType()
 
 	level.intermission = false;
 	game["state"] = "playing";
+	game["roundsIncremented"] = false;
 
 	if ( !isDefined( game["gamestarted"] ) )
 	{
@@ -3223,6 +3238,7 @@ Callback_StartGameType()
 	thread maps\mp\gametypes\_spawnlogic::init();
 	thread maps\mp\gametypes\_hud_message::init();
 	thread maps\mp\gametypes\_quickmessages::init();
+	thread promod\enemylist::enemylist_boot();
 
 	thread promod\scorebot::main();
 
@@ -3500,7 +3516,7 @@ Callback_PlayerConnect()
 	self.isDefusing = false;
 	self.isPlanting = false;
 	self.clutchKills = 0;
-	self.clutchSituation = false;
+	self.clutchSituation = "0";
 
 	self.lastGrenadeSuicideTime = -1;
 
@@ -3837,10 +3853,10 @@ Callback_PlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, s
 
 			if ( iDamage > 0 && ( getDvarInt( "scr_enable_hiticon" ) == 1 || getDvarInt( "scr_enable_hiticon" ) == 2 && !(iDFlags & level.iDFLAGS_PENETRATION) ) )
 			{
-				if ( sMeansOfDeath == "MOD_HEAD_SHOT" )
-					eAttacker thread maps\mp\gametypes\_damagefeedback::updateDamageFeedback( false );
-				else 
-					eAttacker thread maps\mp\gametypes\_damagefeedback::updateDamageFeedback( false );
+				//if ( sMeansOfDeath == "MOD_HEAD_SHOT" )
+				//	eAttacker thread maps\mp\gametypes\_damagefeedback::updateDamageFeedback( false );
+				//else 
+				//	eAttacker thread maps\mp\gametypes\_damagefeedback::updateDamageFeedback( false );
 			}
 		}
 
@@ -4135,8 +4151,8 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 			{
 				prof_begin( "pks1" );
 
-				// Check for clutch situation
-				checkClutchSituation(attacker);
+				// Check for clutch situation (pass victim to account for their death)
+				checkClutchSituation(attacker, self);
 
 				// Track clutch kills
 				if (attacker.clutchSituation != "0")
@@ -4318,12 +4334,19 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	}
 }
 
-checkClutchSituation( attacker )
+checkClutchSituation( attacker, victim )
 {
     // Get the number of players alive on each team
     aliveCounts = getPlayersAlive();
     
-    // Check if the player is the last man standing
+    // Account for the victim being killed (subtract 1 from victim's team)
+    if (isDefined(victim) && isDefined(victim.sessionteam) && victim.sessionteam != "spectator")
+    {
+        if (isDefined(aliveCounts[victim.sessionteam]) && aliveCounts[victim.sessionteam] > 0)
+            aliveCounts[victim.sessionteam]--;
+    }
+    
+    // Check if the attacker is the last man standing on their team
     if (aliveCounts[attacker.sessionteam] == 1)
     {
         // Determine the number of enemies alive
@@ -4336,17 +4359,23 @@ checkClutchSituation( attacker )
         // Determine the type of clutch situation
         if (numEnemiesAlive >= 1 && numEnemiesAlive <= 5)
         {
-            // Update the player's clutch situation and reset their clutch kills
+            // If this is a new clutch situation, reset clutch kills
+            if (attacker.clutchSituation != "1v" + numEnemiesAlive)
+                attacker.clutchKills = 0;
+            
+            // Update the player's clutch situation
             attacker.clutchSituation = "1v" + numEnemiesAlive;
-            attacker.clutchKills = 0;
             
             // Notify the player that they are in a clutch situation
             //self notify("clutch_situation");
         }
-    }else {
-		attacker.clutchSituation = "0";
+    }
+    else
+    {
+        // Not in a clutch situation
+        attacker.clutchSituation = "0";
         attacker.clutchKills = 0;
-	}
+    }
 }
 
 getPlayersAlive()
@@ -4362,12 +4391,22 @@ getPlayersAlive()
         if (player.sessionteam == "spectator")
             continue;
         
-        // Increment the count for the player's team
-        if (!isDefined(aliveCounts[player.sessionteam]))
-            aliveCounts[player.sessionteam] = 1;
-        else
-            aliveCounts[player.sessionteam]++;
+        // Only count alive players
+        if (isAlive(player) && player.sessionstate == "playing")
+        {
+            // Increment the count for the player's team
+            if (!isDefined(aliveCounts[player.sessionteam]))
+                aliveCounts[player.sessionteam] = 1;
+            else
+                aliveCounts[player.sessionteam]++;
+        }
     }
+    
+    // Initialize teams to 0 if not defined
+    if (!isDefined(aliveCounts["allies"]))
+        aliveCounts["allies"] = 0;
+    if (!isDefined(aliveCounts["axis"]))
+        aliveCounts["axis"] = 0;
     
     return aliveCounts;
 }
