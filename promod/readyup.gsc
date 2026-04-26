@@ -124,7 +124,7 @@ main()
 	level notify("header_destroy");
 
 	// Send match started info TODO
-	if( game["PROMOD_KNIFEROUND"] == 0 && level.match_id != 0 && level.is_public == 0 && !game["promod_first_readyup_done"] && level.players.size > 1 ){ //
+	if( game["PROMOD_KNIFEROUND"] == 0 && level.is_public == 0 && !game["promod_first_readyup_done"] && level.players.size > 1 ){
 		thread promod\stats::mapStarted();
 		wait 0.1;
 		thread promod\stats::initPlayers();

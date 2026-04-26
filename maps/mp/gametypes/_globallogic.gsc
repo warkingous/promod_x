@@ -1057,7 +1057,7 @@ endGame( winner, endReasonText, reason )
 	}
 
 	// Stats
-	if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.match_id != 0 ) //&& level.gametype == "sd" 
+	if( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" ) //&& level.gametype == "sd" 
 	{
 		thread promod\stats::roundReport( game["totalroundsplayed"], game["teamScores"]["allies"], game["teamScores"]["axis"], reason, winner, game["PROMOD_KNIFEROUND"], game["promod_overtime_active"], game["promod_overtime_count"] );
 	}
@@ -1208,7 +1208,7 @@ endGame( winner, endReasonText, reason )
 			game["teamScores"]["axis"] = old_score;
 
 			// Swap teamIds for stats
-			if( level.match_id != 0 && level.is_public == 0 )
+			if( level.is_public == 0 )
 			{
 				//old_teamId = game["alliesTeamId"];
 				//game["alliesTeamId"] = game["axisTeamId"];
@@ -1309,7 +1309,7 @@ endGame( winner, endReasonText, reason )
 			thread maps\mp\gametypes\_promod::updateClassAvailability( "axis" );
 
 			// Swap teamIds for stats
-			if( level.match_id != 0 && level.is_public == 0 )
+			if( level.is_public == 0 )
 			{
 				old_teamId = game["alliesTeamId"] ;
 				game["alliesTeamId"] = game["axisTeamId"];
@@ -1456,7 +1456,7 @@ endGame( winner, endReasonText, reason )
 		player setClientDvars( "ui_hud_hardcore", 1, "cg_drawSpectatorMessages", 0, "g_compassShowEnemies", 0 );
 
 		// Players stats
-		if( level.match_id != 0 && level.is_public == 0 )
+		if( level.is_public == 0 )
 		{
 			// Send players stats to api on map end
 			if ( isDefined( player.pers["teamId"] ) && player.pers["teamId"] != 0 )
@@ -1485,8 +1485,7 @@ endGame( winner, endReasonText, reason )
 	wait 1;
 
 	// Send data to api on map end
-	if ( level.match_id != 0 )
-		thread promod\stats::mapFinished(winnerTeamId);
+	thread promod\stats::mapFinished(winnerTeamId);
 
 	// Sounds
 	// for ( i = 0; i < level.players.size; i++ )
@@ -3510,7 +3509,7 @@ Callback_PlayerConnect()
 Callback_PlayerDisconnect()
 {
 	// Players stats
-	if ( level.match_id != 0 && isDefined( self.pers["teamId"] ))
+	if ( isDefined( self.pers["teamId"] ))
 		self promod\stats::sendStatsData();
 
 	// Public stats
@@ -4205,7 +4204,7 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	victim_data = self.pers["team"]+ ";" +self getStance()+ ";" +self playerADS()+ ";" +self isOnGround()+ ";" +self.isDefusing+ ";" +self.isPlanting+ ";" +self maps\mp\_flashgrenades::isFlashbanged()+ ";" +self.origin;
 	kill_data = isTeamkill+ ";" +isWallbang+ ";" +sWeapon+ ";" +camo+ ";" +iDamage+ ";" +metrestring+ ";" +sMeansOfDeath+ ";" +sHitLoc+ ";" +inflictorOrigin+ ";" + death_by_barell +";" + death_by_bombsite +";"+ death_by_falling +";" +time+ ";" + (game["totalroundsplayed"]+1)+ ";" +level.script+ ";" +level.match_id;
 
-	if( !level.rdyup && isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.match_id != 0 && level.is_public == 0 ) //&& level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0
+	if( !level.rdyup && isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.is_public == 0 ) //&& level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0
 	{
 		thread promod\stats::processKillData(attacker, self, attacker_data,	victim_data, kill_data);
 	}

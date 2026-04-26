@@ -449,6 +449,9 @@ onUse( player )
 		if ( !level.hardcoreMode )
 			iPrintLn( &"MP_EXPLOSIVES_PLANTED_BY", player.name );
 
+		if ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && game["PROMOD_KNIFEROUND"] == 0 )
+			thread promod\stats::bombReport( player, self maps\mp\gametypes\_gameobjects::getLabel(), "plant", game["totalroundsplayed"] + 1 );
+
 		maps\mp\gametypes\_globallogic::givePlayerScore( "plant", player );
 
 		playSoundOnPlayers("promod_planted");
@@ -471,6 +474,9 @@ onUse( player )
 
 		if ( !level.hardcoreMode )
 			iPrintLn( &"MP_EXPLOSIVES_DEFUSED_BY", player.name );
+
+		if ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && game["PROMOD_KNIFEROUND"] == 0 )
+			thread promod\stats::bombReport( player, self maps\mp\gametypes\_gameobjects::getLabel(), "defuse", game["totalroundsplayed"] + 1 );
 
 		maps\mp\gametypes\_globallogic::givePlayerScore( "defuse", player );
 

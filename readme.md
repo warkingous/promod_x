@@ -1,3 +1,6 @@
+# PROMOD X V3 TEST
+- Server dvar `promod_stats_debug` — set to `1` (rcon or cfg) to print `^3[stats]^7` chat debug lines from `promod/stats.gsc` hooks; `0` disables them
+
 # PROMOD X V2.76
 
 - PROMOD X is a competitive modification primarily designed for leagues, cups, and LAN tournaments.
