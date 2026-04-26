@@ -21,7 +21,7 @@ initPlayers()
 	debugPrint( "initPlayers()" );
 }
 
-processKillData( attacker, victim, attacker_data, victim_data, kill_data )
+processKillData( attacker, victim, attacker_data, victim_data, kill_data, clutchDbg )
 {
 	an = "?";
 	vn = "?";
@@ -29,7 +29,27 @@ processKillData( attacker, victim, attacker_data, victim_data, kill_data )
 		an = attacker.name;
 	if ( isDefined( victim ) && isPlayer( victim ) )
 		vn = victim.name;
-	debugPrint( "processKillData " + an + " -> " + vn );
+	msg = "processKillData " + an + " -> " + vn;
+	if ( isDefined( clutchDbg ) && clutchDbg != "" )
+		msg += " [" + clutchDbg + "]";
+	debugPrint( msg );
+}
+
+// Payload from promodBuildAssistStatsPayload (semicolon-separated):
+// type;assisterGuid;victimGuid;killerGuid;dmg;distCm;flashSec;flashFlag;round;script;match_id;aTeam;vTeam;kTeam;scorePts;knifeRound;flashedAtDeath;assisterEnt;victimEnt
+// type = damage | flash; distCm = assister–victim distance (cm); flashSec = whiteout display string; flashFlag = damage+flash or flash-only
+assistReport( assister, victim, killer, payload )
+{
+	an = "?";
+	vn = "?";
+	kn = "-";
+	if ( isDefined( assister ) && isPlayer( assister ) )
+		an = assister.name;
+	if ( isDefined( victim ) && isPlayer( victim ) )
+		vn = victim.name;
+	if ( isDefined( killer ) && isPlayer( killer ) )
+		kn = killer.name;
+	debugPrint( "assistReport " + an + " on " + vn + " killer:" + kn + " :: " + payload );
 }
 
 sendData()

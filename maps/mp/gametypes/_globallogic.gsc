@@ -513,6 +513,7 @@ spawnPlayer()
 	self.clutchSituation = "0";
 	self.clutchKills = 0;
 	self.clutchPeakEnemies = 0;
+	self.clutchEnemiesThisKill = 0;
 
 	self.lastEnemyFlashAttacker = undefined;
 	self.lastEnemyFlashTime = undefined;
@@ -3419,6 +3420,7 @@ Callback_PlayerConnect()
 	self.clutchKills = 0;
 	self.clutchSituation = "0";
 	self.clutchPeakEnemies = 0;
+	self.clutchEnemiesThisKill = 0;
 
 	self.lastGrenadeSuicideTime = -1;
 
@@ -4127,7 +4129,7 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 								continue;
 
 							alsoFlashed = victimWasFlashed && isDefined( lastFlasher ) && isPlayer( lastFlasher ) && lastFlasher == player;
-							player thread processAssist( self, alsoFlashed );
+							player thread processAssist( self, alsoFlashed, attacker );
 						}
 						self.attackers = [];
 					}
@@ -4148,7 +4150,7 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 						}
 
 						if ( !alreadyDmgAssist && isDefined( flashP.pers["team"] ) && flashP.pers["team"] == attacker.pers["team"] && flashP.pers["team"] != self.pers["team"] )
-							flashP thread processFlashAssist( self );
+							flashP thread processFlashAssist( self, attacker );
 					}
 
 					prof_end( "PlayerKilled assists" );
@@ -4200,13 +4202,26 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 	if(!isDefined(isClutchKill))
 		isClutchKill = 0;
 
+	clutchDbg = "";
+	if ( isPlayer( attacker ) && isClutchKill )
+	{
+		// peak = worst man-down count this stint; now = enemies for this kill; streak = all clutch kills while last alive (can exceed peak count)
+		clutchDbg = "clutch";
+		if ( isDefined( attacker.clutchSituation ) && attacker.clutchSituation != "0" )
+			clutchDbg += " peak" + attacker.clutchSituation;
+		if ( isDefined( attacker.clutchEnemiesThisKill ) && attacker.clutchEnemiesThisKill > 0 )
+			clutchDbg += " now1v" + attacker.clutchEnemiesThisKill;
+		if ( isDefined( attacker.clutchKills ) )
+			clutchDbg += " streak:" + attacker.clutchKills;
+	}
+
 	attacker_data = lpattackerteam + ";" + attackerStance+ ";" +attackerAds+ ";" +attackerIsOnGround+ ";" +isAttackerDefusing+ ";" +isAttackerPlanting+ ";" +isAttackerFlashed+ ";" +attacker.origin + ";" +isClutchKill;
 	victim_data = self.pers["team"]+ ";" +self getStance()+ ";" +self playerADS()+ ";" +self isOnGround()+ ";" +self.isDefusing+ ";" +self.isPlanting+ ";" +self maps\mp\_flashgrenades::isFlashbanged()+ ";" +self.origin;
 	kill_data = isTeamkill+ ";" +isWallbang+ ";" +sWeapon+ ";" +camo+ ";" +iDamage+ ";" +metrestring+ ";" +sMeansOfDeath+ ";" +sHitLoc+ ";" +inflictorOrigin+ ";" + death_by_barell +";" + death_by_bombsite +";"+ death_by_falling +";" +time+ ";" + (game["totalroundsplayed"]+1)+ ";" +level.script+ ";" +level.match_id;
 
 	if( !level.rdyup && isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.is_public == 0 ) //&& level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0
 	{
-		thread promod\stats::processKillData(attacker, self, attacker_data,	victim_data, kill_data);
+		thread promod\stats::processKillData(attacker, self, attacker_data,	victim_data, kill_data, clutchDbg);
 	}
 
 	level thread updateTeamStatus();
@@ -4269,16 +4284,10 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 
 checkClutchSituation( attacker, victim )
 {
-    // Get the number of players alive on each team
+    // Victim already has sessionstate "dead" before this runs, so getPlayersAlive() does not
+    // count them — do not subtract again from their team or "1v2" becomes 1v1 on every kill.
     aliveCounts = getPlayersAlive();
-    
-    // Account for the victim being killed (subtract 1 from victim's team)
-    if (isDefined(victim) && isDefined(victim.sessionteam) && victim.sessionteam != "spectator")
-    {
-        if (isDefined(aliveCounts[victim.sessionteam]) && aliveCounts[victim.sessionteam] > 0)
-            aliveCounts[victim.sessionteam]--;
-    }
-    
+
     // Check if the attacker is the last man standing on their team
     if (aliveCounts[attacker.sessionteam] == 1)
     {
@@ -4289,13 +4298,14 @@ checkClutchSituation( attacker, victim )
         else
             numEnemiesAlive = aliveCounts["axis"];
         
-        // Enemies still alive after this kill + the victim = disadvantage at this kill (ace shows 1v5 not 1v1)
+        // Living enemies on radar + this kill's victim (already excluded from aliveCounts)
         enemiesFacing = numEnemiesAlive;
         if (isDefined(victim) && isDefined(victim.sessionteam) && victim.sessionteam != "spectator" && victim.sessionteam != attacker.sessionteam)
             enemiesFacing = numEnemiesAlive + 1;
         
         if (enemiesFacing >= 1 && enemiesFacing <= 5)
         {
+            attacker.clutchEnemiesThisKill = enemiesFacing;
             wasInClutch = isDefined(attacker.clutchSituation) && attacker.clutchSituation != "0";
             if (!wasInClutch)
             {
@@ -4316,6 +4326,7 @@ checkClutchSituation( attacker, victim )
         attacker.clutchSituation = "0";
         attacker.clutchKills = 0;
         attacker.clutchPeakEnemies = 0;
+        attacker.clutchEnemiesThisKill = 0;
     }
 }
 
@@ -4418,7 +4429,46 @@ promodFormatFlashWhiteoutSec( victim )
 	return int( tenths / 10 ) + "." + int( tenths % 10 );
 }
 
-processAssist( killedplayer, alsoFlashed )
+// assistType "damage" | "flash"; semicolons in names not supported — payload for promod\stats::assistReport
+promodBuildAssistStatsPayload( assister, victim, killer, assistType, alsoFlashed )
+{
+	dmg = 0;
+	if ( assistType == "damage" && isDefined( victim.damageFromEnemyByClient ) && isDefined( victim.damageFromEnemyByClient[assister.clientid] ) )
+		dmg = victim.damageFromEnemyByClient[assister.clientid];
+	distCm = int( distance( assister.origin, victim.origin ) * 2.54 + 0.5 );
+	flashSec = "";
+	if ( assistType == "flash" || ( assistType == "damage" && isDefined( alsoFlashed ) && alsoFlashed ) )
+		flashSec = promodFormatFlashWhiteoutSec( victim );
+	flagFlash = 0;
+	if ( assistType == "flash" )
+		flagFlash = 1;
+	else if ( isDefined( alsoFlashed ) && alsoFlashed )
+		flagFlash = 1;
+	kGuid = "";
+	kTeam = "";
+	if ( isDefined( killer ) && isPlayer( killer ) )
+	{
+		kGuid = killer getGuid();
+		if ( isDefined( killer.pers["team"] ) )
+			kTeam = killer.pers["team"];
+	}
+	aTeam = "";
+	if ( isDefined( assister.pers["team"] ) )
+		aTeam = assister.pers["team"];
+	vTeam = "";
+	if ( isDefined( victim.pers["team"] ) )
+		vTeam = victim.pers["team"];
+	kr = 0;
+	if ( isDefined( game["PROMOD_KNIFEROUND"] ) && game["PROMOD_KNIFEROUND"] )
+		kr = 1;
+	scorePts = maps\mp\gametypes\_rank::getScoreInfoValue( "assist" );
+	flashedAtDeath = 0;
+	if ( victim maps\mp\_flashgrenades::isFlashbanged() )
+		flashedAtDeath = 1;
+	return assistType + ";" + assister getGuid() + ";" + victim getGuid() + ";" + kGuid + ";" + dmg + ";" + distCm + ";" + flashSec + ";" + flagFlash + ";" + (game["totalroundsplayed"]+1) + ";" + level.script + ";" + level.match_id + ";" + aTeam + ";" + vTeam + ";" + kTeam + ";" + scorePts + ";" + kr + ";" + flashedAtDeath + ";" + assister getEntityNumber() + ";" + victim getEntityNumber();
+}
+
+processAssist( killedplayer, alsoFlashed, killer )
 {
 	self endon("disconnect");
 	killedplayer endon("disconnect");
@@ -4434,6 +4484,12 @@ processAssist( killedplayer, alsoFlashed )
 	self.assists = self getPersStat( "assists" );
 
 	givePlayerScore( "assist", self, killedplayer );
+
+	if ( !level.rdyup && isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.is_public == 0 && isPlayer( self ) && isPlayer( killedplayer ) )
+	{
+		payload = promodBuildAssistStatsPayload( self, killedplayer, killer, "damage", alsoFlashed );
+		thread promod\stats::assistReport( self, killedplayer, killer, payload );
+	}
 
 	if ( self promod\client::get_config( "PROMOD_ASSIST_IPRINT" ) )
 	{
@@ -4451,7 +4507,7 @@ processAssist( killedplayer, alsoFlashed )
 		level.rdyup = false;
 }
 
-processFlashAssist( killedplayer )
+processFlashAssist( killedplayer, killer )
 {
 	self endon("disconnect");
 	killedplayer endon("disconnect");
@@ -4467,6 +4523,12 @@ processFlashAssist( killedplayer )
 	self.assists = self getPersStat( "assists" );
 
 	givePlayerScore( "assist", self, killedplayer );
+
+	if ( !level.rdyup && isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.is_public == 0 && isPlayer( self ) && isPlayer( killedplayer ) )
+	{
+		payload = promodBuildAssistStatsPayload( self, killedplayer, killer, "flash", false );
+		thread promod\stats::assistReport( self, killedplayer, killer, payload );
+	}
 
 	if ( self promod\client::get_config( "PROMOD_ASSIST_IPRINT" ) )
 	{
