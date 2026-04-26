@@ -32,6 +32,10 @@ bombReport( player, label, type, round )
 timeoutReport( player, action, team, round )
 {}
 
+// Timeout phase finished: reason "ready_up" (all ready) | "timer_expired" (countdown reached 0); round same as timeoutReport
+timeoutEndReport( reason, round )
+{}
+
 findTeamId( team )
 {}
 

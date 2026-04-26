@@ -62,10 +62,18 @@ timeoutLoop()
 
 		if ( level.timeout_time_left <= 0 || level.ready_up_over )
 		{
+			endedByReadyUp = isDefined( level.ready_up_over ) && level.ready_up_over;
+
 			level.timeout_over = true;
 			level.ready_up_over = 1;
 
 			game["promod_timeout_called"] = false;
+
+			endReason = "timer_expired";
+			if ( endedByReadyUp )
+				endReason = "ready_up";
+
+			thread promod\stats::timeoutEndReport( endReason, timeoutStatsRoundNum() );
 		}
 	}
 }
