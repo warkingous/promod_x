@@ -79,6 +79,23 @@ timeoutLeft()
 	}
 }
 
+timeoutGetTeamForStats( player )
+{
+	if ( !isPlayer( player ) || !isDefined( player.pers["team"] ) )
+		return "";
+	t = player.pers["team"];
+	if ( t == "allies" || t == "axis" )
+		return t;
+	return "";
+}
+
+timeoutStatsRoundNum()
+{
+	if ( isDefined( game["totalroundsplayed"] ) )
+		return game["totalroundsplayed"] + 1;
+	return 0;
+}
+
 timeoutCall()
 {
 	if ( (isDefined( level.ready_up_over ) && !level.ready_up_over || isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] != "match") || ( level.gametype != "sd" && level.gametype != "sab" ) )
@@ -100,16 +117,7 @@ timeoutCall()
 
 				game["promod_timeout_called"] = false;
 
-				if ( isDefined( level.scorebot ) && level.scorebot )
-				{
-					timeout_team = "";
-					if ( self.pers["team"] == game["attackers"] )
-						timeout_team = "attack";
-					else if ( self.pers["team"] == game["defenders"] )
-						timeout_team = "defence";
-
-					game["promod_scorebot_ticker_buffer"] += "timeout_cancelled" + timeout_team + "" + self.name;
-				}
+				thread promod\stats::timeoutReport( self, "cancelled", timeoutGetTeamForStats( self ), timeoutStatsRoundNum() );
 			}
 			else
 				self iprintln("^3Timeout already called by " + game["promod_timeout_called_by"].name);
@@ -132,19 +140,10 @@ timeoutCall()
 	if ( !isDefined( level.strat_over ) || level.strat_over )
 		self iprintln("^3Call timeout again to cancel");
 
-	if ( isDefined( level.scorebot ) && level.scorebot )
-	{
-		timeout_team = "";
-		if ( self.pers["team"] == game["attackers"] )
-			timeout_team = "attack";
-		else if ( self.pers["team"] == game["defenders"] )
-			timeout_team = "defence";
-
-		game["promod_scorebot_ticker_buffer"] += "timeout_called" + timeout_team + "" + self.name;
-	}
-
 	if ( level.gametype == "sd" )
 		game[self.pers["team"] + "_timeout_called"] = 1;
 
 	game["promod_timeout_called"] = true;
+
+	thread promod\stats::timeoutReport( self, "called", timeoutGetTeamForStats( self ), timeoutStatsRoundNum() );
 }

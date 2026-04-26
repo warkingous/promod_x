@@ -28,6 +28,10 @@ roundReport( round, allies_score, axis_score, endRoundReason, winner, knife_roun
 bombReport( player, label, type, round )
 {}
 
+// player = caller; action "called" | "cancelled"; team "allies" | "axis" | ""; round = totalroundsplayed+1 when defined
+timeoutReport( player, action, team, round )
+{}
+
 findTeamId( team )
 {}
 

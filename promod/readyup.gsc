@@ -12,22 +12,6 @@
 
 main()
 {
-	if ( isDefined( level.scorebot ) && level.scorebot )
-	{
-
-		if( game["promod_in_timeout"] )
-			sb_text = "timeout";
-		else
-		{
-			if( game["promod_first_readyup_done"] )
-				sb_text = "2nd_half";
-			else
-				sb_text = "1st_half";
-		}
-
-		game["promod_scorebot_ticker_buffer"] += "" + sb_text+"_ready_up";
-	}
-
 	level.timeLimitOverride = true;
 	level.rdyup = true;
 	level.rup_txt_fx = true;
