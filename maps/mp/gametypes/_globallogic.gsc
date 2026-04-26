@@ -510,6 +510,15 @@ spawnPlayer()
 	self.hasSpawned = true;
 	self.spawnTime = getTime();
 
+	self.lastEnemyFlashAttacker = undefined;
+	self.lastEnemyFlashTime = undefined;
+	self.lastEnemyFlashAmountDistance = undefined;
+	self.lastEnemyFlashAmountAngleRaw = undefined;
+	self.lastEnemyFlashAmountAngle = undefined;
+	self.lastEnemyFlashDuration = undefined;
+	self._promod_flashAngleRaw = undefined;
+	self.damageFromEnemyByClient = undefined;
+
 	// Decrement player's lives if applicable
 	if ( self.pers["lives"] )
 		self.pers["lives"]--;
@@ -3238,7 +3247,6 @@ Callback_StartGameType()
 	thread maps\mp\gametypes\_spawnlogic::init();
 	thread maps\mp\gametypes\_hud_message::init();
 	thread maps\mp\gametypes\_quickmessages::init();
-	thread promod\enemylist::enemylist_boot();
 
 	thread promod\scorebot::main();
 
@@ -3386,7 +3394,7 @@ checkRoundSwitch()
 	}
 	else
 	{		
-		if ( game["roundsplayed"] % level.roundswitch == 0 )
+		if ( game["roundsplayed"] > 0 && game["roundsplayed"] % level.roundswitch == 0 )
 		{
 			if ( ( isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" || getDvarInt( "promod_allow_readyup" ) && isDefined( game["CUSTOM_MODE"] ) && game["CUSTOM_MODE"] ) && game["promod_first_readyup_done"] )
 			{
@@ -3758,6 +3766,7 @@ Callback_PlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, s
 	{
 		self.attackers = [];
 		self.attackerData = [];
+		self.damageFromEnemyByClient = [];
 	}
 
 	if ( isHeadShot( sWeapon, sHitLoc, sMeansOfDeath ) )
@@ -3841,6 +3850,17 @@ Callback_PlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, s
 
 				self.pers["damage_taken"] += min(iDamage, self.health);
 				eAttacker.pers["damage_done"] += min(iDamage, self.health);
+
+				// Per-enemy damage to this victim this life (assist line: HP + distance)
+				if ( level.teamBased && isDefined( self.pers["team"] ) && isDefined( eAttacker.pers["team"] ) && self.pers["team"] != eAttacker.pers["team"] )
+				{
+					dmgToTrack = min( iDamage, self.health );
+					if ( !isDefined( self.damageFromEnemyByClient ) )
+						self.damageFromEnemyByClient = [];
+					if ( !isDefined( self.damageFromEnemyByClient[eAttacker.clientid] ) )
+						self.damageFromEnemyByClient[eAttacker.clientid] = 0;
+					self.damageFromEnemyByClient[eAttacker.clientid] += dmgToTrack;
+				}
 			}
 
 			self finishPlayerDamageWrapper(eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, sWeapon, vPoint, vDir, sHitLoc, psOffsetTime);
@@ -4194,8 +4214,17 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 				{
 					prof_begin( "PlayerKilled assists" );
 
+					damageAssistEntities = [];
+					victimWasFlashed = self maps\mp\_flashgrenades::isFlashbanged();
+					lastFlasher = self.lastEnemyFlashAttacker;
 					if ( isdefined( self.attackers ) )
 					{
+						for ( j = 0; j < self.attackers.size; j++ )
+						{
+							p = self.attackers[j];
+							if ( isDefined( p ) && isPlayer( p ) )
+								damageAssistEntities[damageAssistEntities.size] = p getEntityNumber();
+						}
 						for ( j = 0; j < self.attackers.size; j++ )
 						{
 							player = self.attackers[j];
@@ -4203,9 +4232,29 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 							if ( !isDefined( player ) || player == attacker )
 								continue;
 
-							player thread processAssist( self );
+							alsoFlashed = victimWasFlashed && isDefined( lastFlasher ) && isPlayer( lastFlasher ) && lastFlasher == player;
+							player thread processAssist( self, alsoFlashed );
 						}
 						self.attackers = [];
+					}
+
+					// Flash assist: victim is still flashed at death and the last enemy flasher
+					// is a killer teammate who did not already receive a damage assist.
+					flashP = self.lastEnemyFlashAttacker;
+					if ( self maps\mp\_flashgrenades::isFlashbanged() && isDefined( flashP ) && isPlayer( flashP ) && flashP != attacker )
+					{
+						alreadyDmgAssist = false;
+						for ( fk = 0; fk < damageAssistEntities.size; fk++ )
+						{
+							if ( damageAssistEntities[fk] == flashP getEntityNumber() )
+							{
+								alreadyDmgAssist = true;
+								break;
+							}
+						}
+
+						if ( !alreadyDmgAssist && isDefined( flashP.pers["team"] ) && flashP.pers["team"] == attacker.pers["team"] && flashP.pers["team"] != self.pers["team"] )
+							flashP thread processFlashAssist( self );
 					}
 
 					prof_end( "PlayerKilled assists" );
@@ -4466,7 +4515,18 @@ waitForTimeOrNotifies( desiredDelay )
 		return waitedTime;
 }
 
-processAssist( killedplayer )
+// lastEnemyFlashDuration = whiteout seconds (see maps/mp/_flashgrenades.gsc)
+promodFormatFlashWhiteoutSec( victim )
+{
+	if ( !isDefined( victim.lastEnemyFlashDuration ) )
+		return "?";
+	tenths = int( victim.lastEnemyFlashDuration * 10 + 0.05 );
+	if ( tenths < 0 )
+		tenths = 0;
+	return int( tenths / 10 ) + "." + int( tenths % 10 );
+}
+
+processAssist( killedplayer, alsoFlashed )
 {
 	self endon("disconnect");
 	killedplayer endon("disconnect");
@@ -4482,6 +4542,49 @@ processAssist( killedplayer )
 	self.assists = self getPersStat( "assists" );
 
 	givePlayerScore( "assist", self, killedplayer );
+
+	if ( self promod\client::get_config( "PROMOD_ASSIST_IPRINT" ) )
+	{
+		dmgLine = 0;
+		if ( isDefined( killedplayer.damageFromEnemyByClient ) && isDefined( killedplayer.damageFromEnemyByClient[self.clientid] ) )
+			dmgLine = killedplayer.damageFromEnemyByClient[self.clientid];
+		metresAssist = int( distance( self.origin, killedplayer.origin ) * 2.54 ) / 100;
+		msgAssist = "Assist ^2+3^7 on " + killedplayer.name + ": ^3" + dmgLine + "^7 HP, ^3" + metresAssist + "^7 m";
+		if ( isDefined( alsoFlashed ) && alsoFlashed )
+			msgAssist += " ^5+ flashed ^7(~^3" + promodFormatFlashWhiteoutSec( killedplayer ) + "^7s whiteout)";
+		self iprintln( msgAssist );
+	}
+
+	if ( !isDefined( level.rdyup ) )
+		level.rdyup = false;
+
+	if ( isDefined( level.scorebot ) && level.scorebot && !level.rdyup )
+		game["promod_scorebot_ticker_buffer"] += "assist_by" + self.name;
+}
+
+processFlashAssist( killedplayer )
+{
+	self endon("disconnect");
+	killedplayer endon("disconnect");
+
+	wait 0.05;
+	WaitTillSlowProcessAllowed();
+
+	if ( ( self.pers["team"] != "axis" && self.pers["team"] != "allies" ) || ( self.pers["team"] == killedplayer.pers["team"] ) )
+		return;
+
+	self thread [[level.onXPEvent]]( "assist" );
+	self incPersStat( "assists", 1 );
+	self.assists = self getPersStat( "assists" );
+
+	givePlayerScore( "assist", self, killedplayer );
+
+	if ( self promod\client::get_config( "PROMOD_ASSIST_IPRINT" ) )
+	{
+		metresFlash = int( distance( self.origin, killedplayer.origin ) * 2.54 ) / 100;
+		flashSec = promodFormatFlashWhiteoutSec( killedplayer );
+		self iprintln( "Flash assist ^2+3^7 on " + killedplayer.name + ": ^5flashed ^7(~^3" + flashSec + "^7s whiteout), ^3" + metresFlash + "^7 m" );
+	}
 
 	if ( !isDefined( level.rdyup ) )
 		level.rdyup = false;

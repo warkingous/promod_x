@@ -295,6 +295,13 @@ quickpromod(response)
 				a = "en";
 			self iprintln("Velocity meter has been "+a+"abled");
 			break;
+
+		case "assist_fb":
+			if ( self promod\client::toggle( "PROMOD_ASSIST_IPRINT" ) )
+				self iprintln( "Assist kill messages ^2on^7" );
+			else
+				self iprintln( "Assist kill messages ^1off^7" );
+			break;
 		case "faction":
 			self loopFactionConfig("PROMOD_FACTION");
 			break;

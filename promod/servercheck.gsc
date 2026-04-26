@@ -12,8 +12,8 @@ main()
 {
 	level endon( "restarting" );
 
-	thread errorMessage();
-	thread backlotCheck();
+	//thread errorMessage();
+	//thread backlotCheck();
 	//thread serverCheck();
 
 	for(;;)

@@ -47,6 +47,7 @@ monitorFlash()
 	for(;;)
 	{
 		self waittill( "flashbang", amount_distance, amount_angle, attacker );
+		self._promod_flashAngleRaw = amount_angle;
 
 		if ( !isalive( self ) || ( isDefined( level.rdyup ) && level.rdyup && ( !isDefined( self.ruptally ) || self.ruptally < 0 ) ) || isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "strat" && isDefined( self.flying ) && self.flying || isDefined( game["PROMOD_KNIFEROUND"] ) && game["PROMOD_KNIFEROUND"] )
 			continue;
@@ -90,7 +91,20 @@ monitorFlash()
 		}
 
 		if (hurtvictim)
+		{
+			// Last enemy flashbang (flash assist when teammate gets the kill)
+			if ( level.teamBased && isPlayer( attacker ) && isDefined( attacker.pers["team"] ) && isDefined( self.pers["team"] ) && attacker.pers["team"] != self.pers["team"] && attacker != self )
+			{
+				self.lastEnemyFlashAttacker = attacker;
+				self.lastEnemyFlashTime = getTime();
+				// Engine breakdown: distance factor, angle (raw + clamped 0.35–1), whiteout duration
+				self.lastEnemyFlashAmountDistance = amount_distance;
+				self.lastEnemyFlashAmountAngleRaw = self._promod_flashAngleRaw;
+				self.lastEnemyFlashAmountAngle = amount_angle;
+				self.lastEnemyFlashDuration = duration;
+			}
 			self thread applyFlash(duration, rumbleduration);
+		}
 		if (hurtattacker)
 			attacker thread applyFlash(duration, rumbleduration);
 	}

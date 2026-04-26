@@ -28,7 +28,7 @@
 {
 	menuDef
 	{
-		IMPROVED_POPUP_SETUP_ONOPEN( quickpromod, 10, 4, 210, ;, setDvar cl_bypassMouseInput "1";, 0 )
+		IMPROVED_POPUP_SETUP_ONOPEN( quickpromod, 11, 4, 226, ;, setDvar cl_bypassMouseInput "1";, 0 )
 		onClose{ setDvar cl_bypassMouseInput "0" }
 
 		CHOICE_POPMENU_TITLE( "Promod Controls" )
@@ -158,7 +158,24 @@
 		{
 			name			"window"
 			group			ingamebox
-			rect			16 164 0 0
+			rect			16 132 0 0
+			origin			ORIGIN_QUICKMESSAGEWINDOW
+			forecolor		1 1 1 1
+			textfont		UI_FONT_NORMAL
+			textstyle		ITEM_TEXTSTYLE_SHADOWED
+			textscale		TEXTSIZE_SMALL
+			textaligny		8
+			text			"8. Assist kill messages"
+			visible			1
+			decoration
+		}
+		execKey "8" { scriptMenuResponse "assist_fb"; close quickpromod }
+
+		itemDef
+		{
+			name			"window"
+			group			ingamebox
+			rect			16 180 0 0
 			origin			ORIGIN_QUICKMESSAGEWINDOW
 			forecolor		1 1 1 1
 			textfont		UI_FONT_NORMAL
