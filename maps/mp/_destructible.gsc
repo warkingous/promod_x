@@ -133,20 +133,20 @@ __losTraceWorldOnly(s, t)
 
         ent = hit["entity"];
 
-        // safe classname (GSC nemá ?:)
+        // Safe classname fetch (GSC has no ternary operator).
         entClass = "";
         if (isdefined(ent.classname))
             entClass = ent.classname;
 
-        // explicit worldspawn should block too (někdy ho engine vrátí místo undefined)
+        // Explicit worldspawn should block too (engine may return it instead of undefined).
         if (entClass == "worldspawn")
             return false;
 
-        // jediný whitelist co přeskakujeme:
-        //  - naše auto (self)
-        //  - hráče
-        //  - dropnuté zbraně / aktivní granáty
-        //  - jiná destructible auta (mají .destructible_type)
+        // Only whitelist we skip:
+        //  - this vehicle (self)
+        //  - players
+        //  - dropped weapons / active grenades
+        //  - other destructible vehicles (have .destructible_type)
         if ( ent == self
           || isPlayer(ent)
           || entClass == "weapon"
@@ -155,11 +155,11 @@ __losTraceWorldOnly(s, t)
         {
             dir = vectornormalize(t - s);
             if (distance((0,0,0), dir) == 0) dir = (0,0,1);
-            s = hit["position"] + dir * eps; // posuň start za překážku a pokračuj
+            s = hit["position"] + dir * eps; // Move start behind the obstacle and continue.
             continue;
         }
 
-        // všechno ostatní (vč. script_model/misc_model/script_vehicle/door apod.) BLOKUJE
+        // Everything else (incl. script_model/misc_model/script_vehicle/door, etc.) blocks.
         return false;
     }
 
