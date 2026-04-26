@@ -510,6 +510,10 @@ spawnPlayer()
 	self.hasSpawned = true;
 	self.spawnTime = getTime();
 
+	self.clutchSituation = "0";
+	self.clutchKills = 0;
+	self.clutchPeakEnemies = 0;
+
 	self.lastEnemyFlashAttacker = undefined;
 	self.lastEnemyFlashTime = undefined;
 	self.lastEnemyFlashAmountDistance = undefined;
@@ -3525,6 +3529,7 @@ Callback_PlayerConnect()
 	self.isPlanting = false;
 	self.clutchKills = 0;
 	self.clutchSituation = "0";
+	self.clutchPeakEnemies = 0;
 
 	self.lastGrenadeSuicideTime = -1;
 
@@ -4405,18 +4410,25 @@ checkClutchSituation( attacker, victim )
         else
             numEnemiesAlive = aliveCounts["axis"];
         
-        // Determine the type of clutch situation
-        if (numEnemiesAlive >= 1 && numEnemiesAlive <= 5)
+        // Enemies still alive after this kill + the victim = disadvantage at this kill (ace shows 1v5 not 1v1)
+        enemiesFacing = numEnemiesAlive;
+        if (isDefined(victim) && isDefined(victim.sessionteam) && victim.sessionteam != "spectator" && victim.sessionteam != attacker.sessionteam)
+            enemiesFacing = numEnemiesAlive + 1;
+        
+        if (enemiesFacing >= 1 && enemiesFacing <= 5)
         {
-            // If this is a new clutch situation, reset clutch kills
-            if (attacker.clutchSituation != "1v" + numEnemiesAlive)
+            wasInClutch = isDefined(attacker.clutchSituation) && attacker.clutchSituation != "0";
+            if (!wasInClutch)
+            {
                 attacker.clutchKills = 0;
-            
-            // Update the player's clutch situation
-            attacker.clutchSituation = "1v" + numEnemiesAlive;
-            
-            // Notify the player that they are in a clutch situation
-            //self notify("clutch_situation");
+                attacker.clutchPeakEnemies = enemiesFacing;
+            }
+            else
+            {
+                if (!isDefined(attacker.clutchPeakEnemies) || enemiesFacing > attacker.clutchPeakEnemies)
+                    attacker.clutchPeakEnemies = enemiesFacing;
+            }
+            attacker.clutchSituation = "1v" + attacker.clutchPeakEnemies;
         }
     }
     else
@@ -4424,6 +4436,7 @@ checkClutchSituation( attacker, victim )
         // Not in a clutch situation
         attacker.clutchSituation = "0";
         attacker.clutchKills = 0;
+        attacker.clutchPeakEnemies = 0;
     }
 }
 
