@@ -48,6 +48,7 @@ init()
 	precacheItem( "destructible_car" );
 	precacheShellShock( "default" );
 	thread maps\mp\_flashgrenades::main();
+	thread maps\mp\_fraggrenades::main();
 	thread maps\mp\_smokegrenades::main();
 	level thread onPlayerConnect();
 }
@@ -309,6 +310,7 @@ beginGrenadeTracking()
 
 	self waittill ( "grenade_fire", grenade, weaponName );
 
+	maps\mp\_fraggrenades::onGrenadeFire( self, grenade, weaponName );
 	maps\mp\_smokegrenades::onGrenadeFire( self, grenade, weaponName );
 
 	if ( weaponName == "frag_grenade_mp" || weaponName == "frag_grenade_short_mp" )

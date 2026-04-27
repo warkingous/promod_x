@@ -109,6 +109,56 @@ smokeReport( thrower, eventType, smoke )
 	logPrint( "P_SMOKESTATS;" + eventType + ";" + sid + ";" + state + ";" + throwTime + ";" + stateTime + ";" + tGuid + ";" + tn + ";" + tTeam + ";" + throwOrigin + ";" + landOrigin + ";" + currentOrigin + ";" + (game["totalroundsplayed"]+1) + ";" + level.script + ";" + level.match_id + "\n" );
 }
 
+// eventType: throw | explode
+// frag fields used: id, state, throwTime, stateStartTime, throwOrigin, explodeOrigin, origin
+fragReport( thrower, eventType, frag )
+{
+	tn = "?";
+	tGuid = "";
+	tTeam = "";
+	if ( isDefined( thrower ) && isPlayer( thrower ) )
+	{
+		tn = thrower.name;
+		tGuid = thrower getGuid();
+		if ( isDefined( thrower.pers["team"] ) )
+			tTeam = thrower.pers["team"];
+	}
+
+	fid = -1;
+	state = "";
+	throwTime = "";
+	stateTime = "";
+	throwOrigin = "";
+	explodeOrigin = "";
+	currentOrigin = "";
+
+	if ( isDefined( frag ) )
+	{
+		if ( isDefined( frag.id ) )
+			fid = frag.id;
+		if ( isDefined( frag.state ) )
+			state = frag.state;
+		if ( isDefined( frag.throwTime ) )
+			throwTime = frag.throwTime;
+		if ( isDefined( frag.stateStartTime ) )
+			stateTime = frag.stateStartTime;
+		if ( isDefined( frag.throwOrigin ) )
+			throwOrigin = frag.throwOrigin;
+		if ( isDefined( frag.explodeOrigin ) )
+			explodeOrigin = frag.explodeOrigin;
+		if ( isDefined( frag.origin ) )
+			currentOrigin = frag.origin;
+	}
+
+	msg = "fragReport " + eventType + " id:" + fid + " by:" + tn + " state:" + state + " throw:" + throwOrigin;
+	if ( eventType == "explode" )
+		msg += " explode:" + explodeOrigin;
+	msg += " at:" + currentOrigin;
+	debugPrint( msg );
+
+	logPrint( "P_FRAGSTATS;" + eventType + ";" + fid + ";" + state + ";" + throwTime + ";" + stateTime + ";" + tGuid + ";" + tn + ";" + tTeam + ";" + throwOrigin + ";" + explodeOrigin + ";" + currentOrigin + ";" + (game["totalroundsplayed"]+1) + ";" + level.script + ";" + level.match_id + "\n" );
+}
+
 sendData()
 {
 	debugPrint( "sendData()" );
