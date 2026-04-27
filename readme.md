@@ -1,5 +1,9 @@
 # PROMOD X V3 TEST
 - Server dvar `promod_stats_debug` — set to `1` (rcon or cfg) to print `^3[stats]^7` chat debug lines from `promod/stats.gsc` hooks; `0` disables them
+- Server dvar `promod_timeout_match` — timeout duration in seconds for normal match mode (fallback/default `300`)
+- Server dvar `promod_timeout_mm` — timeout duration in seconds for matchmaking mode (fallback/default `120`)
+- Server dvar `promod_readyup_period` — ready-up countdown duration in seconds for normal mode (fallback/default `300`)
+- Server dvar `promod_readyup_mm_period` — ready-up countdown duration in seconds for matchmaking mode (fallback/default `180`)
 
 # PROMOD X V2.76
 

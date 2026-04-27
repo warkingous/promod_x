@@ -20,14 +20,39 @@ main()
 
 	level.timeout_over = false;
 
-	// If we are in a match making mode, reduce timeout to 2 minutes
-	if ( game["MATCHMAKING_MODE"] )
-		level.timeout_time_left = 120;
-	// Else use 5 mins timer
-	else
-		level.timeout_time_left = 300;
+	level.timeout_time_left = getConfiguredTimeoutSeconds();
 
 	thread timeoutLoop();
+}
+
+getConfiguredTimeoutSeconds()
+{
+	if ( game["MATCHMAKING_MODE"] )
+		return getDvarIntWithFallback( "promod_timeout_mm", 120, 30, 1200 );
+
+	return getDvarIntWithFallback( "promod_timeout_match", 300, 30, 1800 );
+}
+
+getConfiguredReadyupCountdownSeconds()
+{
+	if ( game["MATCHMAKING_MODE"] )
+		return getDvarIntWithFallback( "promod_readyup_mm_period", 180, 30, 1200 );
+
+	return getDvarIntWithFallback( "promod_readyup_period", 300, 30, 1200 );
+}
+
+getDvarIntWithFallback( dvarName, fallback, minVal, maxVal )
+{
+	if ( getDvar( dvarName ) == "" )
+		setDvar( dvarName, fallback );
+
+	val = getDvarInt( dvarName );
+	if ( val < minVal )
+		val = minVal;
+	if ( val > maxVal )
+		val = maxVal;
+
+	return val;
 }
 
 disableBombBag()

@@ -487,18 +487,13 @@ periodAnnounce()
 	if ( !game["promod_in_timeout"] || isDefined( game["LAN_MODE"] ) && game["LAN_MODE"] )
 		level.halftimetimer setTimerUp( 0 );
 	else
-	{
-		if( ( game["MATCHMAKING_MODE"] ) )
-			level.halftimetimer setTimer( 120 );
-		else
-			level.halftimetimer setTimer( 300 );
-	}
+		level.halftimetimer setTimer( promod\timeout::getConfiguredTimeoutSeconds() );
 
 	if( ( game["MATCHMAKING_MODE"] ) && !game["promod_in_timeout"])
 	{
 		level.timeout_over = false;
-		level.halftimetimer setTimer( 180 );
-		level.timeout_time_left = 180;
+		level.timeout_time_left = promod\timeout::getConfiguredReadyupCountdownSeconds();
+		level.halftimetimer setTimer( level.timeout_time_left );
 		thread promod\timeout::timeoutLoop();
 	}
 	
