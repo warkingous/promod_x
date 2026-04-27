@@ -3769,10 +3769,10 @@ Callback_PlayerDamage( eInflictor, eAttacker, iDamage, iDFlags, sMeansOfDeath, s
 
 			if ( iDamage > 0 && ( getDvarInt( "scr_enable_hiticon" ) == 1 || getDvarInt( "scr_enable_hiticon" ) == 2 && !(iDFlags & level.iDFLAGS_PENETRATION) ) )
 			{
-				//if ( sMeansOfDeath == "MOD_HEAD_SHOT" )
-				//	eAttacker thread maps\mp\gametypes\_damagefeedback::updateDamageFeedback( false );
-				//else 
-				//	eAttacker thread maps\mp\gametypes\_damagefeedback::updateDamageFeedback( false );
+				if ( sMeansOfDeath == "MOD_HEAD_SHOT" )
+					eAttacker thread maps\mp\gametypes\_damagefeedback::updateDamageFeedback( false );
+				else 
+					eAttacker thread maps\mp\gametypes\_damagefeedback::updateDamageFeedback( false );
 			}
 		}
 
