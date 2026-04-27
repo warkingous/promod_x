@@ -11,6 +11,159 @@
 main()
 {
 	precacheShellshock("flashbang");
+	ensureFlashGlobals();
+}
+
+ensureFlashGlobals()
+{
+	if ( !isDefined( level.promod_flashes ) )
+		level.promod_flashes = [];
+
+	if ( !isDefined( level.promod_flashIdCounter ) )
+		level.promod_flashIdCounter = 0;
+
+	if ( !isDefined( level.promod_flashFuseTime ) )
+		level.promod_flashFuseTime = 1.5;
+}
+
+monitorFlashGrenades()
+{
+	self endon( "disconnect" );
+
+	for ( ;; )
+	{
+		self waittill( "grenade_fire", grenade, weaponName );
+		onGrenadeFire( self, grenade, weaponName );
+	}
+}
+
+onGrenadeFire( thrower, grenade, weaponName )
+{
+	if ( weaponName != "flash_grenade_mp" && weaponName != "flash_grenade" )
+		return;
+
+	addFlashGrenade( grenade, thrower, weaponName );
+}
+
+addFlashGrenade( grenadeEnt, thrower, weaponName )
+{
+	ensureFlashGlobals();
+
+	if ( isDefined( grenadeEnt ) && isDefined( grenadeEnt.promod_flashTracked ) && grenadeEnt.promod_flashTracked )
+		return;
+
+	if ( isDefined( grenadeEnt ) )
+		grenadeEnt.promod_flashTracked = true;
+
+	flash = spawnStruct();
+	flash.id = level.promod_flashIdCounter;
+	level.promod_flashIdCounter++;
+
+	flash.weaponName = weaponName;
+	flash.thrower = thrower;
+	flash.grenade = grenadeEnt;
+	flash.state = "moving";
+	flash.stateStartTime = getTime();
+	flash.throwTime = getTime();
+
+	if ( isDefined( grenadeEnt ) )
+		flash.origin = grenadeEnt.origin;
+	else
+		flash.origin = thrower.origin;
+
+	flash.throwOrigin = flash.origin;
+	flash.explodeOrigin = undefined;
+
+	level.promod_flashes[level.promod_flashes.size] = flash;
+	logFlashGrenadeEvent( "throw", flash );
+	flash thread thinkFlashGrenade();
+}
+
+thinkFlashGrenade()
+{
+	explodeAt = self.throwTime + int( level.promod_flashFuseTime * 1000 );
+
+	while ( getTime() < explodeAt )
+	{
+		if ( isDefined( self.grenade ) )
+			self.origin = self.grenade.origin;
+		self.state = "moving";
+		wait 0.05;
+	}
+
+	self.state = "exploded";
+	self.stateStartTime = getTime();
+	self.explodeTime = self.stateStartTime;
+	if ( isDefined( self.grenade ) )
+		self.origin = self.grenade.origin;
+	self.explodeOrigin = self.origin;
+	logFlashGrenadeEvent( "explode", self );
+
+	removeFlashGrenadeById( self.id );
+}
+
+removeFlashGrenadeById( flashId )
+{
+	ensureFlashGlobals();
+
+	for ( i = 0; i < level.promod_flashes.size; i++ )
+	{
+		flash = level.promod_flashes[i];
+		if ( !isDefined( flash ) )
+			continue;
+
+		if ( flash.id == flashId )
+		{
+			level.promod_flashes[i] = undefined;
+			break;
+		}
+	}
+
+	compactFlashGrenadeList();
+}
+
+compactFlashGrenadeList()
+{
+	ensureFlashGlobals();
+
+	compacted = [];
+	for ( i = 0; i < level.promod_flashes.size; i++ )
+	{
+		flash = level.promod_flashes[i];
+		if ( !isDefined( flash ) )
+			continue;
+
+		compacted[compacted.size] = flash;
+	}
+
+	level.promod_flashes = compacted;
+}
+
+logFlashGrenadeEvent( eventType, flash )
+{
+	if ( !isDefined( flash ) )
+		return;
+
+	throwerGuid = "";
+	throwerName = "";
+	if ( isDefined( flash.thrower ) && isPlayer( flash.thrower ) )
+	{
+		throwerGuid = flash.thrower getGuid();
+		throwerName = flash.thrower.name;
+	}
+
+	throwOrigin = "";
+	if ( isDefined( flash.throwOrigin ) )
+		throwOrigin = flash.throwOrigin;
+
+	explodeOrigin = "";
+	if ( isDefined( flash.explodeOrigin ) )
+		explodeOrigin = flash.explodeOrigin;
+
+	logPrint( "P_FLASH;" + eventType + ";" + flash.id + ";" + flash.state + ";" + flash.throwTime + ";" + flash.stateStartTime + ";" + throwerGuid + ";" + throwerName + ";" + throwOrigin + ";" + explodeOrigin + ";" + flash.origin + "\n" );
+
+	if ( isDefined( flash.thrower ) && isPlayer( flash.thrower ) )
+		thread promod\stats::flashGrenadeReport( flash.thrower, eventType, flash );
 }
 
 startMonitoringFlash()

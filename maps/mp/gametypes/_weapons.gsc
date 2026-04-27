@@ -310,6 +310,7 @@ beginGrenadeTracking()
 
 	self waittill ( "grenade_fire", grenade, weaponName );
 
+	maps\mp\_flashgrenades::onGrenadeFire( self, grenade, weaponName );
 	maps\mp\_fraggrenades::onGrenadeFire( self, grenade, weaponName );
 	maps\mp\_smokegrenades::onGrenadeFire( self, grenade, weaponName );
 

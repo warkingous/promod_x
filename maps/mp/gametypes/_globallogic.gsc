@@ -3435,6 +3435,7 @@ Callback_PlayerConnect()
 	self.wasAliveAtMatchStart = false;
 
 	self thread maps\mp\_flashgrenades::monitorFlash();
+	self thread maps\mp\_flashgrenades::monitorFlashGrenades();
 	self thread maps\mp\_fraggrenades::monitorFragGrenades();
 	self thread maps\mp\_smokegrenades::monitorSmokeGrenades();
 	self thread promod\ping::mainLoop();

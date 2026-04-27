@@ -159,6 +159,56 @@ fragReport( thrower, eventType, frag )
 	logPrint( "P_FRAGSTATS;" + eventType + ";" + fid + ";" + state + ";" + throwTime + ";" + stateTime + ";" + tGuid + ";" + tn + ";" + tTeam + ";" + throwOrigin + ";" + explodeOrigin + ";" + currentOrigin + ";" + (game["totalroundsplayed"]+1) + ";" + level.script + ";" + level.match_id + "\n" );
 }
 
+// eventType: throw | explode
+// flash fields used: id, state, throwTime, stateStartTime, throwOrigin, explodeOrigin, origin
+flashGrenadeReport( thrower, eventType, flash )
+{
+	tn = "?";
+	tGuid = "";
+	tTeam = "";
+	if ( isDefined( thrower ) && isPlayer( thrower ) )
+	{
+		tn = thrower.name;
+		tGuid = thrower getGuid();
+		if ( isDefined( thrower.pers["team"] ) )
+			tTeam = thrower.pers["team"];
+	}
+
+	fid = -1;
+	state = "";
+	throwTime = "";
+	stateTime = "";
+	throwOrigin = "";
+	explodeOrigin = "";
+	currentOrigin = "";
+
+	if ( isDefined( flash ) )
+	{
+		if ( isDefined( flash.id ) )
+			fid = flash.id;
+		if ( isDefined( flash.state ) )
+			state = flash.state;
+		if ( isDefined( flash.throwTime ) )
+			throwTime = flash.throwTime;
+		if ( isDefined( flash.stateStartTime ) )
+			stateTime = flash.stateStartTime;
+		if ( isDefined( flash.throwOrigin ) )
+			throwOrigin = flash.throwOrigin;
+		if ( isDefined( flash.explodeOrigin ) )
+			explodeOrigin = flash.explodeOrigin;
+		if ( isDefined( flash.origin ) )
+			currentOrigin = flash.origin;
+	}
+
+	msg = "flashGrenadeReport " + eventType + " id:" + fid + " by:" + tn + " state:" + state + " throw:" + throwOrigin;
+	if ( eventType == "explode" )
+		msg += " explode:" + explodeOrigin;
+	msg += " at:" + currentOrigin;
+	debugPrint( msg );
+
+	logPrint( "P_FLASHSTATS;" + eventType + ";" + fid + ";" + state + ";" + throwTime + ";" + stateTime + ";" + tGuid + ";" + tn + ";" + tTeam + ";" + throwOrigin + ";" + explodeOrigin + ";" + currentOrigin + ";" + (game["totalroundsplayed"]+1) + ";" + level.script + ";" + level.match_id + "\n" );
+}
+
 sendData()
 {
 	debugPrint( "sendData()" );
