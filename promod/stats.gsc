@@ -32,6 +32,17 @@ processKillData( attacker, victim, attacker_data, victim_data, kill_data, clutch
 	msg = "processKillData " + an + " -> " + vn;
 	if ( isDefined( clutchDbg ) && clutchDbg != "" )
 		msg += " [" + clutchDbg + "]";
+
+	parts = strTok( kill_data, ";" );
+	if ( parts.size >= 20 )
+	{
+		smokeThrough = parts[16];
+		smokeHitCount = parts[17];
+		smokeCoverageCm = parts[18];
+		smokeCoveragePermille = parts[19];
+		msg += " smoke:" + smokeThrough + " hits:" + smokeHitCount + " covCm:" + smokeCoverageCm + " covPermille:" + smokeCoveragePermille;
+	}
+
 	debugPrint( msg );
 }
 
@@ -50,6 +61,52 @@ assistReport( assister, victim, killer, payload )
 	if ( isDefined( killer ) && isPlayer( killer ) )
 		kn = killer.name;
 	debugPrint( "assistReport " + an + " on " + vn + " killer:" + kn + " :: " + payload );
+}
+
+// eventType: throw | land | expire
+// smoke fields used: id, state, throwTime, stateStartTime, throwOrigin, landOrigin, origin
+smokeReport( thrower, eventType, smoke )
+{
+	tn = "?";
+	tGuid = "";
+	tTeam = "";
+	if ( isDefined( thrower ) && isPlayer( thrower ) )
+	{
+		tn = thrower.name;
+		tGuid = thrower getGuid();
+		if ( isDefined( thrower.pers["team"] ) )
+			tTeam = thrower.pers["team"];
+	}
+
+	sid = -1;
+	state = "";
+	throwTime = "";
+	stateTime = "";
+	throwOrigin = "";
+	landOrigin = "";
+	currentOrigin = "";
+
+	if ( isDefined( smoke ) )
+	{
+		if ( isDefined( smoke.id ) )
+			sid = smoke.id;
+		if ( isDefined( smoke.state ) )
+			state = smoke.state;
+		if ( isDefined( smoke.throwTime ) )
+			throwTime = smoke.throwTime;
+		if ( isDefined( smoke.stateStartTime ) )
+			stateTime = smoke.stateStartTime;
+		if ( isDefined( smoke.throwOrigin ) )
+			throwOrigin = smoke.throwOrigin;
+		if ( isDefined( smoke.landOrigin ) )
+			landOrigin = smoke.landOrigin;
+		if ( isDefined( smoke.origin ) )
+			currentOrigin = smoke.origin;
+	}
+
+	debugPrint( "smokeReport " + eventType + " id:" + sid + " by:" + tn + " state:" + state + " throw:" + throwOrigin + " land:" + landOrigin + " at:" + currentOrigin );
+
+	logPrint( "P_SMOKESTATS;" + eventType + ";" + sid + ";" + state + ";" + throwTime + ";" + stateTime + ";" + tGuid + ";" + tn + ";" + tTeam + ";" + throwOrigin + ";" + landOrigin + ";" + currentOrigin + ";" + (game["totalroundsplayed"]+1) + ";" + level.script + ";" + level.match_id + "\n" );
 }
 
 sendData()

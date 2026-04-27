@@ -3435,6 +3435,7 @@ Callback_PlayerConnect()
 	self.wasAliveAtMatchStart = false;
 
 	self thread maps\mp\_flashgrenades::monitorFlash();
+	self thread maps\mp\_smokegrenades::monitorSmokeGrenades();
 	self thread promod\ping::mainLoop();
 	self thread promod\velocity::mainLoop();
 
@@ -4217,7 +4218,35 @@ Callback_PlayerKilled(eInflictor, attacker, iDamage, sMeansOfDeath, sWeapon, vDi
 
 	attacker_data = lpattackerteam + ";" + attackerStance+ ";" +attackerAds+ ";" +attackerIsOnGround+ ";" +isAttackerDefusing+ ";" +isAttackerPlanting+ ";" +isAttackerFlashed+ ";" +attacker.origin + ";" +isClutchKill;
 	victim_data = self.pers["team"]+ ";" +self getStance()+ ";" +self playerADS()+ ";" +self isOnGround()+ ";" +self.isDefusing+ ";" +self.isPlanting+ ";" +self maps\mp\_flashgrenades::isFlashbanged()+ ";" +self.origin;
-	kill_data = isTeamkill+ ";" +isWallbang+ ";" +sWeapon+ ";" +camo+ ";" +iDamage+ ";" +metrestring+ ";" +sMeansOfDeath+ ";" +sHitLoc+ ";" +inflictorOrigin+ ";" + death_by_barell +";" + death_by_bombsite +";"+ death_by_falling +";" +time+ ";" + (game["totalroundsplayed"]+1)+ ";" +level.script+ ";" +level.match_id;
+
+	smokeThrough = 0;
+	smokeHitCount = 0;
+	smokeCoverageCm = 0;
+	smokeCoveragePermille = 0;
+	if ( isPlayer( attacker ) && isDefined( attacker.origin ) && isDefined( self.origin ) )
+	{
+		traceStart = attacker.origin + (0, 0, 55);
+		traceEnd = self.origin + (0, 0, 55);
+		if ( isDefined( attacker getEye() ) )
+			traceStart = attacker getEye();
+		if ( isDefined( self getTagOrigin( "j_spineupper" ) ) )
+			traceEnd = self getTagOrigin( "j_spineupper" );
+
+		smokeStats = maps\mp\_smokegrenades::getTraceSmokeStats( traceStart, traceEnd, undefined );
+		if ( isDefined( smokeStats ) )
+		{
+			if ( isDefined( smokeStats.blocked ) && smokeStats.blocked )
+				smokeThrough = 1;
+			if ( isDefined( smokeStats.hitCount ) )
+				smokeHitCount = smokeStats.hitCount;
+			if ( isDefined( smokeStats.coverageUnits ) )
+				smokeCoverageCm = int( smokeStats.coverageUnits * 2.54 + 0.5 );
+			if ( isDefined( smokeStats.coverageRatioPermille ) )
+				smokeCoveragePermille = smokeStats.coverageRatioPermille;
+		}
+	}
+
+	kill_data = isTeamkill+ ";" +isWallbang+ ";" +sWeapon+ ";" +camo+ ";" +iDamage+ ";" +metrestring+ ";" +sMeansOfDeath+ ";" +sHitLoc+ ";" +inflictorOrigin+ ";" + death_by_barell +";" + death_by_bombsite +";"+ death_by_falling +";" +time+ ";" + (game["totalroundsplayed"]+1)+ ";" +level.script+ ";" +level.match_id+ ";" +smokeThrough+ ";" +smokeHitCount+ ";" +smokeCoverageCm+ ";" +smokeCoveragePermille;
 
 	if( !level.rdyup && isDefined( game["PROMOD_MATCH_MODE"] ) && game["PROMOD_MATCH_MODE"] == "match" && level.is_public == 0 ) //&& level.gametype == "sd" && game["PROMOD_KNIFEROUND"] == 0
 	{
