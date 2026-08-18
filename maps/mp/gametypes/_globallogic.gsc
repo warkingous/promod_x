@@ -2446,7 +2446,7 @@ updateTeamStatus()
 
 				if ( isAlive( player ) )
 				{
-					level.alivePlayers[team][level.alivePlayers.size] = player;
+					level.alivePlayers[team][level.alivePlayers[team].size] = player;
 					level.activeplayers[ level.activeplayers.size ] = player;
 				}
 			}
