@@ -48,15 +48,21 @@ main()
 					player giveWeapon( "frag_grenade_mp" );
 
 				// Check loadout grenade and give corresponding grenade based on weapon allowance
+				grenadeCount = maps\mp\gametypes\_class::getSecondaryGrenadeCount( classType, player.pers[classType]["loadout_primary"] );
+
 				if ( player.pers[classType]["loadout_grenade"] == "flash_grenade" && getDvarInt("weap_allow_flash_grenade") )
 				{
 					player setOffhandSecondaryClass("flash");
+					player maps\mp\gametypes\_class::resetSecondaryGrenades();
 					player giveWeapon( "flash_grenade_mp" );
+					player setWeaponAmmoClip( "flash_grenade_mp", grenadeCount );
 				}
 				else if ( player.pers[classType]["loadout_grenade"] == "smoke_grenade" && getDvarInt("weap_allow_smoke_grenade") )
 				{
 					player setOffhandSecondaryClass("smoke");
+					player maps\mp\gametypes\_class::resetSecondaryGrenades();
 					player giveWeapon( "smoke_grenade_mp" );
+					player setWeaponAmmoClip( "smoke_grenade_mp", grenadeCount );
 				}
 
 				// Set sidearm and primary weapons based on class

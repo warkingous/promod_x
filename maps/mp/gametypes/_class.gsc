@@ -34,12 +34,38 @@ giveLoadout( team, class )
 		self setOffhandSecondaryClass(GetSubStr(gren, 0, 5));
 		if(!isDefined(level.strat_over) || level.strat_over)
 		{
+			self resetSecondaryGrenades();
 			self giveWeapon(gren+"_mp");
-			self setWeaponAmmoClip(gren+"_mp", 1);
+			self setWeaponAmmoClip(gren+"_mp", getSecondaryGrenadeCount(class, self.pers[class]["loadout_primary"]));
 		}
 	}
 
 	self setMoveSpeedScale( ( 1.0 - 0.05 * int( class == "assault" ) ) * !int( isDefined( level.strat_over ) && !level.strat_over ) );
+}
+
+getSecondaryGrenadeCount( class, primaryWeapon )
+{
+	if ( class == "demolitions" || primaryWeapon == "winchester1200" || primaryWeapon == "m1014" )
+		return 2;
+
+	return 1;
+}
+
+resetSecondaryGrenades()
+{
+	if ( self hasWeapon( "flash_grenade_mp" ) )
+	{
+		self setWeaponAmmoClip( "flash_grenade_mp", 0 );
+		self setWeaponAmmoStock( "flash_grenade_mp", 0 );
+		self takeWeapon( "flash_grenade_mp" );
+	}
+
+	if ( self hasWeapon( "smoke_grenade_mp" ) )
+	{
+		self setWeaponAmmoClip( "smoke_grenade_mp", 0 );
+		self setWeaponAmmoStock( "smoke_grenade_mp", 0 );
+		self takeWeapon( "smoke_grenade_mp" );
+	}
 }
 
 sidearmWeapon()
