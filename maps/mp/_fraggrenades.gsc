@@ -42,7 +42,10 @@ addFragGrenade( grenadeEnt, thrower, weaponName )
 		return;
 
 	if ( isDefined( grenadeEnt ) )
+	{
 		grenadeEnt.promod_fragTracked = true;
+		grenadeEnt thread watchFragShot();
+	}
 
 	frag = spawnStruct();
 	frag.id = level.promod_fragIdCounter;
@@ -66,6 +69,20 @@ addFragGrenade( grenadeEnt, thrower, weaponName )
 	level.promod_frags[level.promod_frags.size] = frag;
 	logFragEvent( "throw", frag );
 	frag thread thinkFrag();
+}
+
+watchFragShot()
+{
+	self waittill( "grenade_shot", shooter );
+
+	if ( !isDefined( shooter ) || !isPlayer( shooter ) )
+		return;
+
+	if ( !isDefined( shooter.pers ) )
+		return;
+
+	maps\mp\gametypes\_globallogic::givePlayerScore( "grenade_shot", shooter );
+	shooter maps\mp\gametypes\_rank::giveRankXP( "grenade_shot" );
 }
 
 thinkFrag()
